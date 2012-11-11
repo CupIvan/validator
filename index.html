@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>OSM: универсальный валидатор брендов (Сбербанк, Почта и др.)</title>
+	<script src="/i/lib.js"></script>
+	<meta charset="utf-8"/>
+</head>
+<body>
+
+<script src="/i/header.js"></script>
+
+<style>
+	table { border-collapse: collapse; border: 2px solid #CCC; }
+	td { border: 1px solid #CCC; padding: 3px 10px; }
+	tr:nth-child(odd) { background: #EEE; }
+	tr:hover td { background: #DDD; }
+
+	.ok     { color: #080; font-weight: bold; }
+	.err    { color: #F00; font-weight: bold; }
+	.unknow { color: #CCC; font-weight: bold; }
+	.multi, .multi td { background: #FDD; !important; }
+
+	.c { text-align: center; }
+
+	.btn { border-radius: 10px; border: 2px solid #777 !important; background: #EEE; font: bold 10px Verdana;
+		text-decoration: none; color: #000 !important; padding: 2px 10px; display: inline-block; }
+	.btn:hover { background: #AAA; }
+
+	#validators { margin: 10px 0; }
+
+	.hidden a { display: inline-block; background: #EEE; padding: 3px 15px; border-bottom: 1px dashed #999;
+		text-decoration: none; color: #000; }
+	.hidden a.active { background: #CCC; font-weight: bold; border-bottom: 1px solid #999; }
+
+	a[href^="#"] { text-decoration: none; border-bottom: 1px dashed #33A; color: #33A; }
+
+	#date { color: #999; font-size: 80%; }
+	#search_ref { width: 80px; }
+
+	#help { background: #F9F9F9; border: 2px solid #999; padding: 0px 20px; display: none; }
+
+	#validate, #filter { margin-top: 20px; }
+</style>
+<script src="i/validators.js"></script>
+
+<script>var state = 0; function _(x) { state = x; }</script>
+<script src="data/state.js"></script>
+
+<div>
+	<span id="regions"></span>
+	<a href="#help" onclick="window.style('help', 'display: block|none'); return false;">Справка</a>
+	<label><input type="checkbox" id="alt_color" onclick="color(this)">Альтернативная раскраска</label>
+	<div id="help">
+		<p>Данный валидатор предназначен для проверки правильности нанесения сетей магазинов и предприятий.
+			Информация о точках берется с официальных сайтов и обновляется несколько раз в месяц.
+			Информация из базы OSM обновляется по возможности раз в сутки, если есть какая-то активность в данном регионе.</p>
+		<p>Валидатор отображает только те, данные, которые необходимо исправить - таким образом, задача сводится к тому,
+			откорректировать объекты, чтобы они здесь не отображались :-)</p>
+		<p>Для удобства редактирования во второй колонке есть кнопки: <span class="btn">add</span> - создание точки в редакторе JOSM
+			и <span class="btn">upd</span> - обновление некорректных полей у заданного объекта в JOSM.
+			Стоит заметить, что эти кнопки работают когда программа JOSM запущена и в ней включена опция удаленного контроля (remote control).</p>
+		<p>Цветовые обозначения: <b class="ok">Правильное значение</b>, <b class="err">Ошибка</b> (при наведении мыши можно увидеть правильное значение),
+			<b class="unknow">Значение не задано</b>. <b class="multi">Красноватый фон</b> на всей строке говорит о том, что этот OSM объект привязан к нескольким адресам. В этом случае необходимо создать еще один объект.</p>
+		<p>Если вы хотите добавить поддержку вашего региона или валидатора, напишите мне на <a href="mailto:cupivan@narod.ru">почту</a> или в <a href="xmpp:cupivan@ya.ru">jabber</a></p>
+	</div>
+</div>
+<div>
+	<span id="validators"></span>
+	<span id="date"></span>
+</div>
+<div id="state" class="hidden" style="display: none;"></div>
+<div id="filter" class="hidden" style="display: none;">
+	<span id="city"></span>
+	<input id="search"     placeholder="Поиск по адресу" onkeyup="osm.searchByName(this.value)">
+	<input id="search_ref" placeholder="ref" onkeyup="osm.searchByRef(this.value)">
+	<input type="button" value="Проверка адресов" onclick="osm.addrCheck()">
+</div>
+<div id="pages" class="hidden" style="display: none;"></div>
+<div id="validate"></div>
+
+<script>
+// открываем нужный валидатор
+var hash = (document.location+'/#/#/#').replace('//', '/').replace(/.+?#/, '').split('/');
+$('regions',    osm.regions());
+if (hash[1] != '#') osm.activeValidator = hash[1];
+if (hash[0].indexOf('-') != -1)
+{
+	$('region').value    = hash[0];
+	osm.changeRegion(hash[0]);
+	$('validator').value = hash[1];
+	if (hash[2] != '#') { var s = decodeURIComponent(hash[2]); $('search').value = s; osm.searchByName(s); }
+}
+
+// смена цветовой раскраски
+function color(x)
+{
+	var s = x.checked ? 'ext' : '';
+	osm.color_scheme(s);
+	// сохраняем
+	localStorage['color_scheme'] = s;
+}
+// восстанавливаем галку выбора раскраски
+if (localStorage['color_scheme'])
+{
+	$('alt_color').checked = 1;
+	osm.color_scheme(localStorage['color_scheme']);
+}
+</script>
+
+<iframe id="josm" name="josm" style="display: none"></iframe>
+
+<div class="feedback">На отзывы и предложения отвечаю на <a href="http://clubs.ya.ru/4611686018427464811/replies.xml?item_no=215">этой странице</a>.</div>
+
+
+<!-- Yandex.Metrika counter --><script type="text/javascript">(function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter13902487 = new Ya.Metrika({id:13902487, enableAll: true, trackHash:true, webvisor:true}); } catch(e) {} }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f); } else { f(); } })(document, window, "yandex_metrika_callbacks");</script><noscript><div><img src="//mc.yandex.ru/watch/13902487" style="position:absolute; left:-9999px;" alt="" /></div></noscript><!-- /Yandex.Metrika counter -->
+
+</body>
+</html>

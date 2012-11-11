@@ -1,0 +1,15 @@
+#!/bin/sh
+
+DIR='/home/cupivan/http/_.cupivan.ru/osm/validator/parser'
+NAME=$1
+
+if [ -f "$DIR/$1.php" ]
+then
+	cd $DIR/../common
+	php validate.php $1 $2 $3 $4
+	exit
+fi
+
+DIR=`find $DIR . | grep $NAME | head -n1`
+cd $DIR
+$DIR/start.sh $2 $3 $4
