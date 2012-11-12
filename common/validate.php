@@ -24,7 +24,7 @@ function validate($region)
 	//$v->validate();
 
 	// временно сохраняем в старом формате
-	require_once '/home/cupivan/bin/osm/osm_data.php';
+	require_once './osm_data.php';
 	$objects = $v->getOSMObjects();
 	array_push($objects, $v->getNewestTimestamp());
 	osm_data($objects, $region, $region, $validator);

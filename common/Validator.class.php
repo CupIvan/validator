@@ -16,7 +16,7 @@ class Validator extends OsmFunctions
 	/** конструктор - проверка возможности работы с заданным регионом */
 	public function __construct($region)
 	{
-		if (!isset(static::$urls[$region])) throw new Exeption('Unknow region!');
+		if (!isset(static::$urls[$region])) throw new Exception('Unknow region!');
 		$this->region = $region;
 	}
 	/** список областей */

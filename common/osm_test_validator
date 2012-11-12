@@ -1,0 +1,46 @@
+#!/usr/bin/php
+<?php
+
+define('DIR', '/home/cupivan/http/_.cupivan.ru/osm/validator/parser/');
+
+if ($_SERVER['argc'] < 2)
+{
+	echo "Usage: osm_test_validator VALIDATOR REGION [options]\n".
+		 "Options:\n".
+		 "  --all - show all objects\n".
+		 "Example: osm_test_validator sberbank RU-MOS\n";
+	exit;
+}
+
+$validator = @$_SERVER['argv'][1];
+$region    = @$_SERVER['argv'][2];
+
+// дополнительные параметры
+$params = implode(',', $_SERVER['argv']);
+if (strpos($params, '--all')) define('SHOW_ALL', 1);
+
+if (!file_exists(DIR . "$validator.php"))
+{
+	echo "Unknow validator '$validator'\n";
+	exit;
+}
+else
+	require_once DIR . "$validator.php";
+
+try
+{
+	$v = new $validator($region);
+	$v->update();
+	$list = $v->getObjects();
+	echo "Total objects: ".count($list)."\n";
+	echo "First object:\n";
+	if (defined('SHOW_ALL'))
+		print_r($list);
+	else
+		print_r(@$list[0]);
+}
+catch(Exception $e)
+{
+	echo 'Error: '.$e->getMessage()."\n";
+	exit;
+}

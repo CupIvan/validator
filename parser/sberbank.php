@@ -133,6 +133,7 @@ class sberbank extends Validator
 						$time = $hours[$i].'-'.$hours[$i+2].','.$hours[$i+3].'-'.$hours[$i+1];
 					else
 						$time = $hours[$i].'-'.$hours[$i+1];
+					$i += 2; // пропускаем обед
 				}
 				else
 					$time = $hours[$i].'-'.$hours[$i+1];
@@ -154,7 +155,13 @@ class sberbank extends Validator
 
 			$o = $this->makeObject($obj);
 
-			$this->addObject($this->makeObject($obj));
+			if (0 && strpos($o['opening_hours'], '00:00')) // скорее всего ошибка в часах работы!
+			{
+				print_r($o);
+				exit;
+			}
+
+			$this->addObject($o);
 		}
 	}
 }

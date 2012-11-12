@@ -34,7 +34,7 @@ function osm_data($data, $region, $name, $param = '')
 		$timestamp = strtotime($timestamp);
 	}
 
-	$dir = '/home/cupivan/http/_.cupivan.ru/osm/validator/data/'.$region;
+	$dir = '../data/'.$region;
 	if (!file_exists($dir)) mkdir($dir);
 
 	$fname = $dir.'/'.$name.'.js';
@@ -54,7 +54,7 @@ function osm_data($data, $region, $name, $param = '')
 
 
 	// обновляем список валидаторов
-	$fname = '/home/cupivan/http/_.cupivan.ru/osm/validator/data/state.js';
+	$fname = '../data/state.js';
 	$data = @file_get_contents($fname);
 	$data = substr($data, 2, -1);
 
