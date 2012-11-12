@@ -42,18 +42,19 @@ var osm = new osm_cl()
 		.validator('Дикси',       'diksi')
 
 	.region('Астраханская область', 'RU-ARK')
-		.validator('Сбербанк', 'sberbank', 'RU-ARK')
-		.validator('Почта',    'russian_post','RU-ARK')
+		.validator('Сбербанк', 'sberbank')
+		.validator('Почта',    'russian_post')
 	.region('Башкирия', 'RU-BA')
-		.validator('Сбербанк',    'sberbank',    'RU-BA')
-		.validator('Почта',       'russian_post','RU-BA')
+		.validator('Сбербанк',    'sberbank')
+		.validator('Почта',       'russian_post')
+		.validator('Башнефть',    'bashneft')
 	.region('Владимирская область', 'RU-VLA')
-		.validator('Сбербанк',    'sberbank',    'RU-VLA')
-		.validator('Почта',       'russian_post','RU-VLA')
+		.validator('Сбербанк',    'sberbank')
+		.validator('Почта',       'russian_post')
 		.validator('Дикси',       'diksi')
 	.region('Волгоградская область', 'RU-VGG')
-		.validator('Сбербанк',    'sberbank',    'RU-VGG')
-		.validator('Почта',       'russian_post','RU-VGG')
+		.validator('Сбербанк',    'sberbank')
+		.validator('Почта',       'russian_post')
 	.region('Воронежская область', 'RU-VOR')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
@@ -61,6 +62,7 @@ var osm = new osm_cl()
 		.validator('Роснефть',    'rosneft')
 		.validator('Автопаскер',  'autopasker')
 		.validator('Церкви',      'temples')
+		.validator('Башнефть',    'bashneft')
 	.region('Калининградская область')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Альфабанк','alfabank')
@@ -116,6 +118,7 @@ var osm = new osm_cl()
 	.region('Татарстан', 'RU-TA')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Почта',    'russian_post')
+		.validator('Башнефть',    'bashneft')
 	.region('Тульская область', 'RU-TUL')
 		.validator('Сбербанк', 'sberbank')
 	.region('Ульяновская область', 'RU-ULY')
@@ -126,6 +129,7 @@ var osm = new osm_cl()
 		.validator('Почта',    'russian_post')
 	.region('Челябинская область', 'RU-CHE')
 		.validator('Сбербанк', 'sberbank')
+		.validator('Башнефть',    'bashneft')
 	.region('Ярославская область', 'RU-YAR')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Дикси',       'diksi')
@@ -147,6 +151,7 @@ var links = {
 	'promsberbank':'http://www.promsbank.ru/contact',
 	'temples':     'http://www.temples.ru/tree.php',
 	'diksi':       'http://dixy.ru/shops',
+	'bashneft':    'http://www.bashneft-azs.ru/network_azs/',
 _:0};
 
 var fields = {
@@ -166,6 +171,7 @@ var fields = {
 	'promsberbank':['ref', 'operator', 'name', 'website', 'phone', '_data', '_addr'],
 	'temples':     ['ref:temples.ru', 'start_date', 'name', 'alt_name', 'disused', 'denomination', 'religion', 'phone', '_addr'],
 	'diksi':       ['operator', 'name', 'payment:cards', 'opening_hours', '_addr'],
+	'bashneft':    ['ref', 'operator', 'brand', 'name', 'payment:cards', 'payment:fuel_cards', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg', '_addr'],
 _:0}
 
 C_Empty    = 1;

@@ -64,7 +64,8 @@ class Validator extends OsmFunctions
 		$md5 = md5($url);
 		$fname = '../_/_html/'.$this->region.'/'.substr($md5, 0, 2);
 		$fname .= "/$md5.html";
-		if (file_exists($fname) && (time() - filemtime($fname) < 3600*24 || mt_rand(0,9)))
+		if (file_exists($fname))
+		if ((time() - filemtime($fname) < 3600*24 || mt_rand(0,9)))
 			return file_get_contents($fname); // старые файлы обновляем с вероятностью 1/10
 		return false;
 	}
