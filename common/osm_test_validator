@@ -19,6 +19,8 @@ $region    = @$_SERVER['argv'][2];
 $params = implode(',', $_SERVER['argv']);
 if (strpos($params, '--all')) define('SHOW_ALL', 1);
 
+chdir(DIR . '../common/');
+
 if (!file_exists(DIR . "$validator.php"))
 {
 	echo "Unknow validator '$validator'\n";

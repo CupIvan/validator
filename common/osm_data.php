@@ -42,7 +42,6 @@ function osm_data($data, $region, $name, $param = '')
 
 	// сжимаем
 	$st = gzencode($st);
-	file_put_contents($fname, ''); // COMMENT: пустой файл нужен для nginx
 	$fname .= ".gz";
 
 	// сохраняем данные

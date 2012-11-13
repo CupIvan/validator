@@ -76,10 +76,11 @@ class Validator extends OsmFunctions
 		$page = $force ? '' : $this->loadPage($url);
 		if (!$page)
 		{
+			$this->log("Download: $url");
 			$page = @file_get_contents($url, false, $this->context);
 			if (!$page)
 			{
-				echo "Error download: $url\n";
+				$this->log("Error download: $url\n");
 				return '';
 			}
 			$this->response = $http_response_header; // заголовки ответа
@@ -97,7 +98,7 @@ class Validator extends OsmFunctions
 	/** функция валидации объектов */
 	public function validate()
 	{
-		echo "validate not supported yet!\n";
+		$this->log("Validate not supported yet!\n");
 	}
 	/** функция сравнения объектов */
 	protected function compare($osm, $real)
@@ -143,12 +144,6 @@ class Validator extends OsmFunctions
 				$res .= ($res?'; ':'').implode(',', $days).' '.$time;
 			// перечисляем нерабочие дни
 			$edays = array('Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su');
-/*			$nonwork = array();
-			for ($i = 0; $i < count($edays); $i++)
-			if (!strpos(" $res", $edays[$i]))
-				array_push($nonwork, $edays[$i]);
-			if ($nonwork)
-				$res .= '; '.implode(',', $nonwork).' Off';*/
 			// склеиваем соседние дни
 			for ($i = 1; $i < count($edays); $i++)
 				$res = str_replace($edays[$i-1].','.$edays[$i], $edays[$i-1].'-'.$edays[$i], $res);

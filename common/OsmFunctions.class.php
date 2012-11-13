@@ -24,11 +24,12 @@ class OsmFunctions
 		$url = 'http://data.gis-lab.info/osm_dump/dump/latest';
 		$fname = $region.'.osm.pbf';
 		$remote_date = preg_replace('/.+?\nversion = ([^ ]+).+/s', '$1', file_get_contents("$url/$fname.meta"));
+		if (!file_exists('../_/pbf')) mkdir('../_/pbf', 0777);
 		$local_date  = date('Y-m-d', @filemtime("../_/pbf/$fname"));
 		if ($remote_date != $local_date)
 		{
 			$this->log("Download $fname");
-			passthru("wget -q $url/$fname -O ../_/pbf/$fname");
+			passthru("if wget -cq $url/$fname -O /tmp/$fname; then mv -f /tmp/$fname ../_/pbf/$fname; fi");
 			touch("../_/pbf/$fname", strtotime($remote_date));
 		}
 	}

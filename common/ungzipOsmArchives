@@ -1,0 +1,5 @@
+#!/bin/sh
+
+DIR='/home/cupivan/http/cupivan.ru:osm/validator'
+
+gunzip -f $DIR/data/*/*.gz
