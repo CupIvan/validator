@@ -43,7 +43,7 @@ class Validator extends OsmFunctions
 		foreach ($urls as $id => $url)
 		{
 			$url = str_replace('$1', $id, $url);
-			$page = $this->download($this->domain.'/'.$url);
+			$page = $this->download($this->domain.$url);
 			$this->code = $id;
 			$this->parse($page);
 		}
@@ -172,12 +172,14 @@ class Validator extends OsmFunctions
 	/** универсальная функция преобразования телефона в стандартный формат */
 	protected function phone($st)
 	{
-		$st = explode(',', $st); $st = $st[0]; // возможно несколько телефонов, берем первый
+		$st = preg_split('/[,;]/', $st); $st = $st[0]; // возможно несколько телефонов, берем первый
 		$st = preg_replace('/[^\d()]/', '', $st); // оставляяем цифры и скобки
 		$st = preg_replace('/^7/', '8',     $st); // заменяем первую 7 на 8 (+7 которая)
-		$st = preg_replace('/^8?\((.+)\)(.+)/', '+7-$1-$2', $st, -1, $n); // приводим к стандарту RFC
+		$st = preg_replace('/^8?\((.+?)\)(.+)/', '+7-$1-$2', $st, -1, $n); // приводим к стандарту RFC
+		$st = preg_replace('/\(.+/', '', $st); // удаляем оставшиеся скобки, от второго телефона
 		$st = preg_replace('/^8?(\d{3})(\d+)/',   '+7-$1-$2', $st); // выделяем код города - первые 3 цифры
-		if (strlen($st) <= 12) $st = ''; // что-то пошло не так: получился короткий номер +7-000-12345
+		$len = strlen($st);
+		if ($len <= 12 || $len > 14) $st = ''; // что-то пошло не так: получился короткий номер +7-000-12345
 		return $st;
 	}
 	/** создание объекта с нужными полями */

@@ -5,7 +5,7 @@ var osm = new osm_cl()
 		.validator('Альфабанк',   'alfabank')
 		.validator('Промсбербанк','promsberbank')
 		.validator('Перекресток', 'perekrestok', 'moscow')
-		.validator('Белый ветер', 'beli_veter',  'moscow')
+		.validator('Белый ветер', 'beli_veter')
 		.validator('Асна',        'asna',    'moscow')
 		.validator('Азбука вкуса','azbuka',  'moscow')
 		.validator('Газпромнефть','gazprom', 'moscow')
@@ -20,7 +20,7 @@ var osm = new osm_cl()
 		.validator('Альфабанк',   'alfabank')
 		.validator('Промсбербанк','promsberbank')
 		.validator('Перекресток', 'perekrestok', 'mosobl')
-		.validator('Белый ветер', 'beli_veter',  'mosobl')
+		.validator('Белый ветер', 'beli_veter')
 		.validator('Лукойл',      'lukoil')
 		.validator('Роснефть',    'rosneft')
 		.validator('Автопаскер',  'autopasker')
@@ -32,11 +32,11 @@ var osm = new osm_cl()
 		.validator('Перекресток', 'perekrestok', 'spb')
 		.validator('Роснефть',    'rosneft')
 		.validator('Дикси',       'diksi')
+		.validator('Белый ветер', 'beli_veter')
 	.region('Ленинградская область', 'RU-LEN')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
 		.validator('Перекресток', 'perekrestok', 'spbobl')
-		.validator('Белый ветер', 'beli_veter',  'spb')
 		.validator('Газпромнефть','gazprom',     'spb')
 		.validator('Роснефть',    'rosneft')
 		.validator('Дикси',       'diksi')
@@ -109,6 +109,7 @@ var osm = new osm_cl()
 		.validator('Сбербанк', 'sberbank')
 	.region('Самарская область', 'RU-SAM')
 		.validator('Сбербанк', 'sberbank')
+		.validator('Белый ветер', 'beli_veter')
 	.region('Саратовская область', 'RU-SAR')
 		.validator('Сбербанк', 'sberbank')
 	.region('Свердловская область', 'RU-SVE')
@@ -118,7 +119,8 @@ var osm = new osm_cl()
 	.region('Татарстан', 'RU-TA')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Почта',    'russian_post')
-		.validator('Башнефть',    'bashneft')
+		.validator('Башнефть', 'bashneft')
+		.validator('Белый ветер', 'beli_veter')
 	.region('Тульская область', 'RU-TUL')
 		.validator('Сбербанк', 'sberbank')
 	.region('Ульяновская область', 'RU-ULY')
@@ -133,6 +135,7 @@ var osm = new osm_cl()
 	.region('Ярославская область', 'RU-YAR')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Дикси',       'diksi')
+		.validator('Белый ветер', 'beli_veter')
 
 
 var links = {
@@ -158,7 +161,7 @@ var fields = {
 	'sberbank':    ['ref', 'operator', 'branch', 'name', 'phone', 'website', 'opening_hours', 'wheelchair', '_addr'],
 	'perekrestok': ['operator', 'name', 'phone', 'website', 'opening_hours', '_addr'],
 	'azbuka':      ['operator', 'name', 'website', 'opening_hours', '_addr'],
-	'beli_veter':  ['operator', 'name', 'phone', 'website', 'opening_hours', '_addr'],
+	'beli_veter':  ['ref', 'operator', 'name', 'phone', 'website', 'opening_hours', '_addr'],
 	'gazprom':     ['ref', 'operator', 'name', 'website', 'opening_hours', '_addr'],
 	'hlinov':      ['operator', 'name', 'website', '_addr'],
 	'asna':        ['brand', 'official_name', 'phone', 'website', 'website', 'opening_hours', '_addr'],
@@ -720,8 +723,8 @@ function osm_cl()
 		if (!b || field.charAt(0) == '_') return C_Skip;
 		if (!a) return C_Empty;
 
-		a = a.replace(/ё/g, 'е');
-		b = b.replace(/ё/g, 'е');
+		a = (''+a).replace(/ё/g, 'е');
+		b = (''+b).replace(/ё/g, 'е');
 
 		if (field == 'phone')
 			a = a.replace(/ /g, '-');

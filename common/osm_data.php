@@ -42,6 +42,7 @@ function osm_data($data, $region, $name, $param = '')
 
 	// сжимаем
 	$st = gzencode($st);
+	file_put_contents($fname, ''); // нужно для nginx на отладочном сервере
 	$fname .= ".gz";
 
 	// сохраняем данные
