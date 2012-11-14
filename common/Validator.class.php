@@ -203,6 +203,13 @@ class Validator extends OsmFunctions
 			}
 		return $obj;
 	}
+	/** фильтрация объекта не нашего региона */
+	protected function isInRegion($city, $region, $text)
+	{
+		$t1 = $this->region == $region;   // совпадение по региону
+		$t2 = preg_match("/$city/u", $text); // совпадение по адресу
+		return ($t1 && $t2) || (!$t1 && !$t2)? 1 : 0; // оба совпали или оба не совпали
+	}
 	/** добавление объекта во время парсинга страницы */
 	protected function addObject($object)
 	{

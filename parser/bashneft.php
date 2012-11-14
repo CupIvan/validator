@@ -36,7 +36,6 @@ class bashneft extends Validator
 	// парсер страницы
 	protected function parse($st)
 	{
-		$this->objectsCached = 0;
 		if (preg_replace_callback('#GeoPoint\(.{1,200}АЗС.+?\)\);#su', function($x)
 		{
 			if (!preg_match('#'
