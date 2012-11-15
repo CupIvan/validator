@@ -14,6 +14,7 @@ var osm = new osm_cl()
 		.validator('Автопаскер',  'autopasker')
 		.validator('Церкви',      'temples')
 		.validator('Дикси',       'diksi')
+		.validator('Атак',        'atak')
 	.region('Московская область', 'RU-MOS')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
@@ -27,6 +28,7 @@ var osm = new osm_cl()
 		.validator('Автопаскер',  'autopasker')
 		.validator('Церкви',      'temples')
 		.validator('Дикси',       'diksi')
+		.validator('Атак',        'atak')
 	.region('Санкт-Петербург', 'RU-SPE')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
@@ -163,6 +165,7 @@ var links = {
 	'temples':     'http://www.temples.ru/tree.php',
 	'diksi':       'http://dixy.ru/shops',
 	'bashneft':    'http://www.bashneft-azs.ru/network_azs/',
+	'atak':        'http://www.ataksupermarket.ru/atak.html?rid=1',
 _:0};
 
 var fields = {
@@ -183,6 +186,7 @@ var fields = {
 	'temples':     ['ref:temples.ru', 'start_date', 'name', 'alt_name', 'disused', 'denomination', 'religion', 'phone', '_addr'],
 	'diksi':       ['operator', 'name', 'payment:cards', 'opening_hours', '_addr'],
 	'bashneft':    ['ref', 'operator', 'brand', 'name', 'payment:cards', 'payment:fuel_cards', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg', '_addr'],
+	'atak':        ['operator', 'brand', 'name', 'phone', 'website', 'opening_hours', '_addr'],
 _:0}
 
 C_Empty    = 1;
