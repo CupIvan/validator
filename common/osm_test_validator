@@ -32,6 +32,7 @@ else
 try
 {
 	$v = new $validator($region);
+	$v->useCache = 1;
 	$v->update();
 	$list = $v->getObjects();
 	echo "Total objects: ".count($list)."\n";

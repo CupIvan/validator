@@ -12,6 +12,7 @@ class Validator extends OsmFunctions
 	protected $filter  = array();
 	protected $context = null; // для download
 	public    $objectsCached = 1;
+	public    $useCache = 0; // использовать только кеш
 
 	/** конструктор - проверка возможности работы с заданным регионом */
 	public function __construct($region)
@@ -38,6 +39,7 @@ class Validator extends OsmFunctions
 	public function update()
 	{
 		$this->log('Update real data');
+		$this->objectsCached = 1;
 		$urls = static::$urls[$this->region];
 		if (is_string($urls)) $urls = array('' => $urls);
 		foreach ($urls as $id => $url)
@@ -65,14 +67,13 @@ class Validator extends OsmFunctions
 		$fname = '../_/_html/'.$this->region.'/'.substr($md5, 0, 2);
 		$fname .= "/$md5.html";
 		if (file_exists($fname))
-		if ((time() - filemtime($fname) < 3600*24 || mt_rand(0,9)))
+		if ($this->useCache || time() - filemtime($fname) < 3600*24 || mt_rand(0,9))
 			return file_get_contents($fname); // старые файлы обновляем с вероятностью 1/10
 		return false;
 	}
 	/** скачивание страницы из интернета, force - не использовать кеш */
 	protected function download($url, $force = 0)
 	{
-		$this->objectsCached = 1;
 		$page = $force ? '' : $this->loadPage($url);
 		if (!$page)
 		{
@@ -161,10 +162,12 @@ class Validator extends OsmFunctions
 		$st = preg_replace(
 			array('/[ \s]*—[ \s]*/u', '/пн\.?/iu','/вт\.?/iu','/ср\.?/iu','/чт\.?/iu',
 				'/пт\.?/iu','/сб\.?/iu','/вс\.?/iu',
-				'/\s+/', '/(\d)\s*([A-Z])/', '/([a-z])[^\da-z]+(\d)/', '/ [дп]о /u'),
+				'/\s+/', '/(\d)\s*([A-Z])/', '/([a-z])[^\da-z]+(\d)/', '/ [дп]о /u', '/(^|\D)(\d:)/',
+				'/[  ]?-[  ]?/', '/\D00/'),
 			array('-', 'Mo','Tu','We','Th',
 				'Fr','Sa','Su',
-				' ', '$1; $2', '$1 $2', '-'), $st);
+				' ', '$1; $2', '$1 $2', '-',
+				'${1}0$2', '-', ':00'), $st);
 		$st = str_replace('Mo-Su ',      '',     $st);
 		$st = str_replace('00:00-24:00', '24/7', $st);
 		return $st;
