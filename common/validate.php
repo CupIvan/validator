@@ -28,6 +28,5 @@ function validate($region)
 	$objects = $v->getOSMObjects();
 	array_push($objects, $v->getNewestTimestamp());
 	osm_data($objects, $region, $region, $validator);
-	if (!$v->objectsCached)
 	osm_data($v->getObjects(), $region, $validator, $region);
 }

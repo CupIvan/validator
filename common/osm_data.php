@@ -17,7 +17,7 @@ function osm_data($data, $region, $name, $param = '')
 	if (!$data) { echo "Empty data! $data\n"; return; }
 
 	$count = count($data);
-	echo "Make JS $region/$name/$param [$count objects]\n";
+	echo "Make JS $region/$name/$param [$count objects]";
 
 	if ($param != '') // если параметр не задан - это объекты OSM по области
 	{
@@ -47,6 +47,10 @@ function osm_data($data, $region, $name, $param = '')
 
 	// сохраняем данные
 	if (!file_exists($dir)) mkdir($dir);
+
+	// выходим, если содержимое не изменилось
+	if (file_exists($fname) && file_get_contents($fname, $st) == $st) { echo " SKIP\n"; return; }
+
 	file_put_contents($fname, $st);
 	chmod($fname, 0666);
 
@@ -67,4 +71,6 @@ function osm_data($data, $region, $name, $param = '')
 
 	$data = "_($data)";
 	file_put_contents($fname, $data);
+
+	echo " OK\n";
 }
