@@ -123,11 +123,9 @@ class sberbank extends Validator
 
 			// формируем часы работы по дням
 			$a = array(); $i = 0;
-			foreach ($days_list as $day)
+			foreach ($days as $day)
+			if ($day)
 			{
-				if (!isset($hours[$i]) || !$hours[$i])
-					continue; //$time = 'Off'; // выходные дни не отмечаем, т.к. не знаем наверняка
-				else
 				if (isset($skobka[$i+2]) && $skobka[$i+2] == '(')
 				{
 					if ($hours[$i+3] != '00:00')
@@ -149,20 +147,11 @@ class sberbank extends Validator
 			$obj['_addr'] = preg_replace('/(^[^а-я0-9]+|[^а-я0-9]+$)/ui', '', $obj['_addr']); // мусор на границах
 			$obj['_addr'] = preg_replace('/\(.+/ui', '', $obj['_addr']); // убираем все что вскобках и правее
 
-
 			// заменяем координаты с сайта сбербанка на геокодированные
 			$geocoder = new Geocoder();
 			$obj = array_merge($obj, $geocoder->getCoordsByAddress($obj['_addr']));
 
-			$o = $this->makeObject($obj);
-
-			if (0 && strpos($o['opening_hours'], '00:00')) // скорее всего ошибка в часах работы!
-			{
-				print_r($o);
-				exit;
-			}
-
-			$this->addObject($o);
+			$this->addObject($this->makeObject($obj));
 		}
 	}
 }
