@@ -158,19 +158,19 @@ class Validator extends OsmFunctions
 
 		$st = strip_tags($st);
 		$st = preg_replace('/.+физ.+?лиц/', '', $st); // убрать?
-		$st = str_replace(array('c', ',', '.'), array('с', ';', ''), $st);
+		$st = str_replace(array('c', ',', '.', '&ndash;', '&mdash;', '&nbsp;'), array('с', ';', '', '-', '-', ' '), $st);
 		$st = preg_replace(
 			array('/[ \s]*—[ \s]*/u', '/пн\.?/iu','/вт\.?/iu','/ср\.?/iu','/чт\.?/iu',
-				'/пт\.?/iu','/сб\.?/iu','/вс\.?/iu',
+				'/пт\.?/iu','/сб\.?/iu','/вск?\.?/iu',
 				'/\s+/', '/(\d)\s*([A-Z])/', '/([a-z])[^\da-z]+(\d)/', '/ [дп]о /u', '/(^|\D)(\d:)/',
-				'/[  ]?-[  ]?/', '/\D00/'),
+				'/[  ]?-[  ]?/', '/\D00/', '/\s*;/', '/;\s*$/'),
 			array('-', 'Mo','Tu','We','Th',
 				'Fr','Sa','Su',
 				' ', '$1; $2', '$1 $2', '-',
-				'${1}0$2', '-', ':00'), $st);
+				'${1}0$2', '-', ':00', ';', ''), $st);
 		$st = str_replace('Mo-Su ',      '',     $st);
 		$st = str_replace('00:00-24:00', '24/7', $st);
-		return $st;
+		return trim($st);
 	}
 	/** универсальная функция преобразования телефона в стандартный формат */
 	protected function phone($st)
@@ -188,6 +188,8 @@ class Validator extends OsmFunctions
 	/** создание объекта с нужными полями */
 	protected function makeObject($fields)
 	{
+		if (isset($fields['_addr']))
+			$fields['_addr'] = trim(strip_tags($fields['_addr']));
 		// добавляем координаты
 		if (!isset($fields['lat']) && isset($fields['_addr']))
 		{
