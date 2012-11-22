@@ -24,6 +24,7 @@ class russian_post extends Validator
 		'RU-KIR' => array(610, 613),
 		'RU-VLA' => array(600, 602),
 		'RU-KYA' => array(660, 663),
+		'RU-IRK' => array(664, 668),
 		'RU-KHA' => array(680, 682),
 		'RU-PRI' => array(690, 692),
 	);
