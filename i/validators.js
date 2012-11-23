@@ -831,14 +831,22 @@ function osm_cl()
 					{
 						cl = 'ok';
 						t  = 'Нужно изменить на: '+real[fields[i]];
-						// простая раскраска
-						if (!this.color)
+						// простая раскраска, данные из OSM
+						if (!this.color || this.color == 'osm')
 						{
 							if (real[fields[i]] != v) cl = 'err';
 						}
 						else
+						// в таблице выводим реальные данные
+						if (this.color == 'real')
+						{
+							t = 'В OSM значение: '+v;
+							if (real[fields[i]] != v) cl = 'err';
+							v = real[fields[i]];
+						}
+						else
 						// отмечаем посимвольно где ошибка
-						if (this.color == 'ext')
+						if (this.color == 'diff')
 						v = (function(from, to){
 							var i, res = '', c, cl, L = to.length; if (from.length > L) L = from.length;
 							for (i = 0; i < L; i++)

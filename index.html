@@ -49,7 +49,13 @@
 <div>
 	<span id="regions"></span>
 	<a href="#help" onclick="window.style('help', 'display: block|none'); return false;">Справка</a>
-	<label><input type="checkbox" id="alt_color" onclick="color(this)">Альтернативная раскраска</label>
+
+	<span style="margin-left: 30px">Данные в таблице:</span>
+	<select id="color_scheme" onchange="color(this.value)">
+		<option value="osm">OSM</option>
+		<option value="diff">OSM с подсветкой ошибок</option>
+		<option value="real">Правильные данные</option>
+	</select>
 	<div id="help">
 		<p>Данный валидатор предназначен для проверки правильности нанесения сетей магазинов и предприятий.
 			Информация о точках берется с официальных сайтов и обновляется несколько раз в месяц.
@@ -94,16 +100,15 @@ if (hash[0].indexOf('-') != -1)
 // смена цветовой раскраски
 function color(x)
 {
-	var s = x.checked ? 'ext' : '';
-	osm.color_scheme(s);
-	// сохраняем
-	localStorage['color_scheme'] = s;
+	osm.color_scheme(x);
+	localStorage['color_scheme'] = x; // сохраняем
 }
-// восстанавливаем галку выбора раскраски
+// устанавливаем сохраненную раскраску
 if (localStorage['color_scheme'])
 {
-	$('alt_color').checked = 1;
-	osm.color_scheme(localStorage['color_scheme']);
+	var s = localStorage['color_scheme'] || 'osm';
+	$('color_scheme').value = s;
+	osm.color_scheme(s);
 }
 </script>
 
