@@ -54,6 +54,7 @@ var osm = new osm_cl()
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
 		.validator('Башнефть',    'bashneft')
+		.validator('Фармленд',    'farmlend')
 	.region('Владимирская область', 'RU-VLA')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
@@ -177,6 +178,7 @@ var links = {
 	'bashneft':    'http://www.bashneft-azs.ru/network_azs/',
 	'atak':        'http://www.ataksupermarket.ru/atak.html?rid=1',
 	'auchan':      'http://www.auchan.ru/ru/moscow',
+	'farmlend':    'http://www.farmlend.ru/apteki/',
 _:0};
 
 var fields = {
@@ -199,6 +201,7 @@ var fields = {
 	'bashneft':    ['ref', 'operator', 'brand', 'name', 'payment:cards', 'payment:fuel_cards', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg', '_addr'],
 	'atak':        ['operator', 'brand', 'name', 'phone', 'website', 'opening_hours', '_addr'],
 	'auchan':      ['ref', 'operator', 'brand', 'name', 'website', 'opening_hours', '_addr'],
+	'farmlend':    ['ref', 'operator', 'phone', 'website', 'dispensing', '_addr'],
 _:0}
 
 C_Empty    = 1;
