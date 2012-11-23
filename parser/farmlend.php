@@ -1,18 +1,15 @@
 <?php
-// Показываем все ошибки
-error_reporting(E_ALL);
-
 require_once 'Validator.class.php';
 
 class farmlend extends Validator
 {
 	// откуда скачиваем данные
-	protected $domain = 'http://www.farmlend.ru/apteki/';
-	static $urls = array( 'RU-BA'  => 'bash',);
+	protected $domain = 'http://www.farmlend.ru';
+	static $urls = array('RU-BA' => '/apteki/bash');
 	// поля объекта
 	protected $fields = array(
-		'amenity'   => 'pharmacy',
-		'dispensing'    => 'no',
+		'amenity'    => 'pharmacy',
+		'dispensing' => 'no',
 		'operator' => 'Фармленд',
 		'website'  => 'http://www.farmlend.ru',
 		'ref'   => '',
@@ -27,46 +24,48 @@ class farmlend extends Validator
 	// парсер страницы
 	protected function parse($st)
 	{
-        $st = str_replace('&ndash;', '-', $st);
-        $st = str_replace('&nbsp;', '', $st);
-        $st = str_replace('&laquo;', '"', $st);
-        $st = str_replace('<br />', '', $st);
-        $st = str_replace(' т.ф.', ' тел.', $st);
-        $st = str_replace(' т. ', ' тел. ', $st);
-        $st = str_replace(' т.(', ' тел. (', $st);
-        $st = str_replace(', (347', ', тел. (347', $st);
+		$st = str_replace('&ndash;', '-', $st);
+		$st = str_replace('&nbsp;',  '',  $st);
+		$st = str_replace('&laquo;', '"', $st);
+		$st = str_replace('<br />',  '',  $st);
+		$st = str_replace(' т.ф.',  ' тел.',   $st);
+		$st = str_replace(' т. ',   ' тел. ',  $st);
+		$st = str_replace(' т.(',   ' тел. (', $st);
+		$st = str_replace(', (347', ', тел. (347', $st);
 
-$this->objectsCached = 0;
+		if (preg_match_all($regexp = '#'
+			."а(пт\.|/п) ?(?<ref>\d+)"
+			.".+?(?<_addr>.+?)(,|) т"
+			.".+?(ел\.)? (?<text>.+?</li>)"
+			."#su", $st, $m, PREG_SET_ORDER))
+		foreach ($m as $obj)
+		{
+			$addr = $obj['_addr'];
+			$addr = str_replace('/-\D/'  , '/- \D/',$addr);
+			$addr = str_replace('- '  , '',$addr);
+			$addr = str_replace('/-\w/'  , '/\w/',$addr);
+			$addr = trim($addr);
 
-        if (preg_match_all($regexp = '#'
-            ."а(пт\.|/п) ?(?<ref>\d+)"
-            .".+?(?<_addr>.+?)(,|) т"
-            .".+?(ел\.)? (?<text>.+?</li>)"
-            ."#su", $st, $m, PREG_SET_ORDER))
-        foreach ($m as $obj)
-        {
-            $str1 = $obj['_addr'];
-            $str1 = str_replace('/-\D/'  , '/- \D/',$str1);
-            $str1 = str_replace('- '  , '',$str1);
-            $str1 = str_replace('/-\w/'  , '/\w/',$str1);
-            $str1 = trim($str1);
-            $str2 = $obj['text'];
-            $str2 = str_replace('8 Марта','',$str2);
-            $str2 = preg_replace('/,.+$/','',$str2);
-            $str2 = preg_replace('/\D/', '', $str2);
-            $str2 = trim($str2);
-            if (strlen($str2)==7) 
-            {
-                $str2 = '+7347'.$str2;
-                $obj['_addr'] = 'г.Уфа, '.$str1;
-            }
-            if (strlen($str2)==10) 
-            {
-                $str2 = '+7'.$str2;
-                $obj['_addr'] = $str1;
-            }
-            $obj['phone'] = $this->phone($str2); 
+			$phone = $obj['text'];
+			$phone = str_replace('8 Марта','',$phone);
+			$phone = preg_replace('/,.+$/','',$phone);
+			$phone = preg_replace('/\D/', '', $phone);
+			$phone = trim($phone);
+
+			if (strlen($phone) == 7)
+			{
+				$phone = '+7-347-'.$phone;
+				$obj['_addr'] = 'г.Уфа, '.$addr;
+			}
+			else
+			if (strlen($phone) == 10)
+			{
+				$phone = '+7'.$phone;
+				$obj['_addr'] = $addr;
+			}
+			$obj['phone'] = $this->phone($phone);
+
 			$this->addObject($this->makeObject($obj));
-        }
+		}
 	}
 }
