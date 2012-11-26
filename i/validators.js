@@ -612,6 +612,12 @@ function osm_cl()
 					&& mod(a.lon - data[i].lon) < delta
 				)
 				{
+					if (a.ref == data[i].ref) // совпал по ref
+					{
+						minObjId = i; break;
+					}
+
+					// или ищем минимальное удаление от адреса
 					d = this.calcDistance(a, data[i]);
 					if (minObjId < 0 || d < minDistance)
 					{
