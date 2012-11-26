@@ -14,7 +14,7 @@ class izbenka extends Validator
 		'brand'    => 'Избёнка',
 		'operator' => 'ООО "Проект Избёнка"',
 		'website'  => 'http://izbenka.msk.ru',
-		'_hours' => '',
+		'opening_hours' => '',
 		'lat'   => '',
 		'lon'   => '',
 		'_addr' => '',
@@ -35,9 +35,14 @@ class izbenka extends Validator
 		{
 			if (strlen($obj['_addr']) < 10) continue;
 
-			// FIXME: сделать валидацию часов работы
 			$hours = strip_tags($obj['hours']);
-			$obj['_hours'] = $hours;
+			$hours = mb_strtolower($hours, 'utf-8');
+			$hours = str_replace(
+				array('вых',      'воскр', 'воск', 'выход',    'будин', 'кроме', 'пон-ка', 'пон', 'субб'),
+				array('выходные', 'вс',   'вс',    'выходные', 'будни', '',      'пн', 'пн', 'сб'),
+				$hours
+			);
+			$obj['opening_hours'] = $this->time($hours);
 
 			$this->addObject($this->makeObject($obj));
 		}

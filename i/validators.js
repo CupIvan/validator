@@ -204,7 +204,7 @@ var fields = {
 	'atak':        ['operator', 'brand', 'name', 'phone', 'website', 'opening_hours', '_addr'],
 	'auchan':      ['ref', 'operator', 'brand', 'name', 'website', 'opening_hours', '_addr'],
 	'farmlend':    ['ref', 'operator', 'phone', 'website', 'dispensing', '_addr'],
-	'izbenka':     ['operator', 'brand', 'name', 'website', '_hours', '_addr'],
+	'izbenka':     ['operator', 'brand', 'name', 'website', 'opening_hours', '_addr'],
 _:0}
 
 C_Empty    = 1;
