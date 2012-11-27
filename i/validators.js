@@ -598,7 +598,7 @@ function osm_cl()
 	// поиск osm объекта
 	this.search = function(a, saveId)
 	{
-		var i, hash, data, delta = 0.005, minObjId = -1;
+		var i, ref, hash, data, delta = 0.005, minObjId = -1;
 
 		if (a.lat)
 		{
@@ -615,7 +615,10 @@ function osm_cl()
 					&& mod(a.lon - data[i].lon) < delta
 				)
 				{
-					if (a.ref == data[i].ref) // совпал по ref
+					if (0 // совпадение по ref
+						|| (a[ref='ref']            && a[ref] == data[i][ref])
+						|| (a[ref='ref:temples.ru'] && a[ref] == data[i][ref])
+					)
 					{
 						minObjId = i; break;
 					}
