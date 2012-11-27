@@ -68,7 +68,10 @@ class perekrestok extends Validator
 				$obj['opening_hours'] = $this->time($hours);
 				$obj['phone'] = $this->phone($obj['phone']);
 
-				$obj['_addr'] = $this->city.', '.$obj['_addr']; // добавляем город к адресу
+				if (mb_strpos(' '.$obj['place'], 'м. ')) // есть метро
+				$obj['_addr'] = $this->city.', '.$obj['_addr'];
+				else
+				$obj['_addr'] = $obj['place'].', '.$obj['_addr']; // добавляем город к адресу
 
 				$this->addObject($this->makeObject($obj));
 			}
