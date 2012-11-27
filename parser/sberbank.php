@@ -48,9 +48,11 @@ class sberbank extends Validator
 		'amenity'  => 'bank',
 		'name'     => 'Сбербанк',
 		'operator' => 'ОАО "Сбербанк России"',
+		'branch'   => '',
 		'website'  => 'http://sbrf.ru',
 		'phone'    => '',
 		'ref'      => '',
+		'department' => '',
 		'wheelchair' => '',
 		'opening_hours' => '',
 		'lat'   => '',
@@ -147,6 +149,10 @@ class sberbank extends Validator
 			$obj['_addr'] = preg_replace('/\d{6}/i', '', $obj['_addr']); // убираем индекс
 			$obj['_addr'] = preg_replace('/(^[^а-я0-9]+|[^а-я0-9]+$)/ui', '', $obj['_addr']); // мусор на границах
 			$obj['_addr'] = preg_replace('/\(.+/ui', '', $obj['_addr']); // убираем все что вскобках и правее
+
+			// отделение
+			if (preg_match('/[а-я]+ отделение/iu', $obj['_name'], $m))
+				$obj['department'] = $m[0];
 
 			// заменяем координаты с сайта сбербанка на геокодированные
 			$geocoder = new Geocoder();

@@ -189,7 +189,7 @@ var links = {
 _:0};
 
 var fields = {
-	'sberbank':    ['ref', 'operator', 'branch', 'name', 'phone', 'website', 'opening_hours', 'wheelchair', '_addr'],
+	'sberbank':    ['ref', 'operator', 'branch', 'department', 'name', 'phone', 'website', 'opening_hours', 'wheelchair', '_addr'],
 	'perekrestok': ['operator', 'name', 'phone', 'website', 'opening_hours', '_addr'],
 	'azbuka':      ['operator', 'name', 'website', 'opening_hours', '_addr'],
 	'beli_veter':  ['ref', 'operator', 'name', 'phone', 'website', 'opening_hours', '_addr'],
