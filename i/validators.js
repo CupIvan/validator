@@ -198,7 +198,7 @@ var fields = {
 	'russian_post':['ref', 'operator', 'name', 'website', 'phone', 'opening_hours', '_name', '_addr'],
 	'autopasker':  ['operator', 'brand', 'phone', 'website', 'opening_hours', 'payment:cards', '_addr'],
 	'promsberbank':['ref', 'operator', 'name', 'website', 'phone', '_data', '_addr'],
-	'temples':     ['ref:temples.ru', 'start_date', 'name', 'alt_name', 'disused', 'denomination', 'religion', 'phone', '_addr'],
+	'temples':     ['ref:temples.ru', 'start_date', 'name', 'alt_name', 'community:gender', 'building', 'disused', 'denomination', 'religion', 'phone', '_addr'],
 	'diksi':       ['operator', 'name', 'payment:cards', 'opening_hours', '_addr'],
 	'bashneft':    ['ref', 'operator', 'brand', 'name', 'payment:cards', 'payment:fuel_cards', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg', '_addr'],
 	'atak':        ['operator', 'brand', 'name', 'phone', 'website', 'opening_hours', '_addr'],

@@ -13,12 +13,14 @@ class temples extends Validator
 	// поля объекта
 	protected $fields = array(
 		'amenity'  => 'place_of_worship',
+		'building' => '',
 		'name'  => '',
 		'denomination' => '',
 		'religion'     => '',
 		'disused'      => '',
 		'alt_name'     => '',
 		'ref:temples.ru' => '',
+		'community:gender' => '',
 		'start_date' => '',
 		'lat'   => '',
 		'lon'   => '',
@@ -41,13 +43,24 @@ class temples extends Validator
 			."#su", $x[0], $obj)) { print_r($x); exit; return;}
 
 			if (strpos(' '.$obj['state'], 'не сохр')) return; // не сохранившиеся не проверяем
-			if (strpos(' '.$obj['state'], 'сохр')) $obj['disused'] = 'yes';
+			if (strpos(' '.$obj['state'], 'сохр')) $obj['disused']  = 'yes';
 
 			$obj['ref:temples.ru'] = $obj['id'];
 			$obj['name']  = preg_replace('/,? (что|во|в|на|при|у) .+/', '', $obj['name']); // сокращаем название
 			$obj['name']  = preg_replace('/\(.+?\)/', '', $obj['name']); // убираем название в скобках
 			$obj['data']  = trim(strip_tags($obj['data']));
 			$obj['_addr'] = preg_replace('/Подроб.+/', '', $obj['data']);
+
+			if (mb_stripos(' '.$obj['name'],  'собор'))     $obj['building'] = 'cathedral';
+			if (mb_stripos(' '.$obj['name'],  'часовня'))   $obj['building'] = 'chapel';
+			if (mb_stripos(' '.$obj['name'],  'монастырь')){$obj['building'] = 'monastery';
+				if (mb_stripos(' '.$obj['name'], 'мужск')) $obj['community:gender'] = 'male';
+				if (mb_stripos(' '.$obj['name'], 'женск')) $obj['community:gender'] = 'female';
+			}
+			if (0
+				|| mb_stripos(' '.$obj['name'],  'церковь')
+				|| mb_stripos(' '.$obj['name'],  'храм')
+				) $obj['building'] = 'church';
 
 			$this->addObject($this->makeObject($obj));
 		}, $st));
