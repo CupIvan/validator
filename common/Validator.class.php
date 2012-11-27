@@ -157,6 +157,7 @@ class Validator extends OsmFunctions
 		// FIXME: отрефакторить - сделать один return
 
 		$st = ' '.strip_tags(mb_strtolower($st, 'utf-8')).' ';
+		if (mb_stripos($st, 'круглос')) $st = '24/7';
 		$st = str_replace(
 			array('выходной', 'будни', 'выходные', 'ежедневно', 'c', ' и ', ' в ', ' до ', ' по ', ',', '.', '&ndash;', '&mdash;', '&nbsp;'),
 			array('Off',      'Mo-Fr', 'Sa-Su',    'Mo-Su',     'с', ', ',  ' ',   '-',    '-',    ';', '', '-', '-', ' '), $st);
