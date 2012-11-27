@@ -4,6 +4,7 @@ var osm = new osm_cl()
 		.validator('Почта',       'russian_post')
 		.validator('Альфабанк',   'alfabank')
 		.validator('Промсбербанк','promsberbank')
+		.validator('МИнБ',        'minbank')
 		.validator('Перекресток', 'perekrestok')
 		.validator('Белый ветер', 'beli_veter')
 		.validator('Асна',        'asna',    'moscow')
@@ -22,6 +23,7 @@ var osm = new osm_cl()
 		.validator('Почта',       'russian_post')
 		.validator('Альфабанк',   'alfabank')
 		.validator('Промсбербанк','promsberbank')
+		.validator('МИнБ',        'minbank')
 		.validator('Перекресток', 'perekrestok')
 		.validator('Белый ветер', 'beli_veter')
 		.validator('Лукойл',      'lukoil')
@@ -40,6 +42,7 @@ var osm = new osm_cl()
 		.validator('Белый ветер', 'beli_veter')
 		.validator('Газпромнефть','gazprom')
 		.validator('Ашан',        'auchan')
+		.validator('МИнБ',        'minbank')
 	.region('Ленинградская область', 'RU-LEN')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
@@ -47,6 +50,7 @@ var osm = new osm_cl()
 		.validator('Роснефть',    'rosneft')
 		.validator('Газпромнефть','gazprom')
 		.validator('Дикси',       'diksi')
+		.validator('МИнБ',        'minbank')
 
 	.region('Астраханская область', 'RU-ARK')
 		.validator('Сбербанк', 'sberbank')
@@ -181,6 +185,7 @@ var links = {
 	'auchan':      'http://www.auchan.ru/ru/moscow',
 	'farmlend':    'http://www.farmlend.ru/apteki/',
 	'izbenka':     'http://vkusvill.ru/shops/shoplist/',
+	'minbank':     'http://www.minbank.ru/list/373/',
 _:0};
 
 var fields = {
@@ -205,6 +210,7 @@ var fields = {
 	'auchan':      ['ref', 'operator', 'brand', 'name', 'website', 'opening_hours', '_addr'],
 	'farmlend':    ['ref', 'operator', 'phone', 'website', 'dispensing', '_addr'],
 	'izbenka':     ['operator', 'brand', 'name', 'website', 'opening_hours', '_addr'],
+	'minbank':     ['operator', 'name', 'website', 'opening_hours', '_addr'],
 _:0}
 
 C_Empty    = 1;
@@ -963,7 +969,8 @@ function osm_cl()
 				st += '<i style="color: #777"><br><br>г. '+(a.city||a.town||'?') + ', ' + (a.road||'?') + ', д. ' + (a.house_number||'?')+'</i>';
 				x.innerHTML = st;
 			}
-			var url = 'http://nominatim.openstreetmap.org/reverse?json_callback='+f+'&format=json&email=mail@cupivan.ru';
+			var url = 'http://nominatim.openstreetmap.org/reverse?json_callback='+f+
+				'&format=json&accept-language=ru&email=mail@cupivan.ru';
 			url += x.getAttribute('rel');
 			ajax.loadJS(url);
 		});
