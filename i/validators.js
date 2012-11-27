@@ -891,8 +891,8 @@ function osm_cl()
 					'target="_blank">'+v+'</a>';
 			}
 
-			if (fields[i] == 'ref:temples.ru' && v != '?')
-				v = '<a href="http://www.temples.ru/card.php?ID='+v+'" target="_blank">'+v+'</a>';
+			if (fields[i] == 'ref:temples.ru' && real[fields[i]])
+				v = '<a href="http://www.temples.ru/card.php?ID='+real[fields[i]]+'" target="_blank">'+v+'</a>';
 
 			if (cl) cl = 'class="'+cl+'"';
 			if (t)  t  = 'title="'+t.replace(/"/g, '&quot;')+'"';
