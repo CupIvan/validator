@@ -1,9 +1,10 @@
 <?php
 
-$validator = @$_SERVER['argv'][1];
-$region    = @$_SERVER['argv'][2];
+$fname     = @$_SERVER['argv'][1];
+$validator = @$_SERVER['argv'][2];
+$region    = @$_SERVER['argv'][3];
 
-require_once "../parser/$validator.php";
+require_once "../parser/$fname";
 
 if (!$region) // регион не указан - обрабатываем все
 	$regions = $validator::getRegions();

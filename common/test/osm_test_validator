@@ -21,13 +21,14 @@ if (strpos($params, '--all')) define('SHOW_ALL', 1);
 
 chdir(DIR . '../common/');
 
-if (!file_exists(DIR . "$validator.php"))
+if (!$fname = exec("find ".DIR." -name $validator.php"))
 {
 	echo "Unknow validator '$validator'\n";
 	exit;
 }
 else
-	require_once DIR . "$validator.php";
+	require_once $fname;
+
 
 try
 {

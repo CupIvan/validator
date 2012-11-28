@@ -3,13 +3,14 @@
 DIR='/home/cupivan/http/_.cupivan.ru/osm/validator/parser'
 NAME=$1
 
-if [ -f "$DIR/$1.php" ]
+cd $DIR
+
+V=`find ./ -name $1.php`
+if [[ "$V" != "" ]]
 then
 	cd $DIR/../common
-	php validate.php $1 $2 $3 $4
+	php validate.php $V $1 $2
 	exit
 fi
 
-DIR=`find $DIR . | grep $NAME | head -n1`
-cd $DIR
-$DIR/start.sh $2 $3 $4
+echo "Unknow validator '$1'!"
