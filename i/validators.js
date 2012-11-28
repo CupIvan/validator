@@ -190,28 +190,28 @@ var links = {
 _:0};
 
 var fields = {
-	'sberbank':    ['ref', 'operator', 'branch', 'department', 'name', 'phone', 'website', 'opening_hours', 'wheelchair', '_addr'],
-	'perekrestok': ['operator', 'name', 'phone', 'website', 'opening_hours', '_addr'],
-	'azbuka':      ['operator', 'name', 'website', 'opening_hours', '_addr'],
-	'beli_veter':  ['ref', 'operator', 'name', 'phone', 'website', 'opening_hours', '_addr'],
-	'gazprom':     ['ref', 'operator', 'brand', 'name', 'website', 'opening_hours', 'payment:cards', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg', '_addr'],
-	'hlinov':      ['operator', 'name', 'website', '_addr'],
-	'asna':        ['brand', 'official_name', 'phone', 'website', 'website', 'opening_hours', '_addr'],
-	'alfabank':    ['operator', 'name', 'official_name', 'website', 'opening_hours', '_addr'],
-	'alfabank_atm':['operator', 'website', 'opening_hours', 'currency:RUR', 'currency:USD', 'currency:EUR', '_addr'],
-	'lukoil':      ['ref', 'operator', 'brand', 'website', 'opening_hours', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg', '_addr'],
-	'rosneft':     ['ref', 'operator', 'brand', 'website', 'opening_hours', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:octane_80', 'fuel:diesel', '_addr'],
-	'russian_post':['ref', 'operator', 'name', 'website', 'phone', 'opening_hours', '_name', '_addr'],
-	'autopasker':  ['operator', 'brand', 'phone', 'website', 'opening_hours', 'payment:cards', '_addr'],
-	'promsberbank':['ref', 'operator', 'name', 'website', 'phone', '_data', '_addr'],
-	'temples':     ['ref:temples.ru', 'start_date', 'name', 'alt_name', 'community:gender', 'building', 'disused', 'denomination', 'religion', 'phone', '_addr'],
-	'diksi':       ['operator', 'name', 'payment:cards', 'opening_hours', '_addr'],
-	'bashneft':    ['ref', 'operator', 'brand', 'name', 'payment:cards', 'payment:fuel_cards', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg', '_addr'],
-	'atak':        ['operator', 'brand', 'name', 'phone', 'website', 'opening_hours', '_addr'],
-	'auchan':      ['ref', 'operator', 'brand', 'name', 'website', 'opening_hours', '_addr'],
-	'farmlend':    ['ref', 'operator', 'phone', 'website', 'dispensing', '_addr'],
-	'izbenka':     ['operator', 'brand', 'name', 'website', 'opening_hours', '_addr'],
-	'minbank':     ['operator', 'name', 'website', 'opening_hours', '_addr'],
+	'sberbank':    ['_addr', 'ref', 'operator', 'branch', 'department', 'name', 'phone', 'website', 'opening_hours', 'wheelchair'],
+	'perekrestok': ['_addr', 'operator', 'name', 'phone', 'website', 'opening_hours'],
+	'azbuka':      ['_addr', 'operator', 'name', 'website', 'opening_hours'],
+	'beli_veter':  ['_addr', 'ref', 'operator', 'name', 'phone', 'website', 'opening_hours'],
+	'gazprom':     ['_addr', 'ref', 'operator', 'brand', 'name', 'website', 'opening_hours', 'payment:cards', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg'],
+	'hlinov':      ['_addr', 'operator', 'name', 'website'],
+	'asna':        ['_addr', 'brand', 'official_name', 'phone', 'website', 'website', 'opening_hours'],
+	'alfabank':    ['_addr', 'operator', 'name', 'official_name', 'website', 'opening_hours'],
+	'alfabank_atm':['_addr', 'operator', 'website', 'opening_hours', 'currency:RUR', 'currency:USD', 'currency:EUR'],
+	'lukoil':      ['_addr', 'ref', 'operator', 'brand', 'website', 'opening_hours', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg'],
+	'rosneft':     ['_addr', 'ref', 'operator', 'brand', 'website', 'opening_hours', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:octane_80', 'fuel:diesel'],
+	'russian_post':['_addr', 'ref', 'operator', 'name', 'website', 'phone', 'opening_hours', '_name'],
+	'autopasker':  ['_addr', 'operator', 'brand', 'phone', 'website', 'opening_hours', 'payment:cards'],
+	'promsberbank':['_addr', 'ref', 'operator', 'name', 'website', 'phone', '_data'],
+	'temples':     ['_addr', 'ref:temples.ru', 'start_date', 'name', 'alt_name', 'community:gender', 'building', 'disused', 'denomination', 'religion', 'phone'],
+	'diksi':       ['_addr', 'operator', 'name', 'payment:cards', 'opening_hours'],
+	'bashneft':    ['_addr', 'ref', 'operator', 'brand', 'name', 'payment:cards', 'payment:fuel_cards', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg'],
+	'atak':        ['_addr', 'operator', 'brand', 'name', 'phone', 'website', 'opening_hours'],
+	'auchan':      ['_addr', 'ref', 'operator', 'brand', 'name', 'website', 'opening_hours'],
+	'farmlend':    ['_addr', 'ref', 'operator', 'phone', 'website', 'dispensing'],
+	'izbenka':     ['_addr', 'operator', 'brand', 'name', 'website', 'opening_hours'],
+	'minbank':     ['_addr', 'operator', 'name', 'website', 'opening_hours'],
 _:0}
 
 C_Empty    = 1;
@@ -830,7 +830,7 @@ function osm_cl()
 	// сравнение объектов и генерация ячеек
 	this.compare = function(osm, real, fields)
 	{
-		var i, st = '', v, t, cl;
+		var i, st = '', v, t, cl, td_cl;
 		for (i in fields)
 		{
 			cl = t = '';
@@ -907,7 +907,11 @@ function osm_cl()
 			if (cl) cl = 'class="'+cl+'"';
 			if (t)  t  = 'title="'+t.replace(/"/g, '&quot;')+'"';
 
-			st += '<td><span '+cl+t+'>'+v+'</span></td>';
+			td_cl = '';
+			if (fields[i] == '_addr' && real._ref == C_FoundRef)
+				td_cl = ' class="foundByRef"';
+
+			st += '<td'+td_cl+'><span '+cl+t+'>'+v+'</span></td>';
 		}
 		return st;
 	}
