@@ -24,14 +24,19 @@ class farmlend extends Validator
 	// парсер страницы
 	protected function parse($st)
 	{
-		$st = str_replace('&ndash;', '-', $st);
-		$st = str_replace('&nbsp;',  '',  $st);
-		$st = str_replace('&laquo;', '"', $st);
-		$st = str_replace('<br />',  '',  $st);
-		$st = str_replace(' т.ф.',  ' тел.',   $st);
-		$st = str_replace(' т. ',   ' тел. ',  $st);
-		$st = str_replace(' т.(',   ' тел. (', $st);
-		$st = str_replace(', (347', ', тел. (347', $st);
+		$st = str_replace('&ndash;',   '-',      $st);
+		$st = str_replace('&nbsp;',    '',       $st);
+		$st = str_replace('&laquo;',   '"',      $st);
+		$st = str_replace('<br />',    '',       $st);
+		$st = str_replace(' т.ф.',     ' тел. ', $st);
+		$st = str_replace(' т. ',      ' тел. ', $st);
+		$st = str_replace(' т.(',      ' тел. (',$st);
+		$st = str_replace('тел.(',     'тел. (', $st);
+		$st = str_replace(', (347',    ', тел. (347', $st);
+		$st = str_replace('Пр.',       'пр.',    $st);
+		$st = str_replace('(24 часа)', '',       $st);
+		$st = str_replace('-',         '-',      $st);
+		$st = preg_replace('#(Бирск|Мелеуз) \d,#', '$1,', $st);
 
 		if (preg_match_all($regexp = '#'
 			."а(пт\.|/п) ?(?<ref>\d+)"
@@ -40,11 +45,7 @@ class farmlend extends Validator
 			."#su", $st, $m, PREG_SET_ORDER))
 		foreach ($m as $obj)
 		{
-			$addr = $obj['_addr'];
-			$addr = str_replace('/-\D/'  , '/- \D/',$addr);
-			$addr = str_replace('- '  , '',$addr);
-			$addr = str_replace('/-\w/'  , '/\w/',$addr);
-			$addr = trim($addr);
+			$addr = trim(str_replace('- '  , '',$obj['_addr]));
 
 			$phone = $obj['text'];
 			$phone = str_replace('8 Марта','',$phone);
