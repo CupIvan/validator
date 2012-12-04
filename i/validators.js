@@ -767,7 +767,7 @@ function osm_cl()
 	// поиск по адресу в яндекса
 	this.link_yasearch = function(st)
 	{
-		return '<a href="/OSMvsNarod.html#'+st+'" target="_blank" title="Поиск адреса в НЯКе">'+
+		return '<a href="/OSMvsNarod.html#q='+st+'" target="_blank" title="Поиск адреса в НЯКе">'+
 			'<img src="http://yandex.st/lego/2.2.6/common/block/b-service-icon/_ico/b-service-icon_maps.ico"/></a>';
 	}
 
@@ -912,7 +912,7 @@ function osm_cl()
 			{
 				cl += ' addr'+(osm.lat?'" rel="&lat='+osm.lat+'&lon='+osm.lon:'');
 				if (real.lat && real.lat != '?')
-				v = '<a href="/OSMvsNarod.html?lat='+real.lat+
+				v = '<a href="/OSMvsNarod.html#lat='+real.lat+
 					'&lon='+real.lon+'&zoom=17&marker=yes"'+
 					'title="Посмотреть метку геокодера"'+
 					'target="_blank">'+v+'</a>';
