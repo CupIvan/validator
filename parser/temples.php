@@ -8,6 +8,10 @@ class temples extends Validator
 	static $urls = array(
 		'RU-MOW' => array('41' => '/getkml.php?TreeID=$1#$1'),
 		'RU-MOS' => array('42' => '/getkml.php?TreeID=$1#$1'),
+		'RU-BA'  => array('688'=> '/getkml.php?TreeID=$1#$1'),
+		'RU-LEN' => array('709'=> '/getkml.php?TreeID=$1#$1'),
+		'RU-SPE' => array('703'=> '/getkml.php?TreeID=$1#$1'),
+		'RU-TVE' => array('47' => '/getkml.php?TreeID=$1#$1'),
 		'RU-VOR' => array('35' => '/getkml.php?TreeID=$1#$1'),
 	);
 	// поля объекта
