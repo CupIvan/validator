@@ -51,6 +51,19 @@ class Geocoder
 	private function getFileName($st)
 	{
 		$md5 = md5($st);
-		return '../_/_geocoder/'.substr($md5, 0, 2)."/$md5.sz";
+		$folder = '';
+
+		if (preg_match('/([а-я]+)\s+обл/ui', $st, $m)) $folder = $m[1];
+		if (preg_match('/(г|д|пос|с|п)\.\s*([а-я]+)/ui',  $st, $m)) $folder = $m[2];
+
+		if ($folder)
+		{
+			$folder = mb_convert_case($folder, MB_CASE_TITLE, 'utf-8');
+			$folder = mb_substr($folder, 0, 1)."/$folder";
+		}
+		else
+			$folder = '_/'.substr($md5, 0, 2);
+
+		return '../_/_geocoder/'.$folder."/$md5.sz";
 	}
 }
