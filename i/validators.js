@@ -377,6 +377,7 @@ function osm_cl()
 				city = /(г\.|п\.|с\.|д\.|п\/о|пос\.|дер\.|р\.п\.+)\s*([А-Я].+?)(,|$)/.exec(osm.real_data[i]._addr);
 				city = city ? city[2] : '';
 				city = city.replace(/ ул.+/, '');
+				city = city.replace(/[\(\)].*/, '');
 				if (city)
 				if (!osm.cityList[city]) osm.cityList[city] = 1;
 				else osm.cityList[city]++;
@@ -451,7 +452,17 @@ function osm_cl()
 		for (i in fields[osm.activeValidator])
 		{
 			j = fields[osm.activeValidator][i];
-			if (j == '_addr') j = 'Адрес'
+			j = j
+				.replace('ref:temples.ru', '<span title="temples.ru">ref</span>')
+				.replace('start_date', 'Дата постр.')
+				.replace('alt_name',  '<span title="Альтернативное название">Альт.</span>')
+				.replace('disused',   '<span title="не работает?">Закр.</span>')
+				.replace('denomination', '<span title="конфессия">Конф.</span>')
+				.replace('phone',     'Телефон')
+				.replace('building',  'Здание')
+				.replace('name',      'Название')
+				.replace('community:gender', '<span title="community:gender">Пол</span>')
+				.replace('_addr', 'Адрес');
 			st += '<th>'+j+'</th>';
 		}
 		st += '</tr>';

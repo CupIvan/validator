@@ -6,26 +6,27 @@ class temples extends Validator
 	// откуда скачиваем данные
 	protected $domain = 'http://www.temples.ru';
 	static $urls = array(
-		'RU-MOW' => array('41' => '/getkml.php?TreeID=$1#$1'),
-		'RU-MOS' => array('42' => '/getkml.php?TreeID=$1#$1'),
-		'RU-BA'  => array('688'=> '/getkml.php?TreeID=$1#$1'),
-		'RU-LEN' => array('709'=> '/getkml.php?TreeID=$1#$1'),
-		'RU-SPE' => array('703'=> '/getkml.php?TreeID=$1#$1'),
-		'RU-TVE' => array('47' => '/getkml.php?TreeID=$1#$1'),
-		'RU-VOR' => array('35' => '/getkml.php?TreeID=$1#$1'),
+		'RU-MOW' => array('41' => '/export_osm.php?send=on&RegionID=$1#$1'),
+		'RU-MOS' => array('42' => '/export_osm.php?send=on&RegionID=$1#$1'),
+		'RU-BA'  => array('688'=> '/export_osm.php?send=on&RegionID=$1#$1'),
+		'RU-LEN' => array('709'=> '/export_osm.php?send=on&RegionID=$1#$1'),
+		'RU-SPE' => array('703'=> '/export_osm.php?send=on&RegionID=$1#$1'),
+		'RU-TVE' => array('47' => '/export_osm.php?send=on&RegionID=$1#$1'),
+		'RU-VOR' => array('35' => '/export_osm.php?send=on&RegionID=$1#$1'),
 	);
 	// поля объекта
 	protected $fields = array(
 		'amenity'  => 'place_of_worship',
 		'building' => '',
-		'name'  => '',
-		'denomination' => '',
-		'religion'     => '',
+		'name'     => '',
+		'religion' => 'christian',
+		'denomination' => 'russian_orthodox',
 		'disused'      => '',
 		'alt_name'     => '',
 		'ref:temples.ru' => '',
 		'community:gender' => '',
 		'start_date' => '',
+		'website'    => '',
 		'lat'   => '',
 		'lon'   => '',
 		'_id'   => '',
@@ -37,23 +38,48 @@ class temples extends Validator
 	// парсер страницы
 	protected function parse($st)
 	{
-		if (preg_replace_callback('#<Placemark>.+?</Placemark>#s', function($x)
+		$st = str_replace(' />', '></end>', $st);
+		if (preg_match_all('#'
+		.'ID="(?<id>\d+)'
+		.'.+?Name>(?<name>[^<]+)'
+		.'.+?Status>(?<state>[^<]+)'
+		.'.+?TypeObject>(?<type>[^<]+)'
+		.'.+?Address>(?<_addr>[^<]+)'
+		.'.+?WebSite>(?<website>[^<]*)'
+		.'.+?Date>(?<start_date>[^<]+)'
+		.'.+?Confession>(?<confession>[^<]+)'
+		.'.+?Coordinates>(?<lon>[\d.]+),(?<lat>[\d.]+)'
+		."#su", $st, $list, PREG_SET_ORDER))
+		foreach ($list as $obj)
 		{
-			if (!preg_match('#'
-			."<!--.+?\#(?<id>\d+)"
-			.".+?<name>(?<name>.+?) \((?<state>[^\(]+?)\)</name>"
-			.".+?CDATA\[(?<data>.+?)\]\]"
-			.'.+?<coordinates>(?<lon>[^,]+),(?<lat>[^,]+)'
-			."#su", $x[0], $obj)) { print_r($x); exit; return;}
-
-			if (strpos(' '.$obj['state'], 'не сохр')) return; // не сохранившиеся не проверяем
-			if (strpos(' '.$obj['state'], 'сохр')) $obj['disused']  = 'yes';
+			if ($obj['state'] == 'сохр.') $obj['disused']  = 'yes';
 
 			$obj['ref:temples.ru'] = $obj['id'];
 			$obj['name']  = preg_replace('/,? (что|во|в|на|при|у) .+/', '', $obj['name']); // сокращаем название
 			$obj['name']  = preg_replace('/\(.+?\)/', '', $obj['name']); // убираем название в скобках
-			$obj['data']  = trim(strip_tags($obj['data']));
-			$obj['_addr'] = preg_replace('/Подроб.+/', '', $obj['data']);
+
+			// TODO: добавить тег-расшифровку конфессий
+/*
+			if ($obj['confession'] == 'РПЦ МП') $obj['denomination:ru'] = 'Русская Православная Церковь';
+			if ($obj['confession'] == 'РосПЦ')  $obj['denomination:ru'] = 'Российская Православная Церковь';
+			if ($obj['confession'] == 'РПАЦ')   $obj['denomination:ru'] = 'Русская Православная Автономная Церковь';
+*/
+			// FIXME: обрабатывать в датах фразы типа "2-я треть", "1-я пол."
+			$date = $obj['start_date'];
+			$date = str_replace(
+				array('ок. ', 'нач.', 'сер.', 'кон.', 'не позже', '-е', '-х',
+					'строится', ' в.', ' вв.', 'рубеж',
+					'XXI', 'XX', 'XIX', 'XVIII', 'XVII', 'XVI', 'XV', 'XIV',
+				),
+				array('~', 'early', 'mid', 'late', 'before', 's', 's',
+					'','','','',
+					'C21', 'C20', 'C19', 'C18', 'C17', 'C16', 'C15', 'C14',
+				),
+				$date);
+			$date = preg_replace('/\s*-\s*/', '-',$date);
+			$obj['start_date'] = trim($date);
+
+			$obj['website'] = preg_replace('#/$#', '', $obj['website']);
 
 			if (mb_stripos(' '.$obj['name'],  'собор'))     $obj['building'] = 'cathedral';
 			if (mb_stripos(' '.$obj['name'],  'часовня'))   $obj['building'] = 'chapel';
@@ -67,6 +93,6 @@ class temples extends Validator
 				) $obj['building'] = 'church';
 
 			$this->addObject($this->makeObject($obj));
-		}, $st));
+		}
 	}
 }
