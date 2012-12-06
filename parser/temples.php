@@ -9,6 +9,8 @@ class temples extends Validator
 		'RU-MOW' => array('41' => '/export_osm.php?send=on&RegionID=$1#$1'),
 		'RU-MOS' => array('42' => '/export_osm.php?send=on&RegionID=$1#$1'),
 		'RU-BA'  => array('688'=> '/export_osm.php?send=on&RegionID=$1#$1'),
+		'RU-BRY' => array('33' => '/export_osm.php?send=on&RegionID=$1#$1'),
+		'RU-KEM' => array('720'=> '/export_osm.php?send=on&RegionID=$1#$1'),
 		'RU-LEN' => array('709'=> '/export_osm.php?send=on&RegionID=$1#$1'),
 		'RU-SPE' => array('703'=> '/export_osm.php?send=on&RegionID=$1#$1'),
 		'RU-TVE' => array('47' => '/export_osm.php?send=on&RegionID=$1#$1'),
