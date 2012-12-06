@@ -369,20 +369,6 @@ function osm_cl()
 			if (typeof(a) == 'string') a = eval('('+a+')');
 			osm.real_data = osm.real_data.concat(a);
 
-			// поиск всех населенных пунктов
-			var city;
-			osm.cityList = [];
-			for (i in osm.real_data)
-			{
-				city = /(г\.|п\.|с\.|д\.|п\/о|пос\.|дер\.|р\.п\.+)\s*([А-Я].+?)(,|$)/.exec(osm.real_data[i]._addr);
-				city = city ? city[2] : '';
-				city = city.replace(/ ул.+/, '');
-				city = city.replace(/[\(\)].*/, '');
-				if (city)
-				if (!osm.cityList[city]) osm.cityList[city] = 1;
-				else osm.cityList[city]++;
-			}
-
 			osm.revalidate();
 		});
 	}
@@ -593,8 +579,26 @@ function osm_cl()
 			this.filter_data.push(this.real_data[i]);
 		}
 
+		this.updateCityList();
 		this.updatePage();
 		return false;
+	}
+
+	// обновление списка городов отфильтрованных записей
+	this.updateCityList = function()
+	{
+		var city;
+		osm.cityList = [];
+		for (i in osm.filter_data)
+		{
+			city = /(г\.|п\.|с\.|д\.|п\/о|пос\.|дер\.|р\.п\.+)\s*([А-Я].+?)(,|$)/.exec(osm.filter_data[i]._addr);
+			city = city ? city[2] : '';
+			city = city.replace(/ ул.+/, '');
+			city = city.replace(/[\(\)].*/, '');
+			if (city)
+			if (!osm.cityList[city]) osm.cityList[city] = 1;
+			else osm.cityList[city]++;
+		}
 	}
 
 	// поиск по названию

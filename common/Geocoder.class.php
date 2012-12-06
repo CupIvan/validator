@@ -7,6 +7,7 @@ class Geocoder
 		$st = preg_replace('/ /',   ' ', $st);
 		$st = preg_replace('/([\.,;])(\S)/u', '$1 $2', $st); // после знака препинания пробел, а то глюки
 		$st = str_replace('пр-т', 'проспект', $st);
+		$st = str_replace('с.',   'село',     $st);
 		$st = preg_replace('/\s+/', ' ', $st);
 
 		$res = $this->geocode($st);
@@ -54,12 +55,12 @@ class Geocoder
 		$folder = '';
 
 		if (preg_match('/([а-я]+)\s+обл/ui', $st, $m)) $folder = $m[1];
-		if (preg_match('/(г|д|пос|с|п)\.\s*([а-я]+)/ui',  $st, $m)) $folder = $m[2];
+		if (preg_match('/((г|д|дер|пос|с|п|пгт)\.|станица|хутор|село|аул)\s*([а-я]+)/ui',  $st, $m)) $folder = $m[3];
 
 		if ($folder)
 		{
 			$folder = mb_convert_case($folder, MB_CASE_TITLE, 'utf-8');
-			$folder = mb_substr($folder, 0, 1)."/$folder";
+			$folder = mb_substr($folder, 0, 1).'/'.mb_substr($folder, 0, 2)."/$folder";
 		}
 		else
 			$folder = '_/'.substr($md5, 0, 2);
