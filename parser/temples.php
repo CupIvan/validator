@@ -22,7 +22,9 @@ class temples extends Validator
 		'building' => '',
 		'name'     => '',
 		'religion' => 'christian',
-		'denomination' => 'russian_orthodox',
+		'denomination'    => 'russian_orthodox',
+		'denomination:ru' => '',
+		'russian_orthodox'=> '',
 		'disused'      => '',
 		'alt_name'     => '',
 		'ref:temples.ru' => '',
@@ -54,18 +56,53 @@ class temples extends Validator
 		."#su", $st, $list, PREG_SET_ORDER))
 		foreach ($list as $obj)
 		{
+			if ($obj['state'] == 'не сохр.') continue;
 			if ($obj['state'] == 'сохр.') $obj['disused']  = 'yes';
 
 			$obj['ref:temples.ru'] = $obj['id'];
 			$obj['name']  = preg_replace('/,? (что|во|в|на|при|у) .+/', '', $obj['name']); // сокращаем название
 			$obj['name']  = preg_replace('/\(.+?\)/', '', $obj['name']); // убираем название в скобках
 
-			// TODO: добавить тег-расшифровку конфессий
-/*
-			if ($obj['confession'] == 'РПЦ МП') $obj['denomination:ru'] = 'Русская Православная Церковь';
-			if ($obj['confession'] == 'РосПЦ')  $obj['denomination:ru'] = 'Российская Православная Церковь';
-			if ($obj['confession'] == 'РПАЦ')   $obj['denomination:ru'] = 'Русская Православная Автономная Церковь';
-*/
+			// старообрядчество
+			$c = $obj['confession'];
+			if (strpos($c, 'белокриничники') || strpos($c, 'федосеевцы')) { $c = 'РПСЦ'; $obj['disused'] = 'yes'; }
+			if (strpos($c, 'диноверческая'))
+			{
+				if (strpos(" $c", 'МП')) $obj['russian_orthodox'] = 'yes'; // признают патриарха
+				$c = 'edin';
+			}
+			if ($c == 'ДПЦ' || $c == 'РПСЦ' || $c == 'РДЦ' || $c == 'ДКЦ' || $c == 'edin')
+			{
+				$obj['denomination'] = 'old_believers';
+				if ($c != 'edin')
+				$obj['denomination:ru'] = $c;
+			}
+
+			// инакомыслящие
+			if ($c == 'ПЦР (ИПЦ)') $c = 'ИПЦ (ПЦР)';
+			if ($c == 'РосПЦ' || $c == 'РПАЦ' || strpos(" $c", 'ИПЦ'))
+			{
+				$obj['denomination'] = 'dissenters';
+				$obj['denomination:ru'] = $c;
+			}
+
+			// зарубежная
+			if (strpos(" $c", 'РПЦЗ'))
+			{
+				$obj['denomination:ru'] = 'РПЦЗ';
+				if (strpos(" $c", 'МП')) $obj['russian_orthodox'] = 'yes'; // признают патриарха
+			}
+
+			// храм не действует
+			if (strpos(" $c", 'равославн')) $obj['disused'] = 'yes';
+
+			// COMMENT: церкви с неопределенной конфессией
+			if ($c != 'РПЦ МП' && empty($obj['denomination:ru'])
+				&& empty($obj['russian_orthodox']) && empty($obj['disused']))
+			{
+				//print_r($obj);
+			}
+
 			// FIXME: обрабатывать в датах фразы типа "2-я треть", "1-я пол."
 			$date = $obj['start_date'];
 			$date = str_replace(

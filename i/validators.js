@@ -218,7 +218,7 @@ var fields = {
 	'russian_post':['_addr', 'ref', 'operator', 'name', 'website', 'phone', 'opening_hours', '_name'],
 	'autopasker':  ['_addr', 'operator', 'brand', 'phone', 'website', 'opening_hours', 'payment:cards'],
 	'promsberbank':['_addr', 'ref', 'operator', 'name', 'website', 'phone', '_data'],
-	'temples':     ['_addr', 'ref:temples.ru', 'start_date', 'name', 'alt_name', 'community:gender', 'building', 'disused', 'denomination', 'religion', 'phone'],
+	'temples':     ['_addr', 'ref:temples.ru', 'start_date', 'name', 'alt_name', 'community:gender', 'building', 'disused', 'denomination', 'denomination:ru', 'russian_orthodox', 'religion', 'phone'],
 	'diksi':       ['_addr', 'operator', 'name', 'payment:cards', 'opening_hours'],
 	'bashneft':    ['_addr', 'ref', 'operator', 'brand', 'name', 'payment:cards', 'payment:fuel_cards', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg'],
 	'atak':        ['_addr', 'operator', 'brand', 'name', 'phone', 'website', 'opening_hours'],
@@ -451,7 +451,9 @@ function osm_cl()
 				.replace('start_date', 'Дата постр.')
 				.replace('alt_name',  '<span title="Альтернативное название">Альт.</span>')
 				.replace('disused',   '<span title="не работает?">Закр.</span>')
+				.replace('denomination:ru', '<span title="конфессия русск.">Конф.</span>')
 				.replace('denomination', '<span title="конфессия">Конф.</span>')
+				.replace('russian_orthodox', '<span title="признают Патриарха?">ПП</span>')
 				.replace('phone',     'Телефон')
 				.replace('building',  'Здание')
 				.replace('name',      'Название')
