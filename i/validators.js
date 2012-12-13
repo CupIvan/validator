@@ -248,6 +248,7 @@ function osm_cl()
 {
 	this._regions = {};
 	this._filter  = {page: 0};
+	this._cityList = null;
 	this.numPerPage = 30;
 
 	// добавить регион
@@ -427,6 +428,8 @@ function osm_cl()
 			this.count[0]++;
 		}
 
+		osm._cityList = null;
+
 		// открываем объекты с ошибкой
 		if (this.count[C_Diff])     this.filter({_state: C_Diff});
 		else
@@ -496,24 +499,27 @@ function osm_cl()
 		$('validate', st);
 
 		// быстрая выборка по населенным пунктам
-		st = '';
-		var list = [];
-		for (i in osm.cityList) list.push(i);
-		list.sort();
-		for (i in list)
-			st += '<option value="'+list[i].replace(/"/g, '&quote;')+'">'+list[i]+'</option>';
-		if (st) st = '<select onchange="osm.searchByName($(\'search\').value = this.value)"><option value="">Населённый пункт</option>'+st+'</select>';
+		var t='',c=1; st = '';
+		for (i in osm._cityList)
+		{
+			t = osm._cityList[i].name.replace(/"/g, '&quote;');
+			c = osm._cityList[i].count + '';
+			st += '<option value="'+t+'">'+
+				t+' '.repeat(25 - t.length - c.length)+c+'</option>';
+		}
+		if (st) st = '<select onchange="osm.searchByName($(\'search\').value = this.value)">'+
+			'<option value="">Населённый пункт</option>'+st+'</select>';
 		$('city', st);
 
 		// номера страниц
 		st = '';
 		var _ = function(x){
 			return '<a href="#" class="'+(eval(x) == osm._filter._state?'active':'')+
-				'" onclick="return osm.filter({_state:'+x+'})" ';
+				'" onclick="osm._cityList = null; return osm.filter({_state:'+x+'})" ';
 		}
 		var R = function(f, code){
 			return '<a href="#" class="'+(eval(code) == osm._filter[f]?'active':'')+
-				'" onclick="return osm.filter({'+f+':'+code+'})" ';
+				'" onclick="osm._cityList = null; return osm.filter({'+f+':'+code+'})" ';
 		}
 		if (this.count)
 		st += 'Состояние: '+
@@ -1028,3 +1034,8 @@ function osm_cl()
 }
 
 function mod(x) { return x < 0 ? -x : x; }
+String.prototype.repeat = function(x){
+	var i = 0, s = '', st = this;
+	while (i < x) { s += st; i++; }
+	return s;
+}
