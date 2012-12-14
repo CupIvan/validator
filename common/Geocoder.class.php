@@ -8,6 +8,7 @@ class Geocoder
 		$st = preg_replace('/([\.,;])(\S)/u', '$1 $2', $st); // после знака препинания пробел, а то глюки
 		$st = str_replace('пр-т', 'проспект', $st);
 		$st = str_replace('с.',   'село',     $st);
+		$st = str_replace('Республика', ' ', $st);
 		$st = preg_replace('/\s+/', ' ', $st);
 
 		$res = $this->geocode($st);

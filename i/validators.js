@@ -17,6 +17,7 @@ var osm = new osm_cl()
 		.validator('Дикси',       'diksi')
 		.validator('Ашан',        'auchan')
 		.validator('Атак',        'atak')
+		.validator('Зоомагазин "4 лапы"', 'lapy4')
 		.validator('Избёнка',     'izbenka')
 	.region('Московская область', 'RU-MOS')
 		.validator('Сбербанк',    'sberbank')
@@ -35,6 +36,7 @@ var osm = new osm_cl()
 		.validator('Церкви',      'temples')
 		.validator('Дикси',       'diksi')
 		.validator('Атак',        'atak')
+		.validator('Зоомагазин "4 лапы"', 'lapy4')
 	.region('Санкт-Петербург', 'RU-SPE')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
@@ -177,6 +179,7 @@ var osm = new osm_cl()
 		.validator('Белый ветер', 'beli_veter')
 		.validator('Перекресток', 'perekrestok')
 		.validator('Газпромнефть','gazprom')
+		.validator('Зоомагазин "4 лапы"', 'lapy4')
 
 
 var links = {
@@ -201,6 +204,7 @@ var links = {
 	'farmlend':    'http://www.farmlend.ru/apteki/',
 	'izbenka':     'http://vkusvill.ru/shops/shoplist/',
 	'minbank':     'http://www.minbank.ru/list/373/',
+	'lapy4':       'http://4lapy.ru/pet_stores_amp_services/',
 _:0};
 
 var fields = {
@@ -226,6 +230,7 @@ var fields = {
 	'farmlend':    ['_addr', 'ref', 'operator', 'phone', 'website', 'dispensing'],
 	'izbenka':     ['_addr', 'operator', 'brand', 'name', 'website', 'opening_hours'],
 	'minbank':     ['_addr', 'operator', 'name', 'website', 'opening_hours'],
+	'lapy4':       ['_addr', 'name', 'phone', 'opening_hours', 'pets', 'aquarium', 'veterinary', 'grooming', 'payment:cards', 'website'],
 _:0}
 
 C_Empty    = 1;

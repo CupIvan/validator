@@ -11,7 +11,6 @@ class Validator extends OsmFunctions
 	protected $objects = array();
 	protected $filter  = array();
 	protected $context = null; // для download
-	public    $objectsCached = 1;
 	public    $useCache = 0; // использовать только кеш
 
 	/** конструктор - проверка возможности работы с заданным регионом */
@@ -39,7 +38,6 @@ class Validator extends OsmFunctions
 	public function update()
 	{
 		$this->log('Update real data');
-		$this->objectsCached = 1;
 		$urls = static::$urls[$this->region];
 		if (is_string($urls)) $urls = array('' => $urls);
 		foreach ($urls as $id => $url)
@@ -89,10 +87,7 @@ class Validator extends OsmFunctions
 				$page = iconv('cp1251', 'utf-8', $page);
 
 			if (!$force)
-			{
 				$page = $this->savePage($url, $page);
-				$this->objectsCached = 0;
-			}
 		}
 		return $page;
 	}
@@ -159,8 +154,10 @@ class Validator extends OsmFunctions
 		$st = ' '.strip_tags(mb_strtolower($st, 'utf-8')).' ';
 		if (mb_stripos($st, 'круглос')) $st = '24/7';
 		$st = str_replace(
-			array('выходной', 'будни', 'выходные', 'ежедневно', ' ', 'c', ' и ', ' в ', ' до ', ' по ', ',', '.', '&ndash;', '&mdash;', '&nbsp;'),
-			array('Off',      'Mo-Fr', 'Sa-Su',    'Mo-Su',     ' ', 'с', ', ',  ' ',   '-',    '-',    ';', '', '-', '-', ' '), $st);
+			array('выходной', 'будни', 'выходные', 'ежедневно', ' ', 'c', ' и ', ' в ',
+				' до ', ' по ', ',', '.', '&ndash;', '&mdash;', '&nbsp;', '–'),
+			array('Off',      'Mo-Fr', 'Sa-Su',    'Mo-Su',     ' ', 'с', ', ',  ' ',
+				'-',    '-',    ';', '', '-', '-', ' ', '-'), $st);
 		$st = preg_replace('#(\D)(\d{1,2})\s*-\s*(\d{1,2})\s#', '$1$2:00-$3:00', $st);
 		$st = preg_replace(
 			array('/\s(\d{1,2})\s*-/','/-\s*(\d{1,2})\s/','/-\s*(\d{1,2});/',
