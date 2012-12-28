@@ -14,7 +14,7 @@ class minbank extends Validator
 	// поля объекта
 	protected $fields = array(
 		'amenity'  => 'bank',
-		'name'     => 'Московский Индустриальный Банк',
+		'name'     => 'Московский индустриальный банк',
 		'operator' => 'ОАО "МИнБ"',
 		'website'  => 'http://www.minbank.ru',
 		'opening_hours' => '',

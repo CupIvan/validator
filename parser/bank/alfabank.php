@@ -41,27 +41,27 @@ class alfabank extends Validator
 	protected function parse($st)
 	{
 		if (preg_match_all('/'
-			."\'(?<id>\d+)\': {"
-			.".+?type: '(?<type>\d+)"
-			.".+?title: '(?<official_name>[^']+)"
-			.".+?href: '(?<href>[^']+)"
-			.".+?address: '(?<_addr>[^']+)"
-			.".+?lat: '(?<lat>[^']+)"
-			.".+?lon: '(?<lon>[^']+)"
-			.".+?operationTime: '(?<time>[^']+)"
+			."\'(?<id>\d+)\': *{"
+			.".+?type: *'(?<type>\d+)"
+			.".+?title: *'(?<official_name>[^']+)"
+			.".+?href: *'(?<href>[^']+)"
+			.".+?address: *'(?<_addr>[^']+)"
+			.".+?lat: *'(?<lat>[^']+)"
+			.".+?lon: *'(?<lon>[^']+)"
+			.".+?operationTime: *'(?<time>[^']+)"
 			.'.+?},/s', $st, $m, PREG_SET_ORDER))
-		foreach ($m as $item)
+		foreach ($m as $obj)
 		{
-			if (!strpos($item['time'], 'физ')) continue; // пропускаем отделения не для физиков
-			$item['official_name'] = str_replace(array('«','»'), array('"','"'), $item['official_name']);
+			if (!strpos($obj['time'], 'физ')) continue; // пропускаем отделения не для физиков
+			$obj['official_name'] = str_replace(array('«','»'), array('"','"'), $obj['official_name']);
 
-			$time = $item['time'];
+			$time = $obj['time'];
 			$time = preg_replace('/<b>.+/', '', $time);
 			$time = preg_replace('/-?выходной/', ' off', $time);
 			$time = preg_replace('/Работа с клиентами.+? /', '', $time);
-			$item['opening_hours'] = $this->time($time);
-			$item['opening_hours'] = preg_replace('/\s*[а-я].+$/ui', '$1', $item['opening_hours']);
-			$item['opening_hours'] = preg_replace('/(.+(0|ff)).*/',  '$1', $item['opening_hours']);
+			$obj['opening_hours'] = $this->time($time);
+			$obj['opening_hours'] = preg_replace('/\s*[а-я].+$/ui', '$1', $obj['opening_hours']);
+			$obj['opening_hours'] = preg_replace('/(.+(0|ff)).*/',  '$1', $obj['opening_hours']);
 
 			$this->addObject($this->makeObject($obj));
 		}

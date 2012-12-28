@@ -16,7 +16,7 @@ class perekrestok extends Validator
 		'RU-SPE' => array('Петерб'    => '/shops/northwest/#$1'),
 		'RU-LEN' => array('Ленин'     => '/shops/northwest/#$1'),
 		'RU-SAM' => array('Самара'    => '/shops/samara/#$1'),
-		'RU-PEN' => array('Пенза'     => '/shops/samara/#$1'),
+		'RU-PNZ' => array('Пенза'     => '/shops/samara/#$1'),
 		'RU-VOR' => array('Ворон'     => '/shops/cchernozem/#$1'),
 		'RU-KUR' => array('Курск'     => '/shops/cchernozem/#$1'),
 		'RU-LIP' => array('Липецк'    => '/shops/cchernozem/#$1'),

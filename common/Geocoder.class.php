@@ -56,7 +56,7 @@ class Geocoder
 		$folder = '';
 
 		if (preg_match('/([а-я]+)\s+обл/ui', $st, $m)) $folder = $m[1];
-		if (preg_match('/((г|д|дер|пос|с|п|пгт)\.|станица|хутор|село|аул)\s*([а-я]+)/ui',  $st, $m)) $folder = $m[3];
+		if (preg_match('/((г|д|дер|пос|с|п|пгт|т)\.\s*|(станица|хутор|село|аул)\s+)([а-я]{2,})/ui',  $st, $m)) $folder = $m[4];
 
 		if ($folder)
 		{
