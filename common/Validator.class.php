@@ -2,6 +2,8 @@
 require_once 'OsmFunctions.class.php';
 require_once 'Geocoder.class.php';
 
+mb_internal_encoding('utf-8');
+
 class Validator extends OsmFunctions
 {
 	protected $domain  = '';
@@ -11,7 +13,7 @@ class Validator extends OsmFunctions
 	protected $objects = array();
 	protected $filter  = array();
 	protected $context = null; // для download
-	public    $useCache = 0; // использовать только кеш
+	public    $useCache = false; // использовать только кеш
 
 	/** конструктор - проверка возможности работы с заданным регионом */
 	public function __construct($region)
@@ -75,7 +77,7 @@ class Validator extends OsmFunctions
 		$page = $force ? '' : $this->loadPage($url);
 		if (!$page)
 		{
-			$this->log("Download: $url");
+			$this->log("Download: ".urldecode($url));
 			$page = @file_get_contents($url, false, $this->context);
 			if (!$page)
 			{

@@ -9,7 +9,7 @@ V=`find ./ -name $1.php`
 if [[ "$V" != "" ]]
 then
 	cd $DIR/../common
-	php validate.php $V $1 $2
+	php validate.php $V $1 $2 $3
 	exit
 fi
 

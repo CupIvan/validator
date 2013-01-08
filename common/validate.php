@@ -4,6 +4,10 @@ $fname     = @$_SERVER['argv'][1];
 $validator = @$_SERVER['argv'][2];
 $region    = @$_SERVER['argv'][3];
 
+$st = implode('', $_SERVER['argv']);
+if (preg_match_all('#--([a-z-]+)#', $st, $m))
+	foreach ($m[1] as $p) $GLOBALS[$p] = true;
+
 require_once "../parser/$fname";
 
 if (!$region) // регион не указан - обрабатываем все
@@ -20,6 +24,7 @@ function validate($region)
 {
 	global $validator;
 	$v = new $validator($region);
+	$v->useCache = empty($GLOBALS['update-cache']);
 	$v->loadOSM();
 	$v->update();
 	//$v->validate();

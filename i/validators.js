@@ -20,6 +20,7 @@ var osm = new osm_cl()
 		.validator('Зоомагазин "4 лапы"', 'lapy4')
 		.validator('Избёнка',     'izbenka')
 	.region('Московская область', 'RU-MOS')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
 		.validator('Альфабанк',   'alfabank')
@@ -49,6 +50,7 @@ var osm = new osm_cl()
 		.validator('МИнБ',        'minbank')
 		.validator('Церкви',      'temples')
 	.region('Ленинградская область', 'RU-LEN')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
 		.validator('Перекресток', 'perekrestok')
@@ -59,15 +61,18 @@ var osm = new osm_cl()
 		.validator('Церкви',      'temples')
 
 	.region('Астраханская область', 'RU-ARK')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Почта',    'russian_post')
 	.region('Башкирия', 'RU-BA')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
 		.validator('Башнефть',    'bashneft')
 		.validator('Фармленд',    'farmlend')
 		.validator('Церкви',      'temples')
 	.region('Брянская область', 'RU-BRY')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
 		.validator('Церкви',      'temples')
@@ -82,6 +87,7 @@ var osm = new osm_cl()
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
 	.region('Воронежская область', 'RU-VOR')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
 		.validator('Перекресток', 'perekrestok')
@@ -91,9 +97,11 @@ var osm = new osm_cl()
 		.validator('Башнефть',    'bashneft')
 		.validator('Ашан',        'auchan')
 	.region('Иркутская область', 'RU-IRK')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
 	.region('Калининградская область')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Альфабанк','alfabank')
 		.validator('Лукойл',   'lukoil')
@@ -108,18 +116,22 @@ var osm = new osm_cl()
 		.validator('Почта',       'russian_post')
 		.validator('Церкви',      'temples')
 	.region('Кировская область', 'RU-KIR')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Почта',    'russian_post')
 		.validator('Хлынов', 'hlinov')
 	.region('Краснодарский край', 'RU-KDA')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Почта',    'russian_post')
 		.validator('Лукойл',   'lukoil')
 		.validator('Роснефть', 'rosneft')
 	.region('Красноярский край', 'RU-KYA')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Почта', 'russian_post')
 	.region('Курская область', 'RU-KRS')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 	.region('Мурманская область', 'RU-MUR')
 		.validator('Сбербанк',           'sberbank')
@@ -136,21 +148,27 @@ var osm = new osm_cl()
 		.validator('Сбербанк', 'sberbank')
 		.validator('Почта', 'russian_post')
 	.region('Пермский край', 'RU-PER')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Почта', 'russian_post')
 	.region('Приморский край', 'RU-PRI')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Почта',    'russian_post')
 	.region('Ростовская область', 'RU-ROS')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 	.region('Самарская область', 'RU-SAM')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Белый ветер', 'beli_veter')
 		.validator('Перекресток', 'perekrestok')
 		.validator('Ашан',        'auchan')
 	.region('Саратовская область', 'RU-SAR')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 	.region('Свердловская область', 'RU-SVE')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 	.region('Ставропольский край', 'RU-STA')
 		.validator('Сбербанк', 'sberbank')
@@ -163,17 +181,24 @@ var osm = new osm_cl()
 		.validator('Белый ветер', 'beli_veter')
 		.validator('Перекресток', 'perekrestok')
 	.region('Тульская область', 'RU-TUL')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 	.region('Ульяновская область', 'RU-ULY')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Почта',    'russian_post')
 	.region('Хабаровский край', 'RU-KHA')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Почта',    'russian_post')
 	.region('Челябинская область', 'RU-CHE')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Башнефть',    'bashneft')
+	.region('Якутия', 'RU-SA')
+		.validator('Населенные пункты', 'wiki_places')
 	.region('Ярославская область', 'RU-YAR')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Дикси',       'diksi')
 		.validator('Белый ветер', 'beli_veter')
@@ -231,6 +256,7 @@ var fields = {
 	'izbenka':     ['_addr', 'operator', 'brand', 'name', 'website', 'opening_hours'],
 	'minbank':     ['_addr', 'operator', 'name', 'website', 'opening_hours'],
 	'lapy4':       ['_addr', 'name', 'phone', 'opening_hours', 'pets', 'aquarium', 'veterinary', 'grooming', 'payment:cards', 'website'],
+	'wiki_places': ['name', 'name:ru', 'official_status', 'place', 'population', 'wikipedia', 'old_name', 'website', 'addr:postcode', 'okato:user', 'addr:country', 'addr:region', 'addr:district'],
 _:0}
 
 C_Empty    = 1;
@@ -347,7 +373,7 @@ function osm_cl()
 			var i, hash, corr = {};
 
 			// первый эл-т массива - данные, остальные - поправки
-			if (typeof(a) == 'string') // FIXME: убрать, когда перейду на новый формат
+			if (typeof(a) == 'string')
 			a = eval('(['+a+'])');
 
 			// находим поправки
@@ -464,26 +490,38 @@ function osm_cl()
 				.replace('russian_orthodox', '<span title="признают Патриарха?">ПП</span>')
 				.replace('phone',     'Телефон')
 				.replace('building',  'Здание')
+				.replace('old_name',  '<span title="Прежнее название">Прежн.</span>')
+				.replace('name:ru',   'Русское')
 				.replace('name',      'Название')
+				.replace('addr:postcode', 'Индекс')
 				.replace('community:gender', '<span title="community:gender">Пол</span>')
+				.replace('official_status', 'Статус')
+				.replace('addr:country', '<span title="Страна">RU</span>')
+				.replace('population', '<span title="Население">Нас.</span>')
 				.replace('_addr', 'Адрес');
 			st += '<th>'+j+'</th>';
 		}
 		st += '</tr>';
+
+		var yasearch = '';
 
 		for (i = osm._filter.page < 0 ? 0 : osm._filter.page * osm.numPerPage; i < a.length; i++)
 		{
 			if (!osm.category[a[i]._cat]) osm.category[a[i]._cat] = 0;
 			osm.category[a[i]._cat]++;
 
+			yasearch = this.activeValidator == 'wiki_places'
+				? a[i]['addr:district']+', '+a[i]['official_status'].replace('ru:', '')+' '+a[i]['name:ru']
+				: a[i]._addr;
+
 			osm_data = osm.search(a[i]);
 			if (osm_data) a[i].id = osm_data.id;
 			st += '<tr'+(osm_data && osm_data._used > 1 ?
 				' class="multi" title="Объект привязан несколько раз, необходимо его расчленить!"' : '')+'>'
 				+'<td class="c">'+(osm_data
-					? osm.link(osm_data.id)
+					? (osm_data._used > 1?' '+osm.link(a[i]):'')+osm.link(osm_data.id)
 					: osm.link(a[i]))+
-					' '+osm.link_yasearch(a[i]._addr)+
+					' '+osm.link_yasearch(yasearch)+
 					'</td>'
 				+'<td class="c">'+(osm_data
 					? osm.link_open_josm(osm_data.id)+' '+
@@ -567,7 +605,7 @@ function osm_cl()
 	// фильтрация записей
 	this.filter = function(x, skipFilter)
 	{
-		var i, j, skip;
+		var i, j, f, skip;
 		if (!x) x = {};
 		if (this._filter[i='ref']   && x[i] == undefined) x[i] = this._filter[i];
 		if (this._filter[i='_addr'] && x[i] == undefined) x[i] = this._filter[i];
@@ -584,11 +622,22 @@ function osm_cl()
 			for (j in this._filter)
 			if (j != 'page')
 			{
+				if (typeof(this._filter[j]) == 'string')
+					f = this._filter[j].toLowerCase();
+				if (j == '_addr' && this.activeValidator == 'wiki_places')
+				{
+					skip = 1;
+					if (this.real_data[i][j='name:ru']         && this.real_data[i][j].toLowerCase().indexOf(f) != -1) skip = 0;
+					if (this.real_data[i][j='place']           && this.real_data[i][j].toLowerCase().indexOf(f) != -1) skip = 0;
+					if (this.real_data[i][j='official_status'] && this.real_data[i][j].toLowerCase().indexOf(f) != -1) skip = 0;
+					if (this.real_data[i][j='addr:district']   && this.real_data[i][j].toLowerCase().indexOf(f) != -1) skip = 0;
+				}
+				else
 				if (this.real_data[i][j] == undefined) { skip = 1; continue; }
 				else
 				{
 					if (typeof(this._filter[j]) == 'string')
-						if (this.real_data[i][j].toLowerCase().indexOf(this._filter[j].toLowerCase()) == -1)
+						if (this.real_data[i][j].toLowerCase().indexOf(f) == -1)
 							{ skip = 1; break; }
 					if (typeof(this._filter[j]) == 'number')
 						if (this.real_data[i][j] != this._filter[j])
@@ -608,8 +657,8 @@ function osm_cl()
 	// обновление списка городов отфильтрованных записей
 	this.updateCityList = function()
 	{
-		var city;
-		osm.cityList = [];
+		var city, list = {};
+		if (osm._cityList) return;
 		for (i in osm.filter_data)
 		{
 			city = /(г\.|п\.|с\.|д\.|п\/о|пос\.|дер\.|р\.п\.+)\s*([А-Я].+?)(,|$)/.exec(osm.filter_data[i]._addr);
@@ -617,9 +666,18 @@ function osm_cl()
 			city = city.replace(/ ул.+/, '');
 			city = city.replace(/[\(\)].*/, '');
 			if (city)
-			if (!osm.cityList[city]) osm.cityList[city] = 1;
-			else osm.cityList[city]++;
+			if (!list[city]) list[city] = 1;
+			else list[city]++;
 		}
+		osm._cityList = [];
+		for (i in list) osm._cityList.push({name:i, count: list[i]});
+		osm._cityList.sort(function(x,y)
+		{
+			var N = 2;
+			if (x.count > N && y.count <= N) return -1;
+			if (y.count > N && x.count <= N) return  1;
+			return x.name < y.name ? -1 : (x.name > y.name?1:0);
+		});
 	}
 
 	// поиск по названию
@@ -648,6 +706,8 @@ function osm_cl()
 	this.search = function(a, saveId)
 	{
 		var i, ref, hash, data, delta = 0.005, minObjId = -1;
+		if (this.activeValidator == 'wiki_places') delta = 0.02;
+		this.delta = delta;
 
 		if (a.lat)
 		{
@@ -660,13 +720,14 @@ function osm_cl()
 			// пробуем найти в окрестности точки
 			for (i = 0; i < data.length; i++)
 				if (1
-					&& mod(a.lat - data[i].lat) < delta
+					&& mod(a.lat - data[i].lat) < delta/2
 					&& mod(a.lon - data[i].lon) < delta
 				)
 				{
 					if (0 // совпадение по ref
 						|| (a[ref='ref']            && a[ref] == data[i][ref])
 						|| (a[ref='ref:temples.ru'] && a[ref] == data[i][ref])
+						|| (a[ref='okato:user']     && a[ref] == data[i][ref])
 					)
 					{
 						minObjId = i; break;
@@ -706,7 +767,7 @@ function osm_cl()
 	{
 		if (!id) return '';
 
-		var d = 0.00008;
+		var d = this.delta;
 		if (typeof(id) == 'object')
 		if (!id.lat) return '';
 		else
@@ -945,6 +1006,8 @@ function osm_cl()
 
 			if (fields[i] == 'ref:temples.ru' && real[fields[i]])
 				v = '<a href="http://www.temples.ru/card.php?ID='+real[fields[i]]+'" target="_blank">'+v+'</a>';
+			if (fields[i] == 'wikipedia' && real[fields[i]])
+				v = '<a href="http://ru.wikipedia.org/wiki/'+real[fields[i]]+'" target="_blank">'+v+'</a>';
 
 			if (cl) cl = 'class="'+cl+'"';
 			if (t)  t  = 'title="'+t.replace(/"/g, '&quot;')+'"';

@@ -13,10 +13,11 @@ class OsmFunctions
 		$this->log("Load OSM data for ".$this->region);
 		$this->updatePbf($this->region);
 
-		$type  = preg_replace('/.+=/', '', $this->filter[0]);
+		$type  = explode('=', preg_replace('/[^=]+?,/', '', $this->filter[0]));
+		$type  = ($type[0] == 'place') ? $type[0] : $type[1];
 		$fname = $this->extractPbf($this->filter[0], $type);
 
-		$this->filterOsm($fname, $this->filter[1]);
+		$this->filterOsm($fname, @$this->filter[1]);
 	}
 	/** обновление pbf */
 	private function updatePbf($region)
@@ -27,6 +28,7 @@ class OsmFunctions
 		if (!file_exists('../_/pbf')) mkdir('../_/pbf', 0777);
 		$local_date  = date('Y-m-d', @filemtime("../_/pbf/$fname"));
 		if ($remote_date != $local_date)
+		if (!$this->useCache || !file_exists("../_/pbf/$fname"))
 		{
 			$this->log("Download $fname");
 			passthru("if wget -cq $url/$fname -O /tmp/$fname; then mv -f /tmp/$fname ../_/pbf/$fname; fi");
@@ -49,7 +51,8 @@ class OsmFunctions
 		// выделяем объекты нужного типа
 		$osm = $this->region.'.osm'; $fname = $this->region.'.osm.pbf';
 		if (!file_exists("../_/$type")) mkdir("../_/$type");
-		if (@filemtime("../_/$type/$osm") != filemtime("../_/pbf/$fname"))
+		if ( file_exists("../_/pbf/$fname")
+		    && filemtime("../_/pbf/$fname") != @filemtime("../_/$type/$osm"))
 		{
 			$this->log("Extract $type from $fname");
 			passthru("osmosis -q \
@@ -70,6 +73,14 @@ class OsmFunctions
 			$f = "--read-pbf ../_/pbf/$fname \
 				--tf reject-nodes --tf reject-ways \
 				--tf accept-relations $filter";
+		}
+		else
+		if (strpos(" $filter", 'node'))
+		{
+			$filter = preg_replace('/node,?/', '', $filter);
+			$f = "--read-pbf ../_/pbf/$fname \
+				--tf accept-nodes $filter\
+				--tf reject-ways --tf reject-relations";
 		}
 		else
 		{
@@ -94,7 +105,7 @@ class OsmFunctions
 		return $f;
 	}
 	/** загрузка и фильтрация объектов */
-	private function filterOsm($fname, $filter)
+	private function filterOsm($fname, $filter='')
 	{
 		// загружаем объекты и отфильтровываем нужные
 		$xml = file_get_contents($fname);
@@ -108,7 +119,7 @@ class OsmFunctions
 		foreach ($xml->relation as $v) $this->testObject($v, 'r', $filter);
 	}
 	/** попадает ли объект в фильтр? */
-	private function testObject($item, $type, $filter)
+	private function testObject($item, $type, $filter='')
 	{
 		$a = array();
 		foreach ($item->attributes() as $k => $v) $a[$k] = (string)$v;
@@ -125,7 +136,8 @@ class OsmFunctions
 		unset($a['user']);
 
 		// фильтруем
-		$ok = 0;
+		$ok = $filter ? 0 : 1;
+		if (!$ok)
 		foreach ($a as $v)
 			if (mb_stripos(" $v", $filter)) { $ok = 1; break; }
 
