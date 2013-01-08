@@ -272,6 +272,7 @@ C_NoCoords = 5;
 C_NotFound = 6;
 C_FoundRef = 7;
 C_Double   = 8;
+C_Excess   = 9;
 C_Total    = 0;
 
 
@@ -424,7 +425,7 @@ function osm_cl()
 	// валидация подсчет кол-ва объектов
 	this.revalidate_ = function()
 	{
-		var a = osm.real_data, osm_data, state, f;
+		var a = osm.real_data, osm_data, state, f, i, j;
 		this.count = [0,0,0,0,0,0,0,0,0,0,0,0];
 
 		f = fields[this.activeValidator];
@@ -458,6 +459,11 @@ function osm_cl()
 			this.count[a[i]._state] = (this.count[a[i]._state] || 0) + 1;
 			this.count[0]++;
 		}
+
+		// кол-во непривязанных OSM объектов
+		for (i in this.osm_data)
+		for (j in this.osm_data[i])
+			if (!this.osm_data[i][j]._used) this.count[C_Excess]++;
 
 		osm._cityList = null;
 
@@ -574,7 +580,8 @@ function osm_cl()
 			' = '+_('').replace(/ret.+"/, 'delete osm._filter._state;'+
 				'return osm.filter()"')+'title="Все объекты">'+this.count[C_Total]+'</a>'+
 			' | '+R('_ref',  'C_FoundRef')+'title="Найдено по ref">'+this.count[C_FoundRef]+'</a>'+
-			' | '+R('_double', 'C_Double')+'title="Дубликаты">'+this.count[C_Double]+'</a>';
+			' | '+R('_double', 'C_Double')+'title="Дубликаты">'+this.count[C_Double]+'</a>'+
+			' | '+R('_used', 0)+'title="&quot;Лишние&quot; объекты в OSM">'+this.count[C_Excess]+'</a>';
 		$('state', st);
 
 		st = 'Отфильтровано: '+a.length+'<br>';
@@ -610,7 +617,7 @@ function osm_cl()
 	// фильтрация записей
 	this.filter = function(x, skipFilter)
 	{
-		var i, j, f, skip;
+		var i, j;
 		if (!x) x = {};
 		if (this._filter[i='ref']   && x[i] == undefined) x[i] = this._filter[i];
 		if (this._filter[i='_addr'] && x[i] == undefined) x[i] = this._filter[i];
@@ -619,40 +626,50 @@ function osm_cl()
 		if (skipFilter) { this.updatePage(); return false; }
 
 		// фильтруем записи
-		this.filter_data = [];
-		for (i in this.real_data)
-		{
-			skip = 0; j = 0;
+		this.filter_data = []; var self = this;
+
+		var _ = function(a){
+			var skip = 0, j = 0, f;
 			// перебираем поля фильтра по каждой записи
-			for (j in this._filter)
+			for (j in self._filter)
 			if (j != 'page')
 			{
-				if (typeof(this._filter[j]) == 'string')
-					f = this._filter[j].toLowerCase();
-				if (j == '_addr' && this.activeValidator == 'wiki_places')
+				if (j == '_used' && a._used) { skip = 1; break; } // объект использовался, а мы выводим непривязанные
+				if (typeof(self._filter[j]) == 'string')
+					f = self._filter[j].toLowerCase();
+				if (j == '_addr' && self.activeValidator == 'wiki_places')
 				{
 					skip = 1;
-					if (this.real_data[i][j='name:ru']         && this.real_data[i][j].toLowerCase().indexOf(f) != -1) skip = 0;
-					if (this.real_data[i][j='place']           && this.real_data[i][j].toLowerCase().indexOf(f) != -1) skip = 0;
-					if (this.real_data[i][j='official_status'] && this.real_data[i][j].toLowerCase().indexOf(f) != -1) skip = 0;
-					if (this.real_data[i][j='addr:district']   && this.real_data[i][j].toLowerCase().indexOf(f) != -1) skip = 0;
+					if (a[j='name:ru']         && a[j].toLowerCase().indexOf(f) != -1) skip = 0;
+					if (a[j='place']           && a[j].toLowerCase().indexOf(f) != -1) skip = 0;
+					if (a[j='official_status'] && a[j].toLowerCase().indexOf(f) != -1) skip = 0;
+					if (a[j='addr:district']   && a[j].toLowerCase().indexOf(f) != -1) skip = 0;
 				}
 				else
-				if (this.real_data[i][j] == undefined) { skip = 1; continue; }
+				if (j != '_used')
+				if (a[j] == undefined) { skip = 1; continue; }
 				else
 				{
-					if (typeof(this._filter[j]) == 'string')
-						if (this.real_data[i][j].toLowerCase().indexOf(f) == -1)
+					if (typeof(self._filter[j]) == 'string')
+						if (a[j].toLowerCase().indexOf(f) == -1)
 							{ skip = 1; break; }
-					if (typeof(this._filter[j]) == 'number')
-						if (this.real_data[i][j] != this._filter[j])
+					if (typeof(self._filter[j]) == 'number')
+						if (a[j] != self._filter[j])
 							{ skip = 1; break; }
 				}
 			}
-			if (j && skip) continue;
+			if (j && skip) return;
 			// если дошли до сюда - добавляем запись в выборку
-			this.filter_data.push(this.real_data[i]);
+			self.filter_data.push(a);
 		}
+
+		if (this._filter._used != undefined)
+			for (i in this.osm_data)
+			for (j in this.osm_data[i])
+				_(this.osm_data[i][j]);
+		else
+			for (i in this.real_data)
+				_(this.real_data[i]);
 
 		this.updateCityList();
 		this.updatePage();
