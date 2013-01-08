@@ -15,7 +15,9 @@ class russian_post extends Validator
 		'RU-SPE' => array(190, 199),
 		'RU-BRY' => array(241, 243),
 		'RU-KGD' => array(236, 238),
+		'RU-ROS' => array(344, 347),
 		'RU-KDA' => array(350, 354),
+		'RU-RYA' => array(390, 391),
 		'RU-VOR' => array(394, 397),
 		'RU-VGG' => array(400, 404),
 		'RU-TA'  => array(420, 423),
@@ -101,7 +103,7 @@ class russian_post extends Validator
 			if (isset($x[1]) && ($x[1] == '00:00' || $x[1] == '0:00')) continue;
 
 			if ($x[0] == ' ')
-			$time[$t[$i]] = 'Off';
+			$time[$t[$i]] = 'off';
 			else
 			$time[$t[$i]] = isset($y[1])
 				? $x[0].'-'.$y[0].','.$y[1].'-'.$x[1]

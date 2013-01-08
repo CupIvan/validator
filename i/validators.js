@@ -903,8 +903,8 @@ function osm_cl()
 		// игнорируем выходные дни в opening_hours
 		if (field == 'opening_hours')
 		{
-			a = a.replace(/;[ a-z,-]+ Off/i, '');
-			b = b.replace(/;[ a-z,-]+ Off/i, '');
+			a = a.replace(/;[ a-z,-]+ off/i, '');
+			b = b.replace(/;[ a-z,-]+ off/i, '');
 		}
 
 		if (field == 'website')
