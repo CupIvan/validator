@@ -129,7 +129,8 @@ class russian_post extends Validator
 		if (!file_exists($fname)) mkdir($fname, 0777, 1);
 		$fname .= "/$md5.html";
 
-		if (!strpos($content, '<table')) $content = '-'; // сокращаем по-минимуму страницы без индекса
+		if (strpos($content, '<body>') && !strpos($content, '<table'))
+			$content = '-'; // сокращаем по-минимуму страницы без индекса
 		file_put_contents($fname, $content);
 
 		return $content;
