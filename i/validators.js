@@ -591,7 +591,7 @@ function osm_cl()
 		var numPages = Math.ceil(a.length / osm.numPerPage);
 		var big = numPages > 25 ? 1 : 0, skip = 0;
 		if (osm._filter.page < 0)
-			st += '<br><a href="#all" onclick="osm.page(0)">по страницам</a>';
+			st += '<br><a href="#all" onclick="return osm.page(0)">по страницам</a>';
 		else
 		if (numPages > 1)
 		{
@@ -605,7 +605,7 @@ function osm_cl()
 				st += '<a href="#"'+(osm._filter.page == i?'class="active"':'')+
 					'onclick="return osm.page('+i+')">'+(i+1)+'</a> ';
 			}
-			st += '<a href="#all" onclick="osm.page(-1)">все</a>'
+			st += '<a href="#all" onclick="return osm.page(-1)">все</a>'
 		}
 		$('pages', st);
 	}
@@ -615,6 +615,7 @@ function osm_cl()
 	{
 		this._filter.page = x;
 		this.filter(this._filter, 1);
+		return false;
 	}
 
 	// фильтрация записей
@@ -829,50 +830,61 @@ function osm_cl()
 	{
 		$('josm').src = 'http://localhost:8111/import?url='+encodeURIComponent(url);
 	}
+	// координаты в формате top/bottom/left/right
+	this.coords = function(a, d)
+	{
+		if (!d) d = 0.00001;
+		a.lat = parseFloat(a.lat);
+		a.lon = parseFloat(a.lon);
+		return ''
+			+'&top='   +(a.lat+d/2)
+			+'&bottom='+(a.lat-d/2)
+			+'&right=' +(a.lon+d)
+			+'&left='  +(a.lon-d);
+	}
 	// ссылка на "обновление информации"
 	this.link_export_update = function(a, b)
 	{
 		if (!a.id) return '';
-		var i, url = 'http://'+document.domain+'/validator/import.php?';
+		var i, url = '';//'http://'+document.domain+'/validator/import.php?';
 		var f = fields[this.activeValidator];
 		for (i in f) if (f[i].charAt(0) != '_')
 			if (this.compareField(b, a, f[i]) != C_Equal)
 				if (a[f[i]])
-				url += '&'+f[i]+'='+encodeURIComponent(a[f[i]]);
-		return '<a href="#export" onclick="osm.export_update(\''+a.id+'\', \''+url+'\')" title="Обновить объект в OSM" class="btn">upd</a>';
+				url += (url?'|':'')+f[i]+'='+encodeURIComponent(a[f[i]]);
+		if (!url) return '';
+		var d; if (a.id.charAt(0) != 'n') d = 0.001; // FIXME: лучше передавать координату одного из угла, чтобы загружался только один объект!
+		url = url.replace(/"/g, '&quot;');
+		return '<a href="#export" onclick="return osm.export_update(\''+a.id+'\', \''+url+'\')" title="Обновить объект в OSM" class="btn">upd</a>';
 	}
 	this.export_update = function(id, url)
 	{
-		this.open_josm(id);
-		setTimeout(function(){
-			url += '&id='+id;
-			$('josm').src = 'http://localhost:8111/import?url='+encodeURIComponent(url);
-		}, 1000);
+		osm.loaded_objects[id] = 1;
+		url = encodeURIComponent(url);
+		$('josm').src = 'http://localhost:8111/load_object?objects='+id+'&addtags='+url;
+		return false;
 	}
 	// ссылка "открыть в JOSM"
 	this.link_open_josm = function(id)
 	{
-		return '<a href="#load" onclick="osm.open_josm(\''+id+'\')" title="Открыть объект в OSM" class="btn">josm</a>';
+		return '<a href="#load" onclick="return osm.open_josm(\''+id+'\')" title="Открыть объект в OSM" class="btn">josm</a>';
 	}
 	this.open_josm = function(id)
 	{
 		osm.loaded_objects[id] = 1;
 		$('josm').src = 'http://localhost:8111/load_object?objects='+id;
+		return false;
 	}
 	// ссылка "координаты в JOSM"
 	this.link_find_josm = function(a)
 	{
-		var d = 0.0004;
 		if (!a.lat) return '';
-		return '<a href="#bbox" onclick="osm.find_josm('
-				+(a.lat-0+d/2)+','+(a.lat-d/2)+','
-				+(a.lon-0+d)  +','+(a.lon-d)+','
-			+'0)" title="Найти координаты в OSM" class="btn">josm</a>';
+		return '<a href="#bbox" onclick="osm.find_josm(\''+osm.coords(a, 0.0004)+'\')" title="Найти координаты в OSM" class="btn">josm</a>';
 	}
-	this.find_josm = function(t, b, r, l)
+	this.find_josm = function(coords)
 	{
 		osm.loaded_objects[''] = 1;
-		$('josm').src = 'http://localhost:8111/load_and_zoom?top='+t+'&bottom='+b+'&right='+r+'&left='+l;
+		$('josm').src = 'http://localhost:8111/load_and_zoom?'+coords;
 	}
 
 	// поиск по адресу в яндекса
@@ -1059,7 +1071,8 @@ function osm_cl()
 
 		if (!N && !is_new)
 		{
-			if (!confirm('Запрос перевалидации объектов по области '+this.activeRegion+'.\n'
+			var st = this._regions[this.activeRegion].validators[this.activeValidator].title;
+			if (!confirm(st+' будет перевалидирован в регионе '+this._regions[this.activeRegion].title+'.\n\n'
 				+'Физически процедура обновления будет запущена завтра после создания дампа региона.\n'
 				+'Для мгновенной перевалидации загрузите объекты в JOSM, используя кнопки во второй колонке.')) return;
 		}
