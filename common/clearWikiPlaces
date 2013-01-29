@@ -1,0 +1,37 @@
+#!/usr/bin/php
+<?php
+
+$REGION = @$_SERVER['argv'][1];
+$a = @$_SERVER['argv'][7];
+$a = explode(',', $a);
+
+require_once 'OsmFunctions.class.php';
+
+class osm extends OsmFunctions
+{
+	public    function get($id) { echo ">$id<\n"; return self::getObject($id); }
+	protected function log($x)  { echo "$x\n"; }
+}
+
+$osm = new osm();
+
+foreach ($a as $item)
+if ($item)
+{
+	$item = $osm->get($item);
+	$w = @$item['wikipedia'];
+	if (!$w) continue;
+	$w = $wiki = str_replace('ru:', '', $w);
+	$w = urlencode(str_replace(' ', '_', $w)).'?action=edit';
+	$w = str_replace('%28', '(', $w);
+	$w = str_replace('%29', ')', $w);
+	$w = 'http://ru.wikipedia.org/wiki/'.$w;
+	$md5 = md5($w);
+	$fname = "../_/_html/$REGION/".substr($md5, 0, 2)."/$md5.html";
+
+	if (file_exists($fname))
+	{
+		echo "Delete wikipedia cache: $wiki\n";
+		unlink($fname);
+	}
+}

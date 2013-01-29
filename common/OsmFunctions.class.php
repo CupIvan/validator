@@ -6,6 +6,7 @@ class OsmFunctions
 {
 	protected $osm_objects = array();
 	private   $timestamp   = '';
+	public    $useCachePbf  = false; // использовать только кеш
 
 	/** загрузка данных OSM */
 	public function loadOSM()
@@ -28,7 +29,7 @@ class OsmFunctions
 		if (!file_exists('../_/pbf')) mkdir('../_/pbf', 0777);
 		$local_date  = date('Y-m-d', @filemtime("../_/pbf/$fname"));
 		if ($remote_date != $local_date)
-		if (!$this->useCache || !file_exists("../_/pbf/$fname"))
+		if (!$this->useCachePbf || !file_exists("../_/pbf/$fname"))
 		{
 			$this->log("Download $fname");
 			passthru("if wget -cq $url/$fname -O /tmp/$fname; then mv -f /tmp/$fname ../_/pbf/$fname; fi");
@@ -146,13 +147,13 @@ class OsmFunctions
 		if (!$ok) return;
 
 		// определяем средние координаты для площадных объектов
-		if ($type == 'w') $a += $this->getObjectCenter('w'.$a['id']);
-		if ($type == 'r') $a += $this->getObjectCenter('r'.$a['id']);
+		if ($type == 'w') $a += self::getObjectCenter('w'.$a['id']);
+		if ($type == 'r') $a += self::getObjectCenter('r'.$a['id']);
 
 		array_push($this->osm_objects, $a);
 	}
-	/** полная инфомарция об объекте */
-	private function getOsmObject($id)
+	/** текстовые XML данные объекта */
+	static function getOsmXML($id)
 	{
 		$object = 'node';
 		if ($id[0] == 'w') $object = 'way';
@@ -169,17 +170,31 @@ class OsmFunctions
 			$page = file_get_contents($fname);
 		else
 		{
-			$this->log("OSM API: $type$id");
-			$page = @file_get_contents("http://api.openstreetmap.org/api/0.6/$object/$id/full");
+//			$this->log("OSM API: $type$id");
+			if ($object != 'node') $id .= '/full';
+			$page = @file_get_contents("http://api.openstreetmap.org/api/0.6/$object/$id");
 			if ($page)
 			file_put_contents($fname, $page);
 		}
 		return $page;
 	}
-	/** получение центра площадного объекта */
-	private function getObjectCenter($id)
+	/** все поля объекта в виде хеша */
+	static function getObject($id)
 	{
-		$st  = $this->getOsmObject($id);
+		$a = array();
+		$st = self::getOsmXML($id);
+		if (!$st) return $a;
+		$osm = new SimpleXMLElement($st);
+		$item = ($id[0] == 'n') ? $osm->node : $osm->way;
+		foreach ($item->attributes() as $k => $v) $a[$k] = (string)$v;
+		foreach ($item->tag as $tag) $a[(string)$tag->attributes()['k']] = (string)$tag->attributes()['v'];
+		ksort($a);
+		return $a;
+	}
+	/** получение центра площадного объекта */
+	static function getObjectCenter($id)
+	{
+		$st  = self::getOsmXML($id);
 		if (!$st) return array();
 		$osm = new SimpleXMLElement($st);
 

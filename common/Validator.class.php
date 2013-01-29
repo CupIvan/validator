@@ -13,7 +13,8 @@ class Validator extends OsmFunctions
 	protected $objects = array();
 	protected $filter  = array();
 	protected $context = null; // для download
-	public    $useCache = false; // использовать только кеш
+	public    $useCacheHtml = false; // страницы только из кеша
+	public    $updateHtml   = false; // перезакачать html страницы
 
 	/** конструктор - проверка возможности работы с заданным регионом */
 	public function __construct($region)
@@ -66,10 +67,15 @@ class Validator extends OsmFunctions
 		$md5 = md5($url);
 		$fname = '../_/_html/'.$this->region.'/'.substr($md5, 0, 2);
 		$fname .= "/$md5.html";
-		if (file_exists($fname))
-		if ($this->useCache || time() - filemtime($fname) < 3600*24 || mt_rand(0,9))
-			return file_get_contents($fname); // старые файлы обновляем с вероятностью 1/10
-		return false;
+		$reload = 0;
+		if (!file_exists($fname)) $reload = 1;
+		else
+		if ($this->useCacheHtml) $reload = 0;
+		else
+		if (time() - filemtime($fname) < 3600*24) $reload = 0; // обновляли только что, поэтому больше не надо
+		else if ($this->updateHtml || mt_rand(0,9) == 0)
+			$reload = 1; // старые файлы обновляем с вероятностью 1/10
+		return $reload ? false : file_get_contents($fname);
 	}
 	/** скачивание страницы из интернета, force - не использовать кеш */
 	protected function download($url, $force = 0)
@@ -167,7 +173,7 @@ class Validator extends OsmFunctions
 				'/пт\.?/iu','/сб\.?/iu','/вск?\.?/iu', '/([a-z])(\d)/',
 				'/\s+/', '/(\d)\s*([A-Z])/', '/([a-z])[^\da-z]+(\d)/', '/ [дп]о /u', '/(^|\D)(\d:)/',
 				'/[  ]?-[  ]?/', '/[^\d\s]00/', '/\s*;/', '/;(\S)/', '/;[; ]+/', '/;\s*$/', '/([a-z]); ([A-Z])/',
-				'/(\d{2})(\d{2})/','/(\d{1})(\d{2})/', '/-off/'
+				'/(\d{2})(\d{2})/','/(\d{1})(\d{2})/', '/-off/',
 				),
 			array(' $1:00-', '-$1:00 ', '-$1:00;',
 				'-', 'Mo','Tu','We','Th',
