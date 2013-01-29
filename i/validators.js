@@ -13,6 +13,7 @@ var osm = new osm_cl()
 		.validator('Лукойл',      'lukoil')
 		.validator('Роснефть',    'rosneft')
 		.validator('Автопаскер',  'autopasker')
+		.validator('Авто49',      'auto49')
 		.validator('Церкви',      'temples')
 		.validator('Дикси',       'diksi')
 		.validator('Ашан',        'auchan')
@@ -34,6 +35,7 @@ var osm = new osm_cl()
 		.validator('Роснефть',    'rosneft')
 		.validator('Газпромнефть','gazprom')
 		.validator('Автопаскер',  'autopasker')
+		.validator('Авто49',      'auto49')
 		.validator('Церкви',      'temples')
 		.validator('Дикси',       'diksi')
 		.validator('Атак',        'atak')
@@ -49,6 +51,7 @@ var osm = new osm_cl()
 		.validator('Ашан',        'auchan')
 		.validator('МИнБ',        'minbank')
 		.validator('Церкви',      'temples')
+		.validator('Авто49',      'auto49')
 	.region('Ленинградская область', 'RU-LEN')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
@@ -71,6 +74,7 @@ var osm = new osm_cl()
 		.validator('Башнефть',    'bashneft')
 		.validator('Фармленд',    'farmlend')
 		.validator('Церкви',      'temples')
+		.validator('Авто49',      'auto49')
 	.region('Брянская область', 'RU-BRY')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
@@ -99,6 +103,7 @@ var osm = new osm_cl()
 		.validator('Церкви',      'temples')
 		.validator('Башнефть',    'bashneft')
 		.validator('Ашан',        'auchan')
+		.validator('Авто49',      'auto49')
 	.region('Иркутская область', 'RU-IRK')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
@@ -238,6 +243,7 @@ var links = {
 	'izbenka':     'http://vkusvill.ru/shops/shoplist/',
 	'minbank':     'http://www.minbank.ru/list/373/',
 	'lapy4':       'http://4lapy.ru/pet_stores_amp_services/',
+	'auto49':      'http://www.auto49.ru/site.php/shop/',
 _:0};
 
 var fields = {
@@ -265,6 +271,7 @@ var fields = {
 	'minbank':     ['_addr', 'operator', 'name', 'website', 'opening_hours'],
 	'lapy4':       ['_addr', 'name', 'phone', 'opening_hours', 'pets', 'aquarium', 'veterinary', 'grooming', 'payment:cards', 'website'],
 	'wiki_places': ['name', 'name:ru', 'official_status', 'place', 'population', 'wikipedia', 'old_name', 'website', 'addr:postcode', 'okato:user', 'addr:country', 'addr:region', 'addr:district'],
+	'auto49':      ['_addr', 'operator', 'brand', 'phone', 'website', 'opening_hours', 'payment:cards'],
 _:0}
 
 C_Empty    = 1;
