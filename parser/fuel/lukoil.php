@@ -10,6 +10,9 @@ class lukoil extends Validator
 		'RU-MOS' => array('38' => '/back/azs/azs.asp?RegionId=$1&pagesize=0'),
 		'RU-KGD' => array( '8' => '/back/azs/azs.asp?RegionId=$1&pagesize=0'),
 		'RU-KDA' => array('44' => '/back/azs/azs.asp?RegionId=$1&pagesize=0'),
+		'RU-SPE' => array('21' => '/back/azs/azs.asp?RegionId=$1&pagesize=0'),
+		'RU-LEN' => array('22' => '/back/azs/azs.asp?RegionId=$1&pagesize=0'),
+		'RU-VLG' => array('7'  => '/back/azs/azs.asp?RegionId=$1&pagesize=0'),
 	);
 	// поля объекта
 	protected $fields = array(
@@ -20,6 +23,9 @@ class lukoil extends Validator
 			'RU-MOS' => 'ООО "ЛУКОЙЛ-Центрнефтепродукт"',
 			'RU-KGD' => 'ООО "ЛУКОЙЛ-Северо-Западнефтепродукт"',
 			'RU-KDA' => 'ООО "ЛУКОЙЛ-Югнефтепродукт"',
+			'RU-SPE' => 'ООО "ЛУКОЙЛ-Северо-Западнефтепродукт"',
+			'RU-LEN' => 'ООО "ЛУКОЙЛ-Северо-Западнефтепродукт"',
+			'RU-VLG' => 'ООО "ЛУКОЙЛ-Волганефтепродукт"',
 		),
 		'website'  => 'http://www.lukoil.ru',
 		'ref'      => '',
