@@ -12,7 +12,7 @@ class azbuka extends Validator
 	// поля объекта
 	protected $fields = array(
 		'shop'     => 'supermarket',
-		'name'     => 'Азбука вкуса',
+		'name'     => 'Азбука Вкуса',
 		'operator' => 'ООО "Городской супермаркет"',
 		'website'  => 'http://av.ru',
 		'opening_hours' => '',

@@ -275,7 +275,7 @@ var fields = {
 	'izbenka':     ['_addr', 'operator', 'brand', 'name', 'website', 'opening_hours'],
 	'minbank':     ['_addr', 'operator', 'name', 'website', 'opening_hours'],
 	'lapy4':       ['_addr', 'name', 'phone', 'opening_hours', 'pets', 'aquarium', 'veterinary', 'grooming', 'payment:cards', 'website'],
-	'wiki_places': ['name', 'name:ru', 'official_status', 'place', 'population', 'wikipedia', 'old_name', 'website', 'addr:postcode', 'okato:user', 'addr:country', 'addr:region', 'addr:district'],
+	'wiki_places': ['name', 'name:ru', 'official_status', 'place', 'population', '_population2012', '_population2010', 'wikipedia', 'old_name', 'website', 'addr:postcode', 'okato:user', 'addr:country', 'addr:region', 'addr:district'],
 	'auto49':      ['_addr', 'operator', 'brand', 'phone', 'website', 'opening_hours', 'payment:cards'],
 _:0}
 
@@ -537,7 +537,7 @@ function osm_cl()
 			osm.category[a[i]._cat]++;
 
 			yasearch = this.activeValidator == 'wiki_places'
-				? a[i]['addr:district']+', '+a[i]['official_status'].replace('ru:', '')+' '+a[i]['name:ru']
+				? a[i]['addr:district']+', '+(a[i]['official_status']||'').replace('ru:', '')+' '+a[i]['name:ru']
 				: a[i]._addr;
 
 			osm_data = osm.search(a[i]);

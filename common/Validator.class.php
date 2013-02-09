@@ -48,6 +48,7 @@ class Validator extends OsmFunctions
 			$url = str_replace('$1', $id, $url);
 			$page = $this->download($this->domain.$url);
 			$this->code = $id;
+			$this->url  = $url;
 			$this->parse($page);
 		}
 	}

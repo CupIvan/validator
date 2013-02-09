@@ -142,11 +142,17 @@ class russian_post extends Validator
 		$fname = '../_/_html/russian_post/'.$this->region.'/'.substr($md5, 0, 3);
 		$fname .= "/$md5.html";
 
-		if (file_exists($fname))
+		$reload = 0;
+		if (!file_exists($fname)) $reload = 1;
+		else
 		if (filesize($fname) < 10) return '-'; // такого индекса нет, и не будем заново проверять
 		else
-		if (time() - filemtime($fname) < 3600*24*7 || mt_rand(0,9))
-			return file_get_contents($fname); // старые файлы обновляем с вероятностью 1/10
+		if ($this->useCacheHtml) $reload = 0;
+		else
+		if (time() - filemtime($fname) < 3600*24*7) $reload = 0; // обновляли только что, поэтому больше не надо
+		else if ($this->updateHtml || mt_rand(0,9) == 0)
+			$reload = 1; // старые файлы обновляем с вероятностью 1/10
+		return $reload ? false : file_get_contents($fname);
 
 		return false;
 	}

@@ -48,6 +48,8 @@ class wiki_places extends Validator
 		'old_name'   => '',
 		'official_status' => '',
 		'population' => '',
+		'_population2010'=> '', // население из переписи
+		'_population2012'=> '', // население из переписи
 		'okato:user' => '',
 		'wikipedia'  => '',
 		'website'    => '',
@@ -63,6 +65,8 @@ class wiki_places extends Validator
 			'http' => array('header'  => "User-agent: Mozilla")
 		));
 		parent::__construct($x);
+		$this->population2010 = @file_get_contents('../parser/population2010.txt');
+		$this->population2012 = @file_get_contents('../parser/population2012.txt');
 	}
 
 	/** обновление данных по региону */
@@ -99,7 +103,7 @@ class wiki_places extends Validator
 		// заголовок страницы (для ссылки на wiki)
 		$title = preg_match('#"auto">Редактирование ([^<]+?)<#', $st, $m) ? $m[1] : '';
 
-		if (!mb_strpos($st, '{{НП-')) { $this->log("Error parse '$title'!"); return false; }
+		if (!mb_strpos($st, '{{НП-')) { if (!$title) $title = urldecode($this->url); $this->log("Error parse '$title'!"); return false; }
 
 		// названия на других языках
 		if (preg_match_all('#\[\[(?<lang>[a-z]{2}):(?<name>[^&\(]+?)]]#', $st, $m, PREG_SET_ORDER))
@@ -123,7 +127,7 @@ class wiki_places extends Validator
 		$st);
 		$st = preg_replace('#<ref.+?</ref>#s', '', $st);
 		$st = preg_replace("# +#", ' ', $st);
-		$st =  str_replace(array('у́', 'я́', 'а́'), array('у', 'я', 'а'), $st); // убираем ударения
+		$st =  str_replace(array('у́', 'я́', 'а́', 'и́'), array('у', 'я', 'а', 'и'), $st); // убираем ударения
 
 		if (preg_match('#\|русское название\s*=\s*(.+)#', $st, $m)) $obj['name:ru']    = trim($m[1]);
 		if (preg_match('#\|оригинальное название\s*=\s*\{{lang-(.{2})\|(.+?)}}#', $st, $m)) $obj['name:'.$m[1]] = trim($m[2]);
@@ -198,6 +202,18 @@ class wiki_places extends Validator
 		if ($p['st'] == 'хутор' && ($p['pop'] == null || $p['pop'] < 10)) $obj['place'] = 'isolated_dwelling';
 		else
 		if ($p['selo'] && $p['pop'] > 5) $obj['place'] = 'hamlet';
+
+		// данные населения согласно переписи
+		if (0
+			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.@$obj['name:ru'].'.+?(\d+)#', $this->population2010, $m)
+			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['name:ru'].'.+?(\d+)#', $this->population2010, $m)
+		)
+		$obj['_population2010'] = $m[1];
+		if (0
+			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.@$obj['name:ru'].'.+?(\d+)#', $this->population2012, $m)
+			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['name:ru'].'.+?(\d+)#', $this->population2012, $m)
+		)
+		$obj['_population2012'] = $m[1];
 
 		$this->addObject($this->makeObject($obj));
 	}
