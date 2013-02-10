@@ -21,6 +21,7 @@ var osm = new osm_cl()
 		.validator('Атак',        'atak')
 		.validator('Зоомагазин "4 лапы"', 'lapy4')
 		.validator('Избёнка',     'izbenka')
+		.validator('Терволина',   'tervolina')
 	.region('Московская область', 'RU-MOS')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
@@ -42,6 +43,7 @@ var osm = new osm_cl()
 		.validator('Дикси',       'diksi')
 		.validator('Атак',        'atak')
 		.validator('Зоомагазин "4 лапы"', 'lapy4')
+		.validator('Терволина',   'tervolina')
 	.region('Санкт-Петербург', 'RU-SPE')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
@@ -252,6 +254,7 @@ var links = {
 	'lapy4':       'http://4lapy.ru/pet_stores_amp_services/',
 	'auto49':      'http://www.auto49.ru/site.php/shop/',
 	'mkb':         'http://mkb.ru/about_bank/address/?type=office',
+	'tervolina':   'http://www.tervolina.ru/moscow.aspx',
 _:0};
 
 var fields = {
@@ -281,6 +284,7 @@ var fields = {
 	'wiki_places': ['name', 'name:ru', 'official_status', 'place', 'population', '_population2012', '_population2010', 'wikipedia', 'old_name', 'website', 'addr:postcode', 'okato:user', 'addr:country', 'addr:region', 'addr:district'],
 	'auto49':      ['_addr', 'operator', 'brand', 'phone', 'website', 'opening_hours', 'payment:cards'],
 	'mkb':         ['_addr', 'operator', 'department', 'name', 'phone', 'website', 'opening_hours'],
+	'tervolina':   ['_addr', 'operator', 'name', 'brand', 'phone', 'website', 'opening_hours'],
 _:0}
 
 C_Empty    = 1;
