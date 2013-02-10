@@ -21,6 +21,9 @@ class Validator extends OsmFunctions
 	{
 		if (!isset(static::$urls[$region])) throw new Exception('Unknow region!');
 		$this->region = $region;
+		$this->context = stream_context_create(array(
+			'http' => array('method' => 'GET', 'header' => "User-agent: OSM validator http://osm.cupivan.ru\r\n")
+		));
 	}
 	/** список областей */
 	static function getRegions()
@@ -210,6 +213,15 @@ class Validator extends OsmFunctions
 		$len = strlen($st);
 		if ($len <= 12 || $len > 14) $st = ''; // что-то пошло не так: получился короткий номер +7-000-12345
 		return $st;
+	}
+	/** преобразование нескольких телефонов */
+	protected function phones($st)
+	{
+		$res = '';
+		$list = explode(';', $st);
+		foreach ($list as $item)
+			$res .= ($res?';':'').$this->phone($item);
+		return $res;
 	}
 	/** создание объекта с нужными полями */
 	protected function makeObject($fields)

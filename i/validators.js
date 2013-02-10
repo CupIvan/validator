@@ -5,6 +5,7 @@ var osm = new osm_cl()
 		.validator('Альфабанк',   'alfabank')
 		.validator('Промсбербанк','promsberbank')
 		.validator('МИнБ',        'minbank')
+		.validator('МКБ',         'mkb')
 		.validator('Перекресток', 'perekrestok')
 		.validator('Белый ветер', 'beli_veter')
 		.validator('Асна',        'asna')
@@ -27,6 +28,7 @@ var osm = new osm_cl()
 		.validator('Альфабанк',   'alfabank')
 		.validator('Промсбербанк','promsberbank')
 		.validator('МИнБ',        'minbank')
+		.validator('МКБ',         'mkb')
 		.validator('Перекресток', 'perekrestok')
 		.validator('Белый ветер', 'beli_veter')
 		.validator('Азбука вкуса','azbuka')
@@ -249,6 +251,7 @@ var links = {
 	'minbank':     'http://www.minbank.ru/list/373/',
 	'lapy4':       'http://4lapy.ru/pet_stores_amp_services/',
 	'auto49':      'http://www.auto49.ru/site.php/shop/',
+	'mkb':         'http://mkb.ru/about_bank/address/?type=office',
 _:0};
 
 var fields = {
@@ -277,6 +280,7 @@ var fields = {
 	'lapy4':       ['_addr', 'name', 'phone', 'opening_hours', 'pets', 'aquarium', 'veterinary', 'grooming', 'payment:cards', 'website'],
 	'wiki_places': ['name', 'name:ru', 'official_status', 'place', 'population', '_population2012', '_population2010', 'wikipedia', 'old_name', 'website', 'addr:postcode', 'okato:user', 'addr:country', 'addr:region', 'addr:district'],
 	'auto49':      ['_addr', 'operator', 'brand', 'phone', 'website', 'opening_hours', 'payment:cards'],
+	'mkb':         ['_addr', 'operator', 'department', 'name', 'phone', 'website', 'opening_hours'],
 _:0}
 
 C_Empty    = 1;
