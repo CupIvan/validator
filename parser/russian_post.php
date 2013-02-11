@@ -152,8 +152,12 @@ class russian_post extends Validator
 		if (time() - filemtime($fname) < 3600*24*7) $reload = 0; // обновляли только что, поэтому больше не надо
 		else if ($this->updateHtml || mt_rand(0,9) == 0)
 			$reload = 1; // старые файлы обновляем с вероятностью 1/10
-		return $reload ? false : file_get_contents($fname);
 
-		return false;
+		if ($reload) return false;
+
+		$page = file_get_contents($fname);
+		if (strpos($page, '<body onload="')) return false; // страница переадресации
+
+		return $page;
 	}
 }

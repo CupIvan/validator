@@ -58,19 +58,14 @@ class Validator extends OsmFunctions
 	/** сохранение страницы */
 	protected function savePage($url, $content)
 	{
-		$md5 = md5($url);
-		$fname = '../_/_html/'.$this->region.'/'.substr($md5, 0, 2);
-		if (!file_exists($fname)) mkdir($fname, 0777, 1);
-		$fname .= "/$md5.html";
+		$fname = $this->pageFileName($url);
 		file_put_contents($fname, $content);
 		return $content;
 	}
 	/** загрузка страницы */
 	protected function loadPage($url)
 	{
-		$md5 = md5($url);
-		$fname = '../_/_html/'.$this->region.'/'.substr($md5, 0, 2);
-		$fname .= "/$md5.html";
+		$fname = $this->pageFileName($url);
 		$reload = 0;
 		if (!file_exists($fname)) $reload = 1;
 		else
@@ -80,6 +75,15 @@ class Validator extends OsmFunctions
 		else if ($this->updateHtml || mt_rand(0,9) == 0)
 			$reload = 1; // старые файлы обновляем с вероятностью 1/10
 		return $reload ? false : file_get_contents($fname);
+	}
+	/** имя файла для сохранения страницы */
+	protected function pageFileName($url)
+	{
+		$md5 = md5($url);
+		$fname = '../_/_html/'.get_called_class().'/'.$this->region.'/'.substr($md5, 0, 2);
+		if (!file_exists($fname)) mkdir($fname, 0777, 1);
+		$fname .= "/$md5.html";
+		return $fname;
 	}
 	/** скачивание страницы из интернета, force - не использовать кеш */
 	protected function download($url, $force = 0)
