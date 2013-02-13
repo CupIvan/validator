@@ -6,6 +6,7 @@ class wiki_places extends Validator
 	// откуда скачиваем данные
 	protected $domain = 'http://ru.wikipedia.org';
 	static $urls = array(
+		'RU-AD'  => 'Категория:Населённые_пункты_Адыгеи',
 		'RU-ARK' => 'Категория:Населённые_пункты_Архангельской_области',
 		'RU-VLA' => 'Категория:Населённые_пункты_Владимирской_области',
 		'RU-VGG' => 'Категория:Населённые_пункты_Волгоградской_области',
@@ -149,17 +150,17 @@ class wiki_places extends Validator
 		}
 
 		// координаты
-		if (preg_match('#\|lat_deg\s*=\s*([\d\.]+)#', $st, $m))
+		if (preg_match('#\|\s*lat_deg\s*=\s*\+?([\d\.]+)#', $st, $m))
 		{
 			$obj['lat']  = $m[1];
-			if (preg_match('#\|lat_min\s*=\s*(\d+)#', $st, $m)) $obj['lat'] += $m[1] / 60;
-			if (preg_match('#\|lat_sec\s*=\s*(\d+)#', $st, $m)) $obj['lat'] += $m[1] / 3600;
+			if (preg_match('#\|\s*lat_min\s*=\s*(\d+)#', $st, $m)) $obj['lat'] += $m[1] / 60;
+			if (preg_match('#\|\s*lat_sec\s*=\s*(\d+)#', $st, $m)) $obj['lat'] += $m[1] / 3600;
 		}
-		if (preg_match('#\|lon_deg\s*=\s*([\d\.]+)#', $st, $m))
+		if (preg_match('#\|\s*lon_deg\s*=\s*\+?([\d\.]+)#', $st, $m))
 		{
 			$obj['lon']  = $m[1];
-			if (preg_match('#\|lon_min\s*=\s*(\d+)#', $st, $m)) $obj['lon'] += $m[1] / 60;
-			if (preg_match('#\|lon_sec\s*=\s*(\d+)#', $st, $m)) $obj['lon'] += $m[1] / 3600;
+			if (preg_match('#\|\s*lon_min\s*=\s*(\d+)#', $st, $m)) $obj['lon'] += $m[1] / 60;
+			if (preg_match('#\|\s*lon_sec\s*=\s*(\d+)#', $st, $m)) $obj['lon'] += $m[1] / 3600;
 		}
 
 		// убираем все шаблоны
@@ -204,16 +205,17 @@ class wiki_places extends Validator
 		if ($p['selo'] && $p['pop'] > 5) $obj['place'] = 'hamlet';
 
 		// данные населения согласно переписи
+		$name = preg_replace('/ая$/', '(ая|ое)', @$obj['name:ru']); // станица *-ая значится как *-ое сельское поселение
 		if (0
-			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.@$obj['name:ru'].'.+?(\d+)#', $this->population2010, $m)
-			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['name:ru'].'.+?(\d+)#', $this->population2010, $m)
+			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.$name.'.+?(?<N>\d+)#', $this->population2010, $m)
+			|| preg_match('#'.@$obj['addr:region'].'.+?'.$name.'.+?(?<N>\d+)#', $this->population2010, $m)
 		)
 		$obj['_population2010'] = $m[1];
 		if (0
-			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.@$obj['name:ru'].'.+?(\d+)#', $this->population2012, $m)
-			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['name:ru'].'.+?(\d+)#', $this->population2012, $m)
+			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.$name.'.+?(?<N>\d+)#', $this->population2012, $m)
+			|| preg_match('#'.@$obj['addr:region'].'.+?'.$name.'.+?(?<N>\d+)#', $this->population2012, $m)
 		)
-		$obj['_population2012'] = $m[1];
+		$obj['_population2012'] = $m['N'];
 
 		$this->addObject($this->makeObject($obj));
 	}
