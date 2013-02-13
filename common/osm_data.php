@@ -16,6 +16,8 @@ function osm_data($data, $region, $name, $param = '')
 
 	if (!$data) { echo "Empty data! $data\n"; return; }
 
+	$msg = 'OK';
+
 	$count = count($data);
 	echo "Make JS $region/$name/$param [$count objects]";
 
@@ -49,10 +51,12 @@ function osm_data($data, $region, $name, $param = '')
 	if (!file_exists($dir)) mkdir($dir);
 
 	// выходим, если содержимое не изменилось
-	if (file_exists($fname) && file_get_contents($fname, $st) == $st) { echo " SKIP\n"; return; }
-
-	file_put_contents($fname, $st);
-	chmod($fname, 0666);
+	if (file_exists($fname) && file_get_contents($fname, $st) == $st) $msg = "SKIP";
+	else
+	{
+		file_put_contents($fname, $st);
+		chmod($fname, 0666);
+	}
 
 
 
@@ -72,5 +76,5 @@ function osm_data($data, $region, $name, $param = '')
 	$data = "_($data)";
 	file_put_contents($fname, $data);
 
-	echo " OK\n";
+	echo " $msg\n";
 }
