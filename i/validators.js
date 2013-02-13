@@ -22,6 +22,7 @@ var osm = new osm_cl()
 		.validator('Зоомагазин "4 лапы"', 'lapy4')
 		.validator('Избёнка',     'izbenka')
 		.validator('Терволина',   'tervolina')
+		.validator('Подружка',    'podruzhka')
 	.region('Московская область', 'RU-MOS')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
@@ -44,6 +45,7 @@ var osm = new osm_cl()
 		.validator('Атак',        'atak')
 		.validator('Зоомагазин "4 лапы"', 'lapy4')
 		.validator('Терволина',   'tervolina')
+		.validator('Подружка',    'podruzhka')
 	.region('Санкт-Петербург', 'RU-SPE')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
@@ -255,6 +257,7 @@ var links = {
 	'auto49':      'http://www.auto49.ru/site.php/shop/',
 	'mkb':         'http://mkb.ru/about_bank/address/?type=office',
 	'tervolina':   'http://www.tervolina.ru/moscow.aspx',
+	'podruzka':    'http://www.podrygka.ru/shops/find/',
 _:0};
 
 var fields = {
@@ -285,6 +288,7 @@ var fields = {
 	'auto49':      ['_addr', 'operator', 'brand', 'phone', 'website', 'opening_hours', 'payment:cards'],
 	'mkb':         ['_addr', 'operator', 'department', 'name', 'phone', 'website', 'opening_hours'],
 	'tervolina':   ['_addr', 'operator', 'name', 'brand', 'phone', 'website', 'opening_hours'],
+	'podruzhka':   ['_addr', 'operator', 'name', 'brand', 'contact:phone', 'contact:website', 'opening_hours'],
 _:0}
 
 C_Empty    = 1;
