@@ -307,7 +307,12 @@ function osm_cl()
 {
 	this._regions = {};
 	this._filter  = {page: 0};
+	this._fast_filter = {};
+	this._fast_filter_enable = 0;
+	this._fast_filter_search_osm = 0;
 	this._cityList = null;
+	this.activeRegion = '';
+	this.activeValidator = '';
 	this.numPerPage = 30;
 
 	// добавить регион
@@ -323,6 +328,7 @@ function osm_cl()
 	{
 		if (!data) data = this.activeRegion;
 		this._regions[this.activeRegion].validators[code] = {title: title, code: code, data: data}
+		this.activeValidator = code;
 		return this;
 	}
 
@@ -452,10 +458,22 @@ function osm_cl()
 	// валидация подсчет кол-ва объектов
 	this.revalidate_ = function()
 	{
-		var a = osm.real_data, osm_data, state, f, i, j;
+		var a = osm.real_data, osm_data, state, f, i, j, t;
 		this.count = [0,0,0,0,0,0,0,0,0,0,0,0];
 
 		f = fields[this.activeValidator];
+
+		this._fast_filter = {};
+
+		// вспомогательная функция регистрации быстрого фильтра
+		var _ = function(a, x)
+		{
+			if (a && a[x])
+			{
+				if (!osm._fast_filter[x]) osm._fast_filter[x] = {};
+				osm._fast_filter[x][a[x]] = 1 + (osm._fast_filter[x][a[x]] || 0);
+			}
+		}
 
 		for (i = 0; i < a.length; i++)
 		{
@@ -485,6 +503,24 @@ function osm_cl()
 
 			this.count[a[i]._state] = (this.count[a[i]._state] || 0) + 1;
 			this.count[0]++;
+
+			// формируем быстрый фильтр
+			t = this._fast_filter_search_osm ? osm_data : a[i];
+			_(t, 'place');
+			_(t, 'addr:district');
+			_(t, 'official_status');
+			_(t, 'operator');
+			_(t, 'brand');
+			_(t, 'branch');
+			_(t, 'department');
+			_(t, 'building');
+			_(t, 'denomination');
+			if (osm.activeValidator != 'wiki_places')
+			_(t, 'website');
+			if (osm.activeValidator != 'russian_post')
+			if (osm.activeValidator != 'wiki_places')
+			if (osm.activeValidator != 'temples')
+			_(t, 'name');
 		}
 
 		// кол-во непривязанных OSM объектов
@@ -611,7 +647,7 @@ function osm_cl()
 			' | '+R('_used', 0)+'title="&quot;Лишние&quot; объекты в OSM">'+this.count[C_Excess]+'</a>';
 		$('state', st);
 
-		st = 'Отфильтровано: '+a.length+'<br>';
+		st = 'Отфильтровано: '+a.length+' <a href="#" title="Нам нужно больше параметров!" class="simple" onclick="return osm.fastFilterToggle()">еще...</a>'+'<br>'+osm.drawFastFilter()+'<br>';
 		var numPages = Math.ceil(a.length / osm.numPerPage);
 		var big = numPages > 25 ? 1 : 0, skip = 0;
 		if (osm._filter.page < 0)
@@ -632,6 +668,40 @@ function osm_cl()
 			st += '<a href="#all" onclick="return osm.page(-1)">все</a>'
 		}
 		$('pages', st);
+	}
+
+	// отрисовка быстрого фильтра
+	this.drawFastFilter = function()
+	{
+		var i, j, st = '';
+		if (this._fast_filter_enable)
+		for (i in this._fast_filter)
+		{
+			st += '<li>'+i+':<br>';
+			for (j in this._fast_filter[i])
+				st += '<a href="#" onclick="return osm.fastFilter(this)">'+j+' ('+this._fast_filter[i][j]+')</a>';
+			st += '</li>';
+		}
+		if (!st) return '';
+		return '<br>'
+			+'<label><input type="checkbox" '+(this._fast_filter_search_osm?'checked':'')
+			+' name="tsearch" onchange="osm.fastFilterOSMToggle(this.checked)">поиск по OSM объектам</label>'
+			+'<ul>' + st + '</ul>';
+	}
+
+	// выключатель быстрого фильтра
+	this.fastFilterToggle = function() { this._fast_filter_enable ^= 1; this.filter(); return false; }
+
+	// выключатель поиска по OSM
+	this.fastFilterOSMToggle = function(x) { this._fast_filter_search_osm = x; this.revalidate(); return false; }
+
+	// быстрая фильтрация
+	this.fastFilter = function(x)
+	{
+		var value = x.innerHTML.replace(/\s*\(.+/, '');
+		$('search').value = value;
+		osm.searchByName(value);
+		return false;
 	}
 
 	// смена страницы
