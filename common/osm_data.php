@@ -14,7 +14,7 @@ function osm_data($data, $region, $name, $param = '')
 	if (is_string($data))
 		$data = @unserialize(@file_get_contents($data));
 
-	if (!$data) { echo "Empty data! $data\n"; return; }
+	if (!$data) { echo "Empty data! ".(is_string($data)?$data:$region)."\n"; return; }
 
 	$msg = 'OK';
 

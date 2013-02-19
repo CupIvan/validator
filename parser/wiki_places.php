@@ -210,7 +210,7 @@ class wiki_places extends Validator
 			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.$name.'.+?(?<N>\d+)#', $this->population2010, $m)
 			|| preg_match('#'.@$obj['addr:region'].'.+?'.$name.'.+?(?<N>\d+)#', $this->population2010, $m)
 		)
-		$obj['_population2010'] = $m[1];
+		$obj['_population2010'] = $m['N'];
 		if (0
 			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.$name.'.+?(?<N>\d+)#', $this->population2012, $m)
 			|| preg_match('#'.@$obj['addr:region'].'.+?'.$name.'.+?(?<N>\d+)#', $this->population2012, $m)

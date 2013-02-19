@@ -27,7 +27,7 @@ if ($item)
 	$w = str_replace('%29', ')', $w);
 	$w = 'http://ru.wikipedia.org/wiki/'.$w;
 	$md5 = md5($w);
-	$fname = "../_/_html/$REGION/".substr($md5, 0, 2)."/$md5.html";
+	$fname = "../_/_html/wiki_places/$REGION/".substr($md5, 0, 2)."/$md5.html";
 
 	if (file_exists($fname))
 	{

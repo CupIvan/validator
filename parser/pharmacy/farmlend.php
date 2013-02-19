@@ -45,7 +45,7 @@ class farmlend extends Validator
 			."#su", $st, $m, PREG_SET_ORDER))
 		foreach ($m as $obj)
 		{
-			$addr = trim(str_replace('- '  , '',$obj['_addr]));
+			$addr = trim(str_replace('- '  , '',$obj['_addr']));
 
 			$phone = $obj['text'];
 			$phone = str_replace('8 Марта','',$phone);
