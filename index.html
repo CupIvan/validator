@@ -29,6 +29,8 @@
 	#validators { margin: 10px 0; }
 	#city select { font-family: monospace; }
 
+	#log div { padding: 10px; background: #EEA; }
+
 	.hidden a { display: inline-block; background: #EEE; padding: 3px 15px; border-bottom: 1px dashed #999;
 		text-decoration: none; color: #000; }
 	.hidden a.active { background: #CCC; font-weight: bold; border-bottom: 1px solid #999; }
@@ -89,6 +91,7 @@
 	<input type="button" value="Проверка адресов" onclick="osm.addrCheck()">
 </div>
 <div id="pages" class="hidden" style="display: none;"></div>
+<div id="log"></div>
 <div id="validate"></div>
 
 <script>

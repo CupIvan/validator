@@ -411,6 +411,8 @@ function osm_cl()
 		this.real_data = [];
 		this.osm_data_by_ref = {};
 
+		this.log('Загрузка данных с сервера...');
+
 		// данные osm
 		ajax.load('data/'+region+'/'+v.code+'.js', function(a){
 			var i, hash, corr = {};
@@ -464,6 +466,8 @@ function osm_cl()
 	{
 		var a = osm.real_data, osm_data, state, f, i, j, t;
 		this.count = [0,0,0,0,0,0,0,0,0,0,0,0];
+
+		this.log('Обработка данных...');
 
 		f = fields[this.activeValidator];
 
@@ -544,6 +548,7 @@ function osm_cl()
 		if (this.count[C_FoundRef]) this.filter({_state: C_FoundRef});
 		else
 			this.filter()
+		this.log();
 	}
 
 	// функция отрисовки страницы с данными
@@ -552,6 +557,8 @@ function osm_cl()
 		var a = osm.filter_data;
 		if (!a) return;
 		osm.category = {};
+
+		this.log('Генерация таблицы...');
 
 		st += '<tr>';
 		st += '<th colspan="2"></th>';
@@ -672,6 +679,7 @@ function osm_cl()
 			st += '<a href="#all" onclick="return osm.page(-1)">все</a>'
 		}
 		$('pages', st);
+		this.log();
 	}
 
 	// отрисовка быстрого фильтра
@@ -1227,6 +1235,13 @@ function osm_cl()
 	{
 		this.color = name;
 		this.updatePage();
+	}
+
+	// лог работы
+	this.log = function(x)
+	{
+		x = x ? '<div>'+x+'</div>' : '';
+		$('log', x);
 	}
 
 	return this;
