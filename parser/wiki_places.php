@@ -205,17 +205,22 @@ class wiki_places extends Validator
 		if ($p['selo'] && $p['pop'] > 5) $obj['place'] = 'hamlet';
 
 		// данные населения согласно переписи
-		$name = preg_replace('/ая$/', '(ая|ое)', @$obj['name:ru']); // станица *-ая значится как *-ое сельское поселение
+		$name  = preg_replace('/ая$/', '(ая|ое)', @$obj['name:ru']); // станица *-ая значится как *-ое сельское поселение
+		$name .= ' '; // COMMENT: пробел нужен, чтобы отследить конец названия
 		if (0
-			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.$name.'.+?(?<N>\d+)#', $this->population2010, $m)
-			|| preg_match('#'.@$obj['addr:region'].'.+?'.$name.'.+?(?<N>\d+)#', $this->population2010, $m)
+			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.$name.'.*?(?<N>\d+)#', $this->population2010, $m)
+			|| preg_match('#'.@$obj['addr:region'].'.+?'.$name.'.*?(?<N>\d+)#', $this->population2010, $m)
 		)
 		$obj['_population2010'] = $m['N'];
 		if (0
-			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.$name.'.+?(?<N>\d+)#', $this->population2012, $m)
-			|| preg_match('#'.@$obj['addr:region'].'.+?'.$name.'.+?(?<N>\d+)#', $this->population2012, $m)
+			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.$name.'.*?(?<N>\d+)#', $this->population2012, $m)
+			|| preg_match('#'.@$obj['addr:region'].'.+?'.$name.'.*?(?<N>\d+)#', $this->population2012, $m)
 		)
 		$obj['_population2012'] = $m['N'];
+
+		// обновляем население, согласно переписи
+		if (!empty($obj['_population2010'])) $obj['population'] = $obj['_population2010'];
+		if (!empty($obj['_population2012'])) $obj['population'] = $obj['_population2012'];
 
 		$this->addObject($this->makeObject($obj));
 	}
