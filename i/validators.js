@@ -332,7 +332,6 @@ function osm_cl()
 	{
 		if (!data) data = this.activeRegion;
 		this._regions[this.activeRegion].validators[code] = {title: title, code: code, data: data}
-		this.activeValidator = code;
 		return this;
 	}
 
@@ -524,6 +523,7 @@ function osm_cl()
 			_(t, 'building');
 			_(t, 'denomination');
 			if (osm.activeValidator != 'wiki_places')
+			if (osm.activeValidator != 'temples')
 			_(t, 'website');
 			if (osm.activeValidator != 'russian_post')
 			if (osm.activeValidator != 'wiki_places')
@@ -602,9 +602,9 @@ function osm_cl()
 			osm_data = osm.search(a[i]);
 			if (osm_data) a[i].id = osm_data.id;
 			st += '<tr'+(osm_data && osm_data._used > 1 ?
-				' class="multi" title="Объект привязан несколько раз, необходимо его расчленить!"' : '')+'>'
+				' class="multi" title="Объект привязан несколько раз, необходимо его расчленить!'+osm_data._used_name+'"' : '')+'>'
 				+'<td class="c">'+(osm_data
-					? (osm_data._used > 1?' '+osm.link(a[i]):'')+osm.link(osm_data.id)
+					? (osm_data && osm_data._used > 1?' '+osm.link(a[i]):'')+osm.link(osm_data.id)
 					: osm.link(a[i]))+
 					' '+osm.link_yasearch(yasearch)+
 					'</td>'
@@ -783,6 +783,7 @@ function osm_cl()
 
 		this.updateCityList();
 		this.updatePage();
+
 		return false;
 	}
 
@@ -835,7 +836,7 @@ function osm_cl()
 	}
 
 	// поиск osm объекта
-	this.search = function(a, saveId)
+	this.search = function(a, saveId) // a - реальный объект для поиска
 	{
 		var i, ref, hash, data, delta = 0.005, minObjId = -1;
 		if (this.activeValidator == 'wiki_places') delta = 0.02;
@@ -883,7 +884,12 @@ function osm_cl()
 		}
 
 		if (saveId && minObjId >= 0)
+		{
 			data[minObjId]._used = (data[minObjId]._used || 0) + 1;
+			if (!data[minObjId]._used_name) data[minObjId]._used_name = '';
+			data[minObjId]._used_name += '\n'+(a['name:ru'] || a['name'])+
+				' (lat='+(Math.round(a.lat*1000)/1000)+'&lon='+(Math.round(a.lon*1000)/1000)+');';
+		}
 
 		return minObjId < 0 ? null : data[minObjId];
 	}
