@@ -133,7 +133,7 @@ class wiki_places extends Validator
 		if (preg_match('#\|русское название\s*=\s*(.+)#', $st, $m)) $obj['name:ru']    = trim($m[1]);
 		if (preg_match('#\|оригинальное название\s*=\s*\{{lang-(.{2})\|(.+?)}}#', $st, $m)) $obj['name:'.$m[1]] = trim($m[2]);
 		if (preg_match('#\|статус\s*=\s*(.+)#', $st, $m))             $obj['official_status'] = 'ru:'.($p['st'] = trim(mb_strtolower($m[1])));
-		if (preg_match('#\|население\s*=.+?(\d[\d ]*)#', $st, $m))    $obj['population'] = $p['pop'] = (int)str_replace(' ', '', $m[1]);
+		if (preg_match('#\|население\s*=.+?(\d[\d ]*)#', $st, $m))    $obj['population'] = (int)str_replace(' ', '', $m[1]);
 		if (preg_match('#\|почтовый индекс\s*=\s*(\d{5}[1-9])#', $st, $m)) $obj['addr:postcode']   = $m[1]; // COMMENT: 0 на конце признак нескольких индексов у города
 		if (preg_match('#\|регион\s*=\s*(.+)#', $st, $m))             $obj['addr:region']   = trim($m[1]);
 		if (preg_match('#\|район\s*=\s*(.+?район)#', $st, $m))        $obj['addr:district'] = trim($m[1]);
@@ -163,10 +163,30 @@ class wiki_places extends Validator
 			if (preg_match('#\|\s*lon_sec\s*=\s*(\d+)#', $st, $m)) $obj['lon'] += $m[1] / 3600;
 		}
 
+		// данные населения согласно переписи
+		$name  = preg_replace('/ая$/', '(ая|ое)', @$obj['name:ru']); // станица *-ая значится как *-ое сельское поселение
+		$name .= ' '; // COMMENT: пробел нужен, чтобы отследить конец названия
+		if (0
+			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.$name.'.*?(?<N>\d+)#', $this->population2010, $m)
+			|| preg_match('#'.@$obj['addr:region'].'.+?'.$name.'.*?(?<N>\d+)#', $this->population2010, $m)
+		)
+		$obj['_population2010'] = (int)$m['N'];
+		if (0
+			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.$name.'.*?(?<N>\d+)#', $this->population2012, $m)
+			|| preg_match('#'.@$obj['addr:region'].'.+?'.$name.'.*?(?<N>\d+)#', $this->population2012, $m)
+		)
+		$obj['_population2012'] = (int)$m['N'];
+
+		// обновляем население, согласно переписи
+		if (!empty($obj['_population2010'])) $obj['population'] = $obj['_population2010'];
+		if (!empty($obj['_population2012'])) $obj['population'] = $obj['_population2012'];
+
 		// убираем все шаблоны
 		$st = preg_replace('#{{[^{]+?}}#s', '', $st);
 		$st = preg_replace('#{{[^{]+?}}#s', '', $st);
 
+		if (isset($obj['population']))
+		$p['pop']          = $obj['population'];
 		$p['adm_center']   = strpos($st, 'административный центр');
 		$p['adm_subject']  = preg_match('#центр.+?(области|края|республики)#', $st);
 		$p['adm_district'] = preg_match('#центр.+(района|округа)[^а-я]#', $st);
@@ -203,24 +223,6 @@ class wiki_places extends Validator
 		if ($p['st'] == 'хутор' && ($p['pop'] == null || $p['pop'] < 10)) $obj['place'] = 'isolated_dwelling';
 		else
 		if ($p['selo'] && $p['pop'] > 5) $obj['place'] = 'hamlet';
-
-		// данные населения согласно переписи
-		$name  = preg_replace('/ая$/', '(ая|ое)', @$obj['name:ru']); // станица *-ая значится как *-ое сельское поселение
-		$name .= ' '; // COMMENT: пробел нужен, чтобы отследить конец названия
-		if (0
-			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.$name.'.*?(?<N>\d+)#', $this->population2010, $m)
-			|| preg_match('#'.@$obj['addr:region'].'.+?'.$name.'.*?(?<N>\d+)#', $this->population2010, $m)
-		)
-		$obj['_population2010'] = $m['N'];
-		if (0
-			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.$name.'.*?(?<N>\d+)#', $this->population2012, $m)
-			|| preg_match('#'.@$obj['addr:region'].'.+?'.$name.'.*?(?<N>\d+)#', $this->population2012, $m)
-		)
-		$obj['_population2012'] = $m['N'];
-
-		// обновляем население, согласно переписи
-		if (!empty($obj['_population2010'])) $obj['population'] = $obj['_population2010'];
-		if (!empty($obj['_population2012'])) $obj['population'] = $obj['_population2012'];
 
 		$this->addObject($this->makeObject($obj));
 	}
