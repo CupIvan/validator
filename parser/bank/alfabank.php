@@ -58,7 +58,8 @@ class alfabank extends Validator
 			$time = $obj['time'];
 			$time = preg_replace('/<b>.+/', '', $time);
 			$time = preg_replace('/-?выходной/', ' off', $time);
-			$time = preg_replace('/Работа с клиентами.+? /', '', $time);
+			$time = preg_replace('/.+Обслуживание физических лиц.+?>/', '', $time);
+			$time = preg_replace('/<br>/', '', $time);
 			$obj['opening_hours'] = $this->time($time);
 			$obj['opening_hours'] = preg_replace('/\s*[а-я].+$/ui', '$1', $obj['opening_hours']);
 			$obj['opening_hours'] = preg_replace('/(.+(0|ff)).*/',  '$1', $obj['opening_hours']);
