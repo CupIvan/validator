@@ -15,6 +15,7 @@ class russian_post extends Validator
 		'RU-SPE' => array(190, 199),
 		'RU-BRY' => array(241, 243),
 		'RU-KGD' => array(236, 238),
+		'RU-BEL' => array(308, 309),
 		'RU-ROS' => array(344, 347),
 		'RU-KDA' => array(350, 354),
 		'RU-AD'  => array(385, 385),

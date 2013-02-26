@@ -9,6 +9,7 @@ class temples extends Validator
 		'RU-MOW' => array('41' => '/export_osm.php?send=on&RegionID=$1#$1'),
 		'RU-MOS' => array('42' => '/export_osm.php?send=on&RegionID=$1#$1'),
 		'RU-BA'  => array('688'=> '/export_osm.php?send=on&RegionID=$1#$1'),
+		'RU-BEL' => array('32'=>  '/export_osm.php?send=on&RegionID=$1#$1'),
 		'RU-BRY' => array('33' => '/export_osm.php?send=on&RegionID=$1#$1'),
 		'RU-KEM' => array('720'=> '/export_osm.php?send=on&RegionID=$1#$1'),
 		'RU-LEN' => array('709'=> '/export_osm.php?send=on&RegionID=$1#$1'),
@@ -122,7 +123,7 @@ class temples extends Validator
 
 			if (mb_stripos(' '.$obj['name'],  'собор'))     $obj['building'] = 'cathedral';
 			if (mb_stripos(' '.$obj['name'],  'часовня'))   $obj['building'] = 'chapel';
-			if (mb_stripos(' '.$obj['name'],  'монастырь')){$obj['building'] = 'monastery';
+			if (mb_stripos(' '.$obj['name'],  'монастырь')){$obj['amenity'] = 'monastery';
 				if (mb_stripos(' '.$obj['name'], 'мужск')) $obj['community:gender'] = 'male';
 				if (mb_stripos(' '.$obj['name'], 'женск')) $obj['community:gender'] = 'female';
 			}

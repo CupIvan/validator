@@ -13,6 +13,7 @@ class wiki_places extends Validator
 		'RU-VLG' => 'Категория:Населённые_пункты_Вологодской_области',
 		'RU-VOR' => 'Категория:Населённые_пункты_Воронежской_области',
 		'RU-BA'  => 'Категория:Населённые_пункты_Башкортостана',
+		'RU-BEL' => 'Категория:Населённые_пункты_Белгородской_области',
 		'RU-BRY' => 'Категория:Населённые_пункты_Брянской_области',
 		'RU-IRK' => 'Категория:Населённые_пункты_Иркутской_области',
 		'RU-KLU' => 'Категория:Населённые_пункты_Калужской_области',
@@ -128,18 +129,24 @@ class wiki_places extends Validator
 		$st);
 		$st = preg_replace('#<ref.+?</ref>#s', '', $st);
 		$st = preg_replace("# +#", ' ', $st);
-		$st =  str_replace(array('у́', 'я́', 'а́', 'и́'), array('у', 'я', 'а', 'и'), $st); // убираем ударения
+		$st =  str_replace(array('у́', 'я́', 'а́', 'и́', "'"), array('у', 'я', 'а', 'и', ""), $st); // убираем ударения
 
 		if (preg_match('#\|русское название\s*=\s*(.+)#', $st, $m)) $obj['name:ru']    = trim($m[1]);
 		if (preg_match('#\|оригинальное название\s*=\s*\{{lang-(.{2})\|(.+?)}}#', $st, $m)) $obj['name:'.$m[1]] = trim($m[2]);
 		if (preg_match('#\|статус\s*=\s*(.+)#', $st, $m))             $obj['official_status'] = 'ru:'.($p['st'] = trim(mb_strtolower($m[1])));
-		if (preg_match('#\|население\s*=.+?(\d[\d ]*)#', $st, $m))    $obj['population'] = (int)str_replace(' ', '', $m[1]);
 		if (preg_match('#\|почтовый индекс\s*=\s*(\d{5}[1-9])#', $st, $m)) $obj['addr:postcode']   = $m[1]; // COMMENT: 0 на конце признак нескольких индексов у города
 		if (preg_match('#\|регион\s*=\s*(.+)#', $st, $m))             $obj['addr:region']   = trim($m[1]);
 		if (preg_match('#\|район\s*=\s*(.+?район)#', $st, $m))        $obj['addr:district'] = trim($m[1]);
 		if (preg_match('#\|сайт\s*=\s*(http://.+?)/?$#m', $st, $m))   $obj['website'] = trim($m[1]);
 		if (preg_match('#\|цифровой идентификатор\s*=\s*(\d+)#', $st, $m)) $obj['okato:user'] = $m[1];
 		if (preg_match('#\|вид поселения\s*=(.*)#', $st, $m))         $obj['place_type'] = mb_strtolower(trim($m[1]));
+		if (preg_match('#\|население\s*=.+?(\d[\d ,.]*)#', $st, $m))
+		{
+			$obj['population'] = (float)str_replace(array(' ',','), array('','.'), $m[1]);
+			// COMMENT: если население указано в тысячах - домножаем
+			// FIXME: также может быть указано в млн, тогда будет неправильное значение
+			if (strpos($obj['population'], '.')) $obj['population'] *= 1000;
+		}
 		if ($title) $obj['wikipedia'] = "ru:$title";
 
 		// TODO: прежние имена
@@ -166,16 +173,12 @@ class wiki_places extends Validator
 		// данные населения согласно переписи
 		$name  = preg_replace('/ая$/', '(ая|ое)', @$obj['name:ru']); // станица *-ая значится как *-ое сельское поселение
 		$name .= ' '; // COMMENT: пробел нужен, чтобы отследить конец названия
-		if (0
-			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.$name.'.*?(?<N>\d+)#', $this->population2010, $m)
-			|| preg_match('#'.@$obj['addr:region'].'.+?'.$name.'.*?(?<N>\d+)#', $this->population2010, $m)
-		)
-		$obj['_population2010'] = (int)$m['N'];
-		if (0
-			|| preg_match('#'.@$obj['addr:region'].'.+?'.@$obj['addr:district'].'.+?'.$name.'.*?(?<N>\d+)#', $this->population2012, $m)
-			|| preg_match('#'.@$obj['addr:region'].'.+?'.$name.'.*?(?<N>\d+)#', $this->population2012, $m)
-		)
-		$obj['_population2012'] = (int)$m['N'];
+		$regexp = '#'.@$obj['addr:region'].'\s+?'.@$obj['addr:district'].'.+?'.$name.'\s*?(?<N>\d+)#';
+		$regexp = str_replace('|', '\\|', $regexp);
+		if (preg_match($regexp, $this->population2010, $m))
+			$obj['_population2010'] = (int)$m['N'];
+		if (preg_match($regexp, $this->population2012, $m))
+			$obj['_population2012'] = (int)$m['N'];
 
 		// обновляем население, согласно переписи
 		if (!empty($obj['_population2010'])) $obj['population'] = $obj['_population2010'];
@@ -220,7 +223,7 @@ class wiki_places extends Validator
 			|| ($p['pop'] > 300*0.9)
 		) $obj['place'] = 'village';
 		else
-		if ($p['st'] == 'хутор' && ($p['pop'] == null || $p['pop'] < 10)) $obj['place'] = 'isolated_dwelling';
+		if ($p['st'] == 'хутор' && ($p['pop'] && $p['pop'] < 10)) $obj['place'] = 'isolated_dwelling';
 		else
 		if ($p['selo'] && $p['pop'] > 5) $obj['place'] = 'hamlet';
 
