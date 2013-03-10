@@ -108,15 +108,16 @@ class temples extends Validator
 			$date = $obj['start_date'];
 			$date = str_replace(
 				array('ок. ', 'нач.', 'сер.', 'кон.', 'не позже', '-е', '-х',
-					'строится', ' в.', ' вв.', 'рубеж',
-					'XXI', 'XX', 'XIX', 'XVIII', 'XVII', 'XVI', 'XV', 'XIV',
+					'строится', ' в.', ' вв.', 'рубеж', 'вв',
+					'XXI', 'XX', 'ХХ', 'XIX', 'XVIII', 'XVII', 'XVI', 'XV', 'XIV',
 				),
 				array('~', 'early', 'mid', 'late', 'before', 's', 's',
-					'','','','',
-					'C21', 'C20', 'C19', 'C18', 'C17', 'C16', 'C15', 'C14',
+					'','','','', '',
+					'C21', 'C20', 'C20', 'C19', 'C18', 'C17', 'C16', 'C15', 'C14',
 				),
 				$date);
-			$date = preg_replace('/\s*-\s*/', '-',$date);
+			$date = preg_replace('/\s*-\s*/',        '-', $date);
+			$date = preg_replace('/(\d)-(\d|C)/', '$1..$2', $date);
 			$obj['start_date'] = trim($date);
 
 			$obj['website'] = preg_replace('#/$#', '', $obj['website']);
