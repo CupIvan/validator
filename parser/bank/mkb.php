@@ -15,9 +15,9 @@ class mkb extends Validator
 		'department' => '',
 		'name'     => 'МКБ',
 		'operator' => 'ОАО "Московский кредитный банк"',
-		'website'  => 'http://mkb.ru',
-		'phone'    => '',
-		'opening_hours' => '',
+		'contact:website' => 'http://mkb.ru',
+		'contact:phone'   => '',
+		'opening_hours'   => '',
 		'lat'   => '',
 		'lon'   => '',
 		'_addr' => '',
@@ -45,10 +45,10 @@ class mkb extends Validator
 			$phone = str_replace('><', '>;<', $phone); // телефоны в раздельных тегах
 			$phone = preg_replace('/<.+?>/', '', $phone); // убираем теги
 			$phone = str_replace('-', '', $phone);
-			$obj['phone'] = $this->phones($phone);
+			$obj['contact:phone'] = $this->phones($phone);
 			$obj['opening_hours'] = $this->time($obj['time']);
-			if (strpos($obj['official_name'], 'тделение'))
-				$obj['department'] = $obj['official_name'];
+			if (preg_match('/тделение "(.+?)"/', $obj['official_name'], $m))
+				$obj['department'] = $m[1];
 
 			$this->addObject($this->makeObject($obj));
 		}

@@ -295,7 +295,7 @@ var fields = {
 	'lapy4':       ['_addr', 'name', 'phone', 'opening_hours', 'pets', 'aquarium', 'veterinary', 'grooming', 'payment:cards', 'website'],
 	'wiki_places': ['name', 'name:ru', 'official_status', 'place', 'population', '_population2012', '_population2010', 'wikipedia', 'old_name', 'website', 'addr:postcode', 'okato:user', 'addr:country', 'addr:region', 'addr:district'],
 	'auto49':      ['_addr', 'operator', 'brand', 'phone', 'website', 'opening_hours', 'payment:cards'],
-	'mkb':         ['_addr', 'operator', 'department', 'name', 'phone', 'website', 'opening_hours'],
+	'mkb':         ['_addr', 'operator', 'department', 'name', 'contact:phone', 'contact:website', 'opening_hours'],
 	'tervolina':   ['_addr', 'operator', 'name', 'brand', 'phone', 'website', 'opening_hours'],
 	'podruzhka':   ['_addr', 'operator', 'name', 'brand', 'contact:phone', 'contact:website', 'opening_hours'],
 _:0}
