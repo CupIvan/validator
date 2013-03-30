@@ -669,24 +669,27 @@ function osm_cl()
 		st = 'Отфильтровано: '+a.length+' <a href="#" title="Нам нужно больше параметров!" class="simple" onclick="return osm.fastFilterToggle()">еще...</a>'+'<br>'+osm.drawFastFilter()+'<br>';
 		var numPages = Math.ceil(a.length / osm.numPerPage);
 		var big = numPages > 25 ? 1 : 0, skip = 0;
+		var st_nav = '';
 		if (osm._filter.page < 0)
-			st += '<br><a href="#all" onclick="return osm.page(0)">по страницам</a>';
+			st_nav = '<br><a href="#all" onclick="return osm.page(0)">по страницам</a>';
 		else
 		if (numPages > 1)
 		{
-			st += '<br>';
+			st_nav += '<br>';
 			for (i = 0; i < numPages; i++)
 			{
 				if (big)
 					if (i > 10 && i < numPages - 5)
 						if (mod(i - osm._filter.page) > 2) { skip = 1; continue; }
 				if (skip) { st += ' ... '; skip = 0; }
-				st += '<a href="#"'+(osm._filter.page == i?'class="active"':'')+
+				st_nav += '<a href="#"'+(osm._filter.page == i?'class="active"':'')+
 					'onclick="return osm.page('+i+')">'+(i+1)+'</a> ';
 			}
-			st += '<a href="#all" onclick="return osm.page(-1)">все</a>'
+			st_nav += '<a href="#all" onclick="return osm.page(-1)">все</a>'
 		}
+		st += st_nav;
 		$('pages', st);
+		$('pages_bottom', numPages > 1 ? st_nav : '');
 		this.log();
 	}
 
