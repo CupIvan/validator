@@ -274,7 +274,7 @@ var fields = {
 	'perekrestok': ['_addr', 'operator', 'name', 'phone', 'website', 'opening_hours'],
 	'azbuka':      ['_addr', 'operator', 'name', 'website', 'opening_hours'],
 	'beli_veter':  ['_addr', 'ref', 'operator', 'name', 'phone', 'website', 'opening_hours'],
-	'gazprom':     ['_addr', 'ref', 'operator', 'brand', 'name', 'website', 'opening_hours', 'payment:cards', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg'],
+	'gazprom':     ['_addr', 'ref', 'operator', 'brand', 'name', 'website', 'opening_hours', 'payment:cards', 'shop', 'toilets', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg'],
 	'hlinov':      ['_addr', 'operator', 'name', 'website'],
 	'asna':        ['_addr', '_name', 'brand', 'phone', 'opening_hours', 'website'],
 	'alfabank':    ['_addr', 'operator', 'name', 'official_name', 'website', 'opening_hours'],

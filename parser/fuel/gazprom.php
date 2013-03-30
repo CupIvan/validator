@@ -11,23 +11,35 @@ class gazprom extends Validator
 		'RU-SPE' => array('139' => '/our_azs/#$1'),
 		'RU-LEN' => array('139' => '/our_azs/#$1_'),
 		'RU-KLU' => array('133' => '/our_azs/#$1'),
+		'RU-CHE' => array('144' => '/our_azs/#$1'),
 		'RU-YAR' => array('145' => '/our_azs/#$1'),
 	);
 	// поля объекта
 	protected $fields = array(
 		'amenity'  => 'fuel',
-		'brand'    => 'Газпромнефть',
-		'operator' => 'ОАО "Газпром нефть"',
+		'name'     => 'Газпромнефть',
+		'brand'    => 'Газпром нефть',
+		'operator' => array(
+			'RU-MOW' => 'ОАО "Газпромнефть-Центр"',
+			'RU-MOS' => 'ОАО "Газпромнефть-Центр"',
+			'RU-KLU' => 'ОАО "Газпромнефть-Центр"',
+			'RU-SPE' => 'ЗАО "Газпромнефть-Северо-Запад"',
+			'RU-LEN' => 'ЗАО "Газпромнефть-Северо-Запад"',
+			'RU-CHE' => 'ОАО "Газпромнефть-Челябинск"',
+			'RU-YAR' => 'ОАО "Газпромнефть-Ярославль"',
+		),
 		'website'  => 'http://www.gazprom-neft.ru',
 		'ref'      => '',
-		'opening_hours'      => '',
-		'payment:cards'      => '',
+		'opening_hours'  => '',
+		'payment:cards'  => '',
 		'fuel:octane_98' => '',
 		'fuel:octane_95' => '',
 		'fuel:octane_92' => '',
 		'fuel:octane_80' => '',
 		'fuel:diesel'    => '',
 		'fuel:lpg'       => '',
+		'toilets' => '',
+		'shop'  => '',
 		'lat'   => '',
 		'lon'   => '',
 		'_addr' => '',
@@ -54,7 +66,7 @@ class gazprom extends Validator
 		$this->ext = array();
 		if (preg_match_all('#'
 			.'azs_other_info_(?<ref>\d+)'
-			.'.+?serviceText(?<text>.+?)<'
+			.'.+?<nobr>(?<text>.+?serviceText.+?)<'
 			.'#s', $st, $m, PREG_SET_ORDER))
 		foreach ($m as $item)
 		{
@@ -66,6 +78,8 @@ class gazprom extends Validator
 			if (mb_strpos($item['text'], '>80<'))  $a['fuel:octane_80'] = 'yes';
 			if (mb_strpos($item['text'], '>ДТ<'))  $a['fuel:diesel']    = 'yes';
 			if (mb_strpos($item['text'], '>ГАЗ<')) $a['fuel:lpg']       = 'yes';
+			if (mb_strpos($item['text'], 'Туал'))  $a['toilets']        = 'yes';
+			if (mb_strpos($item['text'], 'Магаз')) $a['shop']           = 'yes';
 			if (mb_strpos($item['text'], 'руглосут')) $a['opening_hours'] = '24/7';
 			$this->ext[$item['ref']] = $a;
 		}
