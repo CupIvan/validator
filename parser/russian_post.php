@@ -10,6 +10,7 @@ class russian_post extends Validator
 		'RU-MOS' => array(140, 144),
 		'RU-VLG' => array(160, 162),
 		'RU-ARK' => array(163, 165),
+		'RU-TVE' => array(170, 172),
 		'RU-MUR' => array(183, 184),
 		'RU-LEN' => array(187, 188),
 		'RU-SPE' => array(190, 199),

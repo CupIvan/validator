@@ -33,6 +33,7 @@ class wiki_places extends Validator
 		'RU-SAR' => 'Категория:Населённые_пункты_Саратовской_области',
 		'RU-SVE' => 'Категория:Населённые_пункты_Свердловской_области',
 		'RU-TUL' => 'Категория:Населённые_пункты_Тульской_области',
+		'RU-TVE' => 'Категория:Населённые_пункты_Тверской_области',
 		'RU-ULY' => 'Категория:Населённые_пункты_Ульяновской_области',
 		'RU-KHA' => 'Категория:Населённые_пункты_Хабаровского_края',
 		'RU-CHE' => 'Категория:Населённые_пункты_Челябинской_области',
@@ -67,8 +68,8 @@ class wiki_places extends Validator
 			'http' => array('header'  => "User-agent: Mozilla")
 		));
 		parent::__construct($x);
-		$this->population2010 = @file_get_contents('../parser/population2010.txt');
-		$this->population2012 = @file_get_contents('../parser/population2012.txt');
+		$this->population2010 = str_replace('ё', 'е', @file_get_contents('../parser/population2010.txt'));
+		$this->population2012 = str_replace('ё', 'е', @file_get_contents('../parser/population2012.txt'));
 	}
 
 	/** обновление данных по региону */
@@ -129,7 +130,7 @@ class wiki_places extends Validator
 		$st);
 		$st = preg_replace('#<ref.+?</ref>#s', '', $st);
 		$st = preg_replace("# +#", ' ', $st);
-		$st =  str_replace(array('у́', 'я́', 'а́', 'и́', "'"), array('у', 'я', 'а', 'и', ""), $st); // убираем ударения
+		$st =  str_replace(array('у́', 'я́', 'а́', 'и́', '́', "'"), array('у', 'я', 'а', 'и', '', ""), $st); // убираем ударения
 
 		if (preg_match('#\|русское название\s*=\s*(.+)#', $st, $m)) $obj['name:ru']    = trim($m[1]);
 		if (preg_match('#\|оригинальное название\s*=\s*\{{lang-(.{2})\|(.+?)}}#', $st, $m)) $obj['name:'.$m[1]] = trim($m[2]);
@@ -175,6 +176,7 @@ class wiki_places extends Validator
 		$name .= ' '; // COMMENT: пробел нужен, чтобы отследить конец названия
 		$regexp = '#'.@$obj['addr:region'].'\s+?'.@$obj['addr:district'].'.+?'.$name.'\s*?(?<N>\d+)#';
 		$regexp = str_replace('|', '\\|', $regexp);
+		$regexp = str_replace('ё',   'е', $regexp);
 		if (preg_match($regexp, $this->population2010, $m))
 			$obj['_population2010'] = (int)$m['N'];
 		if (preg_match($regexp, $this->population2012, $m))

@@ -206,7 +206,10 @@ var osm = new osm_cl()
 	.region('Ставропольский край', 'RU-STA')
 		.validator('Сбербанк', 'sberbank')
 	.region('Тверская область', 'RU-TVE')
-		.validator('Церкви',      'temples')
+		.validator('Населенные пункты', 'wiki_places')
+		.validator('Сбербанк', 'sberbank')
+		.validator('Почта',    'russian_post')
+		.validator('Церкви',   'temples')
 	.region('Татарстан', 'RU-TA')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Почта',    'russian_post')
@@ -971,7 +974,7 @@ function osm_cl()
 				url += (url?'|':'')+f[i]+'='+encodeURIComponent(a[f[i]]);
 		if (!url) return '';
 		var d; if (a.id.charAt(0) != 'n') d = 0.001; // FIXME: лучше передавать координату одного из угла, чтобы загружался только один объект!
-		url = url.replace(/"/g, '&quot;');
+		url = url.replace(/"/g, '&quot;').replace(/'/g, "\\'");
 		return '<a href="#export" onclick="return osm.export_update(\''+a.id+'\', \''+url+'\')" title="Обновить объект в OSM" class="btn">upd</a>';
 	}
 	this.export_update = function(id, url)
