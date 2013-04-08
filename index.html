@@ -83,6 +83,7 @@
 	<span id="validators"></span>
 	<span id="date"></span>
 </div>
+<div id="checkJosm"></div>
 <div id="state" class="hidden" style="display: none;"></div>
 <div id="filter" class="hidden" style="display: none;">
 	<span id="city"></span>
@@ -107,6 +108,8 @@ if (hash[0].indexOf('-') != -1)
 	$('validator').value = hash[1];
 	if (hash[2] != '#') { var s = decodeURIComponent(hash[2]); $('search').value = s; osm.searchByName(s); }
 }
+
+osm.checkJosm();
 
 // смена цветовой раскраски
 function color(x)

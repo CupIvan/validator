@@ -1261,6 +1261,30 @@ function osm_cl()
 		$('log', x);
 	}
 
+	// проверка включен ли Josm нужной версии
+	this.checkJosm = function()
+	{
+		ajax.load('http://localhost:8111/version', function(x){
+			var st = '', color = '';
+			if (!x)
+			{
+				st = '<b>Не запущен JOSM!</b>'; color = '#D33';
+				setTimeout(osm.checkJosm, 30*1000); // проверяем снова через 30 секунд
+			}
+			else
+			{
+				var version = x.protocolversion.major+'.'+x.protocolversion.minor;
+				if (version >= '1.5')
+					osm.josmCanDeleteTags = true;
+				else
+					st = 'Требуется обновление JOSM! <a href="http://gis-lab.info/programs/josm/josm-tested.jar">Загрузить</a>';
+					color = '#990';
+			}
+			if (st) st = '<div style="display: table; color: '+color+'; padding: 5px 20px; margin: 10px 0; border: 1px dashed '+color+'">'+st+'</div>';
+			$('checkJosm', st);
+		});
+	}
+
 	return this;
 }
 
