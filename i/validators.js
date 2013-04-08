@@ -574,6 +574,7 @@ function osm_cl()
 		for (i in fields[osm.activeValidator])
 		{
 			j = fields[osm.activeValidator][i];
+			st += '<th title="'+j+'">';
 			j = j
 				.replace('ref:temples.ru', '<span title="temples.ru">ref</span>')
 				.replace('start_date', 'Дата постр.')
@@ -582,6 +583,7 @@ function osm_cl()
 				.replace('denomination:ru', '<span title="конфессия русск.">Конф.</span>')
 				.replace('denomination', '<span title="конфессия">Конф.</span>')
 				.replace('russian_orthodox', '<span title="признают Патриарха?">ПП</span>')
+				.replace('contact:phone',     'Телефон')
 				.replace('phone',     'Телефон')
 				.replace('building',  'Здание')
 				.replace('old_name',  '<span title="Прежнее название">Прежн.</span>')
@@ -593,7 +595,7 @@ function osm_cl()
 				.replace('addr:country', '<span title="Страна">RU</span>')
 				.replace('population', '<span title="Население">Нас.</span>')
 				.replace('_addr', 'Адрес');
-			st += '<th>'+j+'</th>';
+			st += j+'</th>';
 		}
 		st += '</tr>';
 
@@ -1045,9 +1047,8 @@ function osm_cl()
 			real[field] = '';
 */
 		if (!osm) osm = {};
-		var a = osm[field], b = real[field];
+		var a = osm[field] || '', b = real[field];
 		if (!b || field.charAt(0) == '_') return C_Skip;
-		if (!a) return C_Empty;
 		if (a == b) return C_Equal;
 
 		a = (''+a).replace(/ё/g, 'е');
@@ -1083,8 +1084,12 @@ function osm_cl()
 		}
 
 		// ищем телефонный номер в разных полях
-		if (field == 'phone' && !a) a = osm['contact:phone'];
-		if (field == 'contact:phone' && !a) a = osm['phone'];
+		if (field == 'phone' && !a) a = osm['contact:phone']||'';
+		if (field == 'contact:phone' && !a) a = osm['phone']||'';
+
+		// ищем website в разных полях
+		if (field == 'website' && !a) a = osm['contact:website']||'';
+		if (field == 'contact:website' && !a) a = osm['website']||'';
 
 		if (field == 'contact:phone' || field == 'phone')
 		{
@@ -1093,7 +1098,7 @@ function osm_cl()
 			b = b.replace(/-/g, ' ')
 		}
 
-		if (field == 'website')
+		if (field == 'website' || field == 'contact:website')
 		{
 			// игнорируем слеш на конце после имени домена
 			a = a.replace(/(\.[a-z]{2,3})\/$/, '$1')
@@ -1112,18 +1117,19 @@ function osm_cl()
 			b = b.replace(/.*?"(.+?)".*/, '$1');
 		}
 
+		if (!a) return C_Empty;
 		return (a != b) ? C_Diff : C_Similar;
 	}
 
 	// сравнение объектов и генерация ячеек
 	this.compare = function(osm, real, fields)
 	{
-		var i, st = '', v, t, cl, td_cl;
+		var i, st = '', v, t, cl, td_cl, cmp_res;
 		for (i in fields)
 		{
-			cl = t = '';
-			v  = osm[fields[i]] || real[fields[i]] || '?';
-			switch (this.compareField(osm, real, fields[i]))
+			cl = t = td_cl = '';
+			v  = osm[fields[i]] || '?';
+			switch (cmp_res = this.compareField(osm, real, fields[i]))
 			{
 				case C_Skip:
 					{
@@ -1137,9 +1143,11 @@ function osm_cl()
 						t  = 'Нужно установить: '+real[fields[i]];
 						break;
 					}
+				case C_Similar:
 				case C_Diff:
 					{
-						cl = 'ok';
+						cl = 'ok'; if (v == '?') v = '';
+						if (cmp_res == C_Similar) td_cl += ' similar';
 						t  = 'Нужно изменить на: '+real[fields[i]];
 						// простая раскраска, данные из OSM
 						if (!this.color || this.color == 'osm')
@@ -1172,13 +1180,13 @@ function osm_cl()
 						break;
 					}
 				case C_Equal:
-				case C_Similar:
 					{
 						cl = 'ok';
 						t  = 'Верно: '+real[fields[i]];
 						break;
 					}
 			}
+			v  = osm[fields[i]] || real[fields[i]] || '?';
 
 			if (fields[i] == '_addr')
 			{
@@ -1198,9 +1206,10 @@ function osm_cl()
 			if (cl) cl = 'class="'+cl+'"';
 			if (t)  t  = 'title="'+t.replace(/"/g, '&quot;')+'"';
 
-			td_cl = '';
 			if (fields[i] == '_addr' && real._ref == C_FoundRef)
-				td_cl = ' class="foundByRef"';
+				td_cl += 'foundByRef';
+
+			if (td_cl) td_cl = ' class="'+td_cl+'"';
 
 			st += '<td'+td_cl+'><span '+cl+t+'>'+v+'</span></td>';
 		}
