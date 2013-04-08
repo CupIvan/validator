@@ -307,6 +307,7 @@ C_Empty    = 1;
 C_Skip     = 2;
 C_Diff     = 3;
 C_Equal    = 4;
+C_Similar  =14;
 C_NoCoords = 5;
 C_NotFound = 6;
 C_FoundRef = 7;
@@ -966,16 +967,32 @@ function osm_cl()
 			+'&left='  +(a.lon-d);
 	}
 	// ссылка на "обновление информации"
-	this.link_export_update = function(a, b)
+	this.link_export_update = function(a, b) // a - real, b - osm
 	{
 		if (!a.id) return '';
 		var i, url = '';//'http://'+document.domain+'/validator/import.php?';
-		var f = fields[this.activeValidator];
+		var f = fields[this.activeValidator], k, v;
 		for (i in f) if (f[i].charAt(0) != '_')
 			if (this.compareField(b, a, f[i]) != C_Equal)
-				if (a[f[i]])
-				url += (url?'|':'')+f[i]+'='+encodeURIComponent(a[f[i]]);
+			{
+				k = f[i]; v = a[k];
+				if (!v) continue;
+
+				// не устанавливаем устаревшие теги
+				if (k == 'phone')   a[k = 'contact:phone'] = v;
+				if (k == 'website') a[k = 'contact:website'] = v;
+
+				url += (url?'|':'')+encodeURIComponent(k)+'='+encodeURIComponent(v);
+			}
 		if (!url) return '';
+
+		// заодно стираем устаревшие теги, если в OSM есть замена
+		if (this.josmCanDeleteTags)
+		{
+			i = 'phone';   if (b[i] && a['contact:'+i]) url += '|'+i+'=%20';
+			i = 'website'; if (b[i] && a['contact:'+i]) url += '|'+i+'=%20';
+		}
+
 		var d; if (a.id.charAt(0) != 'n') d = 0.001; // FIXME: лучше передавать координату одного из угла, чтобы загружался только один объект!
 		url = url.replace(/"/g, '&quot;').replace(/'/g, "\\'");
 		return '<a href="#export" onclick="return osm.export_update(\''+a.id+'\', \''+url+'\')" title="Обновить объект в OSM" class="btn">upd</a>';
@@ -1031,12 +1048,10 @@ function osm_cl()
 		var a = osm[field], b = real[field];
 		if (!b || field.charAt(0) == '_') return C_Skip;
 		if (!a) return C_Empty;
+		if (a == b) return C_Equal;
 
 		a = (''+a).replace(/ё/g, 'е');
 		b = (''+b).replace(/ё/g, 'е');
-
-		if (field == 'phone')
-			a = a.replace(/ /g, '-');
 
 		if (field == 'name')
 		{
@@ -1067,6 +1082,17 @@ function osm_cl()
 			b = b.replace(/;[ a-z,-]+ off/i, '');
 		}
 
+		// ищем телефонный номер в разных полях
+		if (field == 'phone' && !a) a = osm['contact:phone'];
+		if (field == 'contact:phone' && !a) a = osm['phone'];
+
+		if (field == 'contact:phone' || field == 'phone')
+		{
+			// игнорируем дефисы в телефонах
+			a = a.replace(/-/g, ' ')
+			b = b.replace(/-/g, ' ')
+		}
+
 		if (field == 'website')
 		{
 			// игнорируем слеш на конце после имени домена
@@ -1086,8 +1112,7 @@ function osm_cl()
 			b = b.replace(/.*?"(.+?)".*/, '$1');
 		}
 
-		if (a != b) return C_Diff;
-		return C_Equal;
+		return (a != b) ? C_Diff : C_Similar;
 	}
 
 	// сравнение объектов и генерация ячеек
@@ -1147,6 +1172,7 @@ function osm_cl()
 						break;
 					}
 				case C_Equal:
+				case C_Similar:
 					{
 						cl = 'ok';
 						t  = 'Верно: '+real[fields[i]];
