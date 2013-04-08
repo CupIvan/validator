@@ -137,7 +137,7 @@ class wiki_places extends Validator
 		if (preg_match('#\|статус\s*=\s*(.+)#', $st, $m))             $obj['official_status'] = 'ru:'.($p['st'] = trim(mb_strtolower($m[1])));
 		if (preg_match('#\|почтовый индекс\s*=\s*(\d{5}[1-9])#', $st, $m)) $obj['addr:postcode']   = $m[1]; // COMMENT: 0 на конце признак нескольких индексов у города
 		if (preg_match('#\|регион\s*=\s*(.+)#', $st, $m))             $obj['addr:region']   = trim($m[1]);
-		if (preg_match('#\|район\s*=\s*(.+?район)#', $st, $m))        $obj['addr:district'] = trim($m[1]);
+		if (preg_match('#\|район\s*=\s*([^|]+?район)#', $st, $m))     $obj['addr:district'] = trim($m[1]);
 		if (preg_match('#\|сайт\s*=\s*(http://.+?)/?$#m', $st, $m))   $obj['website'] = trim($m[1]);
 		if (preg_match('#\|цифровой идентификатор\s*=\s*(\d+)#', $st, $m)) $obj['okato:user'] = $m[1];
 		if (preg_match('#\|вид поселения\s*=(.*)#', $st, $m))         $obj['place_type'] = mb_strtolower(trim($m[1]));
