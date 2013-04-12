@@ -87,6 +87,7 @@ var osm = new osm_cl()
 		.validator('Фармленд',    'farmlend')
 		.validator('Церкви',      'temples')
 		.validator('Авто49',      'auto49')
+		.validator('Лукойл',      'lukoil')
 	.region('Белгородская область', 'RU-BEL')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
@@ -106,6 +107,7 @@ var osm = new osm_cl()
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
+		.validator('Лукойл',      'lukoil')
 	.region('Вологодская область', 'RU-VLG')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
@@ -178,7 +180,8 @@ var osm = new osm_cl()
 	.region('Пермский край', 'RU-PER')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
-		.validator('Почта', 'russian_post')
+		.validator('Почта',    'russian_post')
+		.validator('Лукойл',   'lukoil')
 	.region('Приморский край', 'RU-PRI')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
@@ -252,7 +255,7 @@ var links = {
 	'hlinov':      'http://bank-hlynov.ru/about/unit_of_the_bank/additional_offices/',
 	'asna':        'http://www.asna.ru/drugstores',
 	'alfabank':    'http://www.alfabank.ru/russia/moscow/',
-	'lukoil':      'http://www.lukoil.ru/back/azs/azs.asp?tab=1',
+	'lukoil':      'http://www.lukoil.ru/new/azslocator',
 	'rosneft':     'http://www.rosneft.ru/Downstream/petroleum_product_sales/servicestations/',
 	'russian_post':'http://www.russianpost.ru/rp/servise/ru/home/postuslug/searchops1',
 	'autopasker':  'http://avtopasker.ru/info/list.php?town=all',
@@ -282,7 +285,7 @@ var fields = {
 	'asna':        ['_addr', 'ref', '_name', 'brand', 'contact:phone', 'opening_hours', 'contact:website', 'contact:email'],
 	'alfabank':    ['_addr', 'operator', 'name', 'official_name', 'website', 'opening_hours'],
 	'alfabank_atm':['_addr', 'operator', 'website', 'opening_hours', 'currency:RUR', 'currency:USD', 'currency:EUR'],
-	'lukoil':      ['_addr', 'ref', 'operator', 'brand', 'website', 'opening_hours', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg'],
+	'lukoil':      ['_addr', 'ref', 'operator', 'brand', 'contact:website', 'opening_hours', 'payment:cards', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg', 'car_wash', 'shop', 'toilets', 'compressed_air'],
 	'rosneft':     ['_addr', 'ref', 'operator', 'brand', 'website', 'opening_hours', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:octane_80', 'fuel:diesel'],
 	'russian_post':['_addr', 'ref', 'operator', 'name', 'website', 'phone', 'opening_hours', '_name'],
 	'autopasker':  ['_addr', 'operator', 'brand', 'phone', 'website', 'opening_hours', 'payment:cards'],
