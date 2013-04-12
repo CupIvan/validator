@@ -279,7 +279,7 @@ var fields = {
 	'beli_veter':  ['_addr', 'ref', 'operator', 'name', 'phone', 'website', 'opening_hours'],
 	'gazprom':     ['_addr', 'ref', 'operator', 'brand', 'name', 'website', 'opening_hours', 'payment:cards', 'shop', 'toilets', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg'],
 	'hlinov':      ['_addr', 'operator', 'name', 'website'],
-	'asna':        ['_addr', '_name', 'brand', 'phone', 'opening_hours', 'website'],
+	'asna':        ['_addr', 'ref', '_name', 'brand', 'contact:phone', 'opening_hours', 'contact:website', 'contact:email'],
 	'alfabank':    ['_addr', 'operator', 'name', 'official_name', 'website', 'opening_hours'],
 	'alfabank_atm':['_addr', 'operator', 'website', 'opening_hours', 'currency:RUR', 'currency:USD', 'currency:EUR'],
 	'lukoil':      ['_addr', 'ref', 'operator', 'brand', 'website', 'opening_hours', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg'],

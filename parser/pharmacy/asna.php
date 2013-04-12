@@ -6,16 +6,17 @@ class asna extends Validator
 	// откуда скачиваем данные
 	protected $domain = 'http://www.asna.ru';
 	static $urls = array(
-		'RU-MOW' => '/drugstores/network/#MOW',
-		'RU-MOS' => '/drugstores/network/#MOS',
+		'RU-MOW' => '/maps/json/city.php?id=1#$1',
+		'RU-MOS' => '/maps/json/city.php?id=1#$1',
 	);
 	// поля объекта
 	protected $fields = array(
-		'amenity'  => 'pharmacy',
-		'brand'    => 'АСНА',
-		'website'  => 'http://asna.ru',
-		'opening_hours' => '',
-		'phone' => '',
+		'amenity' => 'pharmacy',
+		'brand'   => 'АСНА',
+		'contact:website'  => 'http://asna.ru',
+		'contact:email'    => '',
+		'contact:phone'    => '',
+		'opening_hours'    => '',
 		'lat'   => '',
 		'lon'   => '',
 		'_name' => '',
@@ -27,26 +28,29 @@ class asna extends Validator
 	// парсер страницы
 	protected function parse($st)
 	{
+		$list = json_decode($st, true);
+		if (!$list) return false;
+
 		$id_obl = '137,214,158,188,16,90,208,220,222,223,157,169,206,199';
 		$id_obl = array_fill_keys(explode(',', $id_obl), 1);
 
-		if (preg_match_all('#'
-			.'GeoPoint.(?<lon>[\d.]+),(?<lat>[\d.]+)'
-			.'.+?name = "(?<_name>[^"]+)"'
-			.'.+?description = "(?<_addr>.+?)<br>'
-			.'(?<phone>.+?)<br>'
-			.'.+?: (?<hours>.+?)<br>'
-			.".+?href='(?<url>[^']+.adress/(?<ref>\d+))'"
-			.'.+?addOverlay'
-			."#su", $st, $m, PREG_SET_ORDER))
-		foreach ($m as $obj)
+		foreach($list['items'] as $a)
 		{
-			$is =  !isset($id_obl[$obj['ref']]);
+			$obj = array('_name' => $a['name'], 'lat'=>$a['x'], 'lon'=>$a['y']);
+
+			list($url, $hours, $phone, $email) = explode('<br>', $a['html']);
+
+			if (preg_match('#"(?<url>.+?/(?<ref>\d+)/)">(?<_addr>[^<]*)#', $url, $m))
+				$obj += $m;
+
+			$is =  !isset($id_obl[@$obj['ref']]);
 			if ($this->region == 'RU-MOW' && !$is) continue;
 			if ($this->region == 'RU-MOS' &&  $is) continue;
 
-			$obj['opening_hours'] = $this->time($obj['hours']);
-			$obj['phone'] = $this->phone($obj['phone']);
+			$obj['contact:website'] = preg_replace('/.+"(.+?)".+/', '$1', $url);
+			$obj['contact:phone']   = $this->phone($phone);
+			$obj['contact:email']   = $email;
+			$obj['opening_hours']   = $this->time($hours);
 
 			$this->addObject($this->makeObject($obj));
 		}
