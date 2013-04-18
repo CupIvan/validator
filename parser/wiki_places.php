@@ -141,7 +141,7 @@ class wiki_places extends Validator
 		if (preg_match('#\|сайт\s*=\s*(http://.+?)/?$#m', $st, $m))   $obj['website'] = trim($m[1]);
 		if (preg_match('#\|цифровой идентификатор\s*=\s*(\d+)#', $st, $m)) $obj['okato:user'] = $m[1];
 		if (preg_match('#\|вид поселения\s*=(.*)#', $st, $m))         $obj['place_type'] = mb_strtolower(trim($m[1]));
-		if (preg_match('#\|население\s*=.+?(\d[\d ,.]*)(.*?(?<m>тыс|млн))#', $st, $m))
+		if (preg_match('#\|население\s*=.+?(\d[\d ,.]*)(.*?(?<m>|тыс|млн))#', $st, $m))
 		{
 			$obj['population'] = (float)str_replace(array(' ',','), array('','.'), $m[1]);
 			// COMMENT: если население указано в тысячах - домножаем
