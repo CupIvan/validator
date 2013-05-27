@@ -72,29 +72,62 @@ class wiki_places extends Validator
 		$this->population2012 = str_replace('ё', 'е', @file_get_contents('../parser/population2012.txt'));
 	}
 
+	private function getPlacePages($url, $ignore = array())
+	{
+		$links = array();
+
+		if (empty($ignore[$url])) $ignore[$url] = 1;
+		else return $links;
+
+		$page = $this->download($this->domain.$url);
+		if ($page)
+		{
+			$from = strpos($page,  'bodycontent');
+			$to   = strpos($page, '/bodycontent');
+		}
+		if (empty($to))
+		{
+			$from = strpos($page,  'mw-subcategories');
+			$to   = strpos($page, 'printfooter');
+		}
+		$page = substr($page, $from, $to - $from);
+
+		// добавляем ссылки из этой категории
+		$url = urldecode($url);
+		if (preg_match_all('#<li><a href="(/wiki/.+?)"#s', $page, $m))
+		foreach ($m[1] as $url)
+		{
+			$st = urldecode($url);
+			if (0
+				|| strpos($st, '/Населённые')
+				|| strpos($st, '/Города')
+				|| strpos($st, '/Список')
+			) continue;
+			$links[] = $url.'?action=edit';
+		}
+
+		// добавляем ссылки из подразделов
+		if (preg_match_all('#(/wiki/'.urlencode('Категория').':.+?)"#', $page, $m))
+		foreach ($m[1] as $url)
+		{
+			$st = urldecode($url);
+			if (0
+				|| strpos($st, ':Населённые_пункты')
+				|| strpos($st, ':Города')
+				|| strpos($st, ':Посёлки_городского_типа')
+			)
+			$links = array_merge($links, $this->getPlacePages($url, $ignore));
+		}
+		return $links;
+	}
+
 	/** обновление данных по региону */
 	public function update()
 	{
 		$this->log('Search wikipedia pages');
-		$url  = $this->domain.'/wiki/'.urlencode(self::$urls[$this->region]);
-		// список районов в области
-		$page = $this->download($url);
-		if (!preg_match_all("#(/wiki/[A-Z0-9%_:\(\)]+)\">Населённые пункты#su", $page, $m)) return false;
-		// список городов в каждом районе
-		$list = array();
-		foreach ($m[1] as $url)
-		{
-			$page = $this->download($this->domain.$url);
-			$page = preg_replace('#.+?Страницы в категории(.+?)/bodycontent.+#s', '$1', $page);
-			if (!preg_match_all("#/wiki/[A-Z0-9%_:\(,\).-]+#su", $page, $m1)) continue;
-			foreach ($m1[0] as $url)
-			if (!strpos(urldecode($url), 'пункты'))
-			if (!strpos(urldecode($url), 'пунктов'))
-			if (!strpos(urldecode($url), 'район_('))       // в списке городов может быть
-			if (mb_substr(urldecode($url), -5) != 'район') // ссылка на описание района
-				$list[] = $url.'?action=edit';
-		}
-		self::$urls[$this->region] = $list;
+
+		self::$urls[$this->region] = array_unique($this->getPlacePages('/wiki/'.urlencode(self::$urls[$this->region])));
+
 		parent::update();
 	}
 
@@ -106,6 +139,7 @@ class wiki_places extends Validator
 		// заголовок страницы (для ссылки на wiki)
 		$title = preg_match('#"auto">Редактирование ([^<]+?)<#', $st, $m) ? $m[1] : '';
 
+		$st = str_replace('{{НП+Россия', '{{НП-Россия', $st);
 		if (!mb_strpos($st, '{{НП-')) { if (!$title) $title = urldecode($this->url); $this->log("Error parse '$title'!"); return false; }
 
 		// названия на других языках
@@ -125,14 +159,14 @@ class wiki_places extends Validator
 		$st = preg_replace("#\[\[[^|\]]+\|([^|\]]+)\]\]#", '$1', $st); // удаление wiki-ссылок [[...|...]]
 		$st = preg_replace("#[\[\]]#",                     '$1', $st); // удаление wiki-ссылок [[...]]
 		$st =  str_replace( // исправляем баги в синтаксисе статьи
-			array('|',   '&lt;', '&gt;', '&amp;', '&nbsp;', ' '),
-			array("\n|", '<',    '>',    '&',     ' ',      ' '),
+			array('|',   '&lt;', '&gt;', '&amp;', '&nbsp;', ' ', '«', '»'),
+			array("\n|", '<',    '>',    '&',     ' ',      ' ', '"', '"'),
 		$st);
 		$st = preg_replace('#<ref.+?</ref>#s', '', $st);
 		$st = preg_replace("# +#", ' ', $st);
 		$st =  str_replace(array('у́', 'я́', 'а́', 'и́', '́', "'"), array('у', 'я', 'а', 'и', '', ""), $st); // убираем ударения
 
-		if (preg_match('#\|русское название\s*=\s*(.+)#', $st, $m)) $obj['name:ru']    = trim($m[1]);
+		if (preg_match('#\|русское название\s*=\s*(.+)#', $st, $m)) $obj['name:ru']    = trim(strip_tags($m[1]));
 		if (preg_match('#\|оригинальное название\s*=\s*\{{lang-(.{2})\|(.+?)}}#', $st, $m)) $obj['name:'.$m[1]] = trim($m[2]);
 		if (preg_match('#\|статус\s*=\s*(.+)#', $st, $m))             $obj['official_status'] = 'ru:'.($p['st'] = trim(mb_strtolower($m[1])));
 		if (preg_match('#\|почтовый индекс\s*=\s*(\d{5}[1-9])#', $st, $m)) $obj['addr:postcode']   = $m[1]; // COMMENT: 0 на конце признак нескольких индексов у города
@@ -172,11 +206,13 @@ class wiki_places extends Validator
 		}
 
 		// данные населения согласно переписи
-		$name  = preg_replace('/ая$/', '(ая|ое)', @$obj['name:ru']); // станица *-ая значится как *-ое сельское поселение
+		$name  = preg_replace('/ая$/', 'ая^^', @$obj['name:ru']); // станица *-ая значится как *-ое сельское поселение
 		$name .= ' '; // COMMENT: пробел нужен, чтобы отследить конец названия
 		$regexp = '#'.@$obj['addr:region'].'\s+?'.@$obj['addr:district'].'.+?'.$name.'\s*?(?<N>\d+)#';
-		$regexp = str_replace('|', '\\|', $regexp);
-		$regexp = str_replace('ё',   'е', $regexp);
+		$regexp = str_replace('|',        '\\|', $regexp);
+		$regexp = str_replace('ё',          'е', $regexp);
+		$regexp = str_replace('ая^^', '(ая|ое)', $regexp);
+
 		if (preg_match($regexp, $this->population2010, $m))
 			$obj['_population2010'] = (int)$m['N'];
 		if (preg_match($regexp, $this->population2012, $m))
