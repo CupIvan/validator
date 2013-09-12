@@ -70,6 +70,7 @@ class wiki_places extends Validator
 		parent::__construct($x);
 		$this->population2010 = str_replace('ё', 'е', @file_get_contents('../parser/population2010.txt'));
 		$this->population2012 = str_replace('ё', 'е', @file_get_contents('../parser/population2012.txt'));
+		$this->populationFix  = str_replace('ё', 'е', @file_get_contents('../parser/populationFix.txt'));
 	}
 
 	private function getPlacePages($url, $ignore = array())
@@ -205,28 +206,14 @@ class wiki_places extends Validator
 			if (preg_match('#\|\s*lon_sec\s*=\s*(\d+)#', $st, $m)) $obj['lon'] += $m[1] / 3600;
 		}
 
-		// данные населения согласно переписи
-		$name  = preg_replace('/ая$/', 'ая^^', @$obj['name:ru']); // станица *-ая значится как *-ое сельское поселение
-		$name .= ' '; // COMMENT: пробел нужен, чтобы отследить конец названия
-		$regexp = '#'.@$obj['addr:region'].'\s+?'.@$obj['addr:district'].'.+?'.$name.'\s*?(?<N>\d+)#';
-		$regexp = str_replace('|',        '\\|', $regexp);
-		$regexp = str_replace('ё',          'е', $regexp);
-		$regexp = str_replace('ая^^', '(ая|ое)', $regexp);
-
-		if (preg_match($regexp, $this->population2010, $m))
-			$obj['_population2010'] = (int)$m['N'];
-		if (preg_match($regexp, $this->population2012, $m))
-			$obj['_population2012'] = (int)$m['N'];
-
 		// обновляем население, согласно переписи
-		if (!empty($obj['_population2010'])) $obj['population'] = $obj['_population2010'];
-		if (!empty($obj['_population2012'])) $obj['population'] = $obj['_population2012'];
+		$this->updatePopulationFromCensus($obj);
 
 		// убираем все шаблоны
 		$st = preg_replace('#{{[^{]+?}}#s', '', $st);
 		$st = preg_replace('#{{[^{]+?}}#s', '', $st);
 
-		if (isset($obj['population']))
+		if (!empty($obj['population']))
 		$p['pop']          = $obj['population'];
 		$p['adm_center']   = strpos($st, 'административный центр');
 		$p['adm_subject']  = preg_match('#центр.+?(области|края|республики)#', $st);
@@ -266,5 +253,33 @@ class wiki_places extends Validator
 		if ($p['selo'] && $p['pop'] > 5) $obj['place'] = 'hamlet';
 
 		$this->addObject($this->makeObject($obj));
+	}
+	/** обновление населения согласно переписи */
+	private function updatePopulationFromCensus(&$obj)
+	{
+		$name  = preg_replace('/ая$/', 'ая^^', @$obj['name:ru']); // станица *-ая значится как *-ое сельское поселение
+		$name .= ' '; // COMMENT: пробел нужен, чтобы отследить конец названия
+		$regexp = '#'.@$obj['addr:region'].'\s+?'.@$obj['addr:district'].'.+?'.$name.'\s*?(?<N>\d+)#';
+		$regexp = str_replace('|',        '\\|', $regexp);
+		$regexp = str_replace('ё',          'е', $regexp);
+		$regexp = str_replace('ая^^', '(ая|ое)', $regexp);
+
+		if (preg_match($regexp, $this->population2010, $m))
+			$obj['_population2010'] = (int)$m['N'];
+		if (preg_match($regexp, $this->population2012, $m))
+			$obj['_population2012'] = (int)$m['N'];
+
+		if (!empty($obj['okato:user']))
+		{
+			$regexp = '\s+'.$obj['okato:user'].'\s+(?<N>\d+)#m';
+
+			if (preg_match('#^2010'.$regexp, $this->populationFix, $m))
+				$obj['_population2010'] = (int)$m['N'];
+			if (preg_match('#^2012', $this->populationFix, $m))
+				$obj['_population2012'] = (int)$m['N'];
+		}
+
+		if (!empty($obj['_population2010'])) $obj['population'] = $obj['_population2010'];
+		if (!empty($obj['_population2012'])) $obj['population'] = $obj['_population2012'];
 	}
 }
