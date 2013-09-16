@@ -57,8 +57,9 @@ class sberbank extends Validator
 		'website'  => 'http://sbrf.ru',
 		'phone'    => '',
 		'ref'      => '',
-		'department' => '',
-		'wheelchair' => '',
+		'disused'  => '',
+		'department'    => '',
+		'wheelchair'    => '',
 		'opening_hours' => '',
 		'lat'   => '',
 		'lon'   => '',
@@ -158,6 +159,12 @@ class sberbank extends Validator
 			// отделение
 			if (preg_match('/[а-я]+ отделение/iu', $obj['_name'], $m))
 				$obj['department'] = $m[0];
+
+			if (strpos($obj[0], 'не обслуживаются'))
+			{
+				$obj['disused'] = 'yes';
+				$obj['opening_hours'] = '';
+			}
 
 			// заменяем координаты с сайта сбербанка на геокодированные
 			$geocoder = new Geocoder();
