@@ -706,13 +706,14 @@ function osm_cl()
 	// отрисовка быстрого фильтра
 	this.drawFastFilter = function()
 	{
-		var i, j, st = '';
+		var i, j, st = '', a;
 		if (this._fast_filter_enable)
 		for (i in this._fast_filter)
 		{
 			st += '<li>'+i+':<br>';
-			for (j in this._fast_filter[i])
-				st += '<a href="#" onclick="return osm.fastFilter(this)">'+j+' ('+this._fast_filter[i][j]+')</a>';
+			a = asort(this._fast_filter[i]);
+			for (j in a)
+				st += '<a href="#" onclick="return osm.fastFilter(this)">'+j+' ('+a[j]+')</a>';
 			st += '</li>';
 		}
 		if (!st) return '';
@@ -1335,4 +1336,17 @@ String.prototype.repeat = function(x){
 	var i = 0, s = '', st = this;
 	while (i < x) { s += st; i++; }
 	return s;
+}
+
+/** сортировка хэша */
+function asort(a)
+{
+	var i, tmp=[];
+	for (i in a)
+		tmp.push([i,a[i]]);
+	tmp.sort(function(x,y){ x=x[0];y=y[0]; if(x==y)return 0; return x>y?1:-1; });
+	a={};
+	for (i in tmp)
+		a[tmp[i][0]] = tmp[i][1];
+	return a;
 }
