@@ -79,20 +79,30 @@ class lukoil extends Validator
 	{
 		foreach ($stations as $a)
 		{
-			$obj = array();
-			$obj['ref']   = $a['Number'];
-			$obj['_addr'] = $a['Address'];
-			$obj['lat']   = $a['Lat'];
-			$obj['lon']   = $a['Lng'];
+			$obj = array(); $new = true;
 
-			$fuel = array_fill_keys(array_values($a['FuelIds']), 1);
+			if (isset($a['Number'])) $new = false;
+
+			if ($new) {
+				$obj['ref']   = $a['n'];
+				$obj['_addr'] = $a['a'];
+				$obj['lat']   = $a['y'];
+				$obj['lon']   = $a['x'];
+			} else {
+				$obj['ref']   = $a['Number'];
+				$obj['_addr'] = $a['Address'];
+				$obj['lat']   = $a['Lat'];
+				$obj['lon']   = $a['Lng'];
+			}
+
+			$fuel = array_fill_keys(array_values($new ? $a['f'] : $a['FuelIds']), 1);
 			$obj["fuel:octane_98"] = empty($fuel['98'])     && empty($fuel['ekto-sport'])  ? 'no' : 'yes';
 			$obj["fuel:octane_95"] = empty($fuel['95'])     && empty($fuel['ekto-plus'])   ? 'no' : 'yes';
 			$obj["fuel:octane_92"] = empty($fuel['92'])     && empty($fuel['ekto'])        ? 'no' : 'yes';
 			$obj["fuel:diesel"]    = empty($fuel['diesel']) && empty($fuel['ekto-diesel']) ? 'no' : 'yes';
 			$obj["fuel:lpg"]       = empty($fuel['gas']) ? 'no' : 'yes';
 
-			$service = array_fill_keys(array_values($a['ServiceIds']), 1);
+			$service = array_fill_keys(array_values($new ? $a['s'] : $a['ServiceIds']), 1);
 			if (!empty($service['market']))      $obj['shop']     = 'yes';
 			if (!empty($service['bankomat']))    $obj['atm']      = 'yes';
 			if (!empty($service['wc']))          $obj['toilets']  = 'yes';

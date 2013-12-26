@@ -24,13 +24,16 @@ class wiki_places extends Validator
 		'RU-KYA' => 'Категория:Населённые_пункты_Красноярского_края',
 		'RU-KRS' => 'Категория:Населённые_пункты_Курской_области',
 		'RU-LEN' => 'Категория:Населённые_пункты_Ленинградской_области',
+		'RU-LIP' => 'Категория:Населённые_пункты_Липецкой_области',
 		'RU-MOS' => 'Категория:Населённые_пункты_Московской_области',
+		'RU-OMS' => 'Категория:Населённые_пункты_Омской_области',
 		'RU-PER' => 'Категория:Населённые_пункты_Пермского_края',
 		'RU-PRI' => 'Категория:Населённые_пункты_Приморского_края',
 		'RU-ROS' => 'Категория:Населённые_пункты_Ростовской_области',
 		'RU-RYA' => 'Категория:Населённые_пункты_Рязанской_области',
 		'RU-SAM' => 'Категория:Населённые_пункты_Самарской_области',
 		'RU-SAR' => 'Категория:Населённые_пункты_Саратовской_области',
+		'RU-STA' => 'Категория:Населённые_пункты_Ставропольского_края',
 		'RU-SVE' => 'Категория:Населённые_пункты_Свердловской_области',
 		'RU-TUL' => 'Категория:Населённые_пункты_Тульской_области',
 		'RU-TVE' => 'Категория:Населённые_пункты_Тверской_области',
@@ -56,7 +59,7 @@ class wiki_places extends Validator
 		'_population2013'=> '',
 		'okato:user' => '',
 		'wikipedia'  => '',
-		'website'    => '',
+		'contact:website' => '',
 		'lat'   => '',
 		'lon'   => '',
 		);
@@ -142,6 +145,7 @@ class wiki_places extends Validator
 		// заголовок страницы (для ссылки на wiki)
 		$title = preg_match('#"auto">Редактирование ([^<]+?)<#', $st, $m) ? $m[1] : '';
 
+		$st = str_replace('{{НП2',       '{{НП-Россия', $st);
 		$st = str_replace('{{НП+Россия', '{{НП-Россия', $st);
 		if (!mb_strpos($st, '{{НП-')) { if (!$title) $title = urldecode($this->url); $this->log("Error parse '$title'!"); return false; }
 
@@ -173,9 +177,9 @@ class wiki_places extends Validator
 		if (preg_match('#\|оригинальное название\s*=\s*\{{lang-(.{2})\|(.+?)}}#', $st, $m)) $obj['name:'.$m[1]] = trim($m[2]);
 		if (preg_match('#\|статус\s*=\s*(.+)#', $st, $m))             $obj['official_status'] = 'ru:'.($p['st'] = trim(mb_strtolower($m[1])));
 		if (preg_match('#\|почтовый индекс\s*=\s*(\d{5}[1-9])#', $st, $m)) $obj['addr:postcode']   = $m[1]; // COMMENT: 0 на конце признак нескольких индексов у города
-		if (preg_match('#\|регион\s*=\s*(.+)#', $st, $m))             $obj['addr:region']   = trim($m[1]);
+		if (preg_match('#\|регион\s*=\s*(.*)#', $st, $m))             $obj['addr:region']   = trim($m[1]);
 		if (preg_match('#\|район\s*=\s*([^|]+?район)#', $st, $m))     $obj['addr:district'] = trim($m[1]);
-		if (preg_match('#\|сайт\s*=\s*(http://.+?)/?$#m', $st, $m))   $obj['website'] = trim($m[1]);
+		if (preg_match('#\|сайт\s*=\s*(http://.+?)/?$#m', $st, $m))   $obj['contact:website'] = trim($m[1]);
 		if (preg_match('#\|цифровой идентификатор\s*=\s*(\d+)#', $st, $m)) $obj['okato:user'] = $m[1];
 		if (preg_match('#\|вид поселения\s*=(.*)#', $st, $m))         $obj['place_type'] = mb_strtolower(trim($m[1]));
 		if (preg_match('#\|население\s*=.+?(\d[\d ,.]*)(.*?(?<m>|тыс|млн))#', $st, $m))

@@ -7,6 +7,7 @@ var osm = new osm_cl()
 		.validator('Промсбербанк','promsberbank')
 		.validator('МИнБ',        'minbank')
 		.validator('МКБ',         'mkb')
+		.validator('М.Видео',     'mvideo')
 		.validator('Перекресток', 'perekrestok')
 		.validator('Белый ветер', 'beli_veter')
 		.validator('Асна',        'asna')
@@ -33,6 +34,7 @@ var osm = new osm_cl()
 		.validator('Промсбербанк','promsberbank')
 		.validator('МИнБ',        'minbank')
 		.validator('МКБ',         'mkb')
+		.validator('М.Видео',     'mvideo')
 		.validator('Перекресток', 'perekrestok')
 		.validator('Белый ветер', 'beli_veter')
 		.validator('Азбука вкуса','azbuka')
@@ -156,17 +158,23 @@ var osm = new osm_cl()
 		.validator('Хлынов', 'hlinov')
 	.region('Краснодарский край', 'RU-KDA')
 		.validator('Населенные пункты', 'wiki_places')
-		.validator('Сбербанк', 'sberbank')
-		.validator('Почта',    'russian_post')
-		.validator('Лукойл',   'lukoil')
-		.validator('Роснефть', 'rosneft')
+		.validator('Сбербанк',     'sberbank')
+		.validator('Почта',        'russian_post')
+		.validator('Служба крови', 'blood')
+		.validator('Лукойл',       'lukoil')
+		.validator('Роснефть',     'rosneft')
 	.region('Красноярский край', 'RU-KYA')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Почта', 'russian_post')
 	.region('Курская область', 'RU-KRS')
 		.validator('Населенные пункты', 'wiki_places')
-		.validator('Сбербанк', 'sberbank')
+		.validator('Сбербанк',          'sberbank')
+	.region('Липецкая область', 'RU-LIP')
+		.validator('Населенные пункты', 'wiki_places')
+		.validator('Сбербанк',          'sberbank')
+		.validator('Почта',             'russian_post')
+		.validator('Перекрёсток',       'perekrestok')
 	.region('Мурманская область', 'RU-MUR')
 		.validator('Сбербанк',           'sberbank')
 		.validator('Почта',              'russian_post')
@@ -176,6 +184,13 @@ var osm = new osm_cl()
 	.region('Нижегородская область', 'RU-NIZ')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Перекресток', 'perekrestok')
+	.region('Новгородская область', 'RU-NGR')
+		.validator('Сбербанк', 'sberbank')
+		.validator('Дикси',       'diksi')
+	.region('Омская область', 'RU-OMS')
+		.validator('Населенные пункты', 'wiki_places')
+		.validator('Сбербанк',          'sberbank')
+		.validator('Почта',             'russian_post')
 	.region('Орловская область', 'RU-ORL')
 		.validator('Сбербанк', 'sberbank')
 	.region('Пензенская область', 'RU-PNZ')
@@ -211,6 +226,7 @@ var osm = new osm_cl()
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 	.region('Ставропольский край', 'RU-STA')
+		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
 	.region('Тверская область', 'RU-TVE')
 		.validator('Населенные пункты', 'wiki_places')
@@ -273,10 +289,12 @@ var links = {
 	'izbenka':     'http://vkusvill.ru/shops/shoplist/',
 	'minbank':     'http://www.minbank.ru/list/373/',
 	'lapy4':       'http://4lapy.ru/pet_stores_amp_services/',
-	'auto49':      'http://www.auto49.ru/site.php/shop/',
+	'auto49':      'http://www.auto49.ru/import',
 	'mkb':         'http://mkb.ru/about_bank/address/?type=office',
 	'tervolina':   'http://www.tervolina.ru/moscow.aspx',
 	'podruzka':    'http://www.podrygka.ru/shops/find/',
+	'mvideo':      'http://www.mvideo.ru/shops/',
+	'blood':       'http://yadonor.ru/where.htm',
 _:0};
 
 var fields = {
@@ -291,7 +309,7 @@ var fields = {
 	'alfabank_atm':['_addr', 'operator', 'website', 'opening_hours', 'currency:RUR', 'currency:USD', 'currency:EUR'],
 	'lukoil':      ['_addr', 'ref', 'operator', 'brand', 'contact:website', 'opening_hours', 'payment:cards', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg', 'car_wash', 'shop', 'toilets', 'compressed_air'],
 	'rosneft':     ['_addr', 'ref', 'operator', 'brand', 'website', 'opening_hours', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:octane_80', 'fuel:diesel'],
-	'russian_post':['_addr', 'ref', 'operator', 'name', 'website', 'phone', 'opening_hours', '_name'],
+	'russian_post':['_addr', 'ref', 'operator', 'name', 'contact:website', 'contact:phone', 'opening_hours', '_name'],
 	'autopasker':  ['_addr', 'operator', 'brand', 'phone', 'website', 'opening_hours', 'payment:cards'],
 	'promsberbank':['_addr', 'ref', 'operator', 'name', 'website', 'phone', '_data'],
 	'temples':     ['_addr', 'ref:temples.ru', 'start_date', 'name', 'alt_name', 'community:gender', 'building', 'disused', 'denomination', 'denomination:ru', 'russian_orthodox', 'religion', 'phone'],
@@ -303,11 +321,13 @@ var fields = {
 	'izbenka':     ['_addr', 'operator', 'brand', 'name', 'website', 'opening_hours'],
 	'minbank':     ['_addr', 'operator', 'name', 'website', 'opening_hours'],
 	'lapy4':       ['_addr', 'name', 'phone', 'opening_hours', 'pets', 'aquarium', 'veterinary', 'grooming', 'payment:cards', 'website'],
-	'wiki_places': ['name', 'name:ru', 'official_status', 'place', 'population', '_population2013', '_population2012', '_population2010', 'wikipedia', 'old_name', 'website', 'addr:postcode', 'okato:user', 'addr:country', 'addr:region', 'addr:district'],
+	'wiki_places': ['name', 'name:ru', 'official_status', 'place', 'population', '_population2013', '_population2012', '_population2010', 'wikipedia', 'old_name', 'contact:website', 'addr:postcode', 'okato:user', 'addr:country', 'addr:region', 'addr:district'],
 	'auto49':      ['_addr', 'operator', 'brand', 'phone', 'website', 'opening_hours', 'payment:cards'],
 	'mkb':         ['_addr', 'operator', 'department', 'name', 'contact:phone', 'contact:website', 'opening_hours'],
 	'tervolina':   ['_addr', 'operator', 'name', 'brand', 'phone', 'website', 'opening_hours'],
 	'podruzhka':   ['_addr', 'operator', 'name', 'brand', 'contact:phone', 'contact:website', 'opening_hours'],
+	'mvideo':      ['_addr', 'ref', 'operator', 'name', 'brand', 'contact:phone', 'contact:website', 'opening_hours'],
+	'blood':       ['_addr', 'name', 'contact:phone', 'opening_hours', 'contact:website', 'contact:email', 'operator'],
 _:0}
 
 C_Empty    = 1;
@@ -1080,7 +1100,7 @@ function osm_cl()
 				// если отделение имеет название - считаем это правильным
 				if (/Отделение связи "[^"]+"/.exec(a)) a = b;
 				// если в названии нет цифр - то тоже пропускаем
-				if (!/\d/.exec(osm.name) && osm.name.toLowerCase() != 'почта') a = b;
+				if (osm.name && !/\d/.exec(osm.name) && osm.name.toLowerCase() != 'почта') a = b;
 			}
 		}
 
@@ -1201,7 +1221,7 @@ function osm_cl()
 						break;
 					}
 			}
-			v  = osm[fields[i]] || real[fields[i]] || '?';
+			if (v == '?') v = osm[fields[i]] || real[fields[i]] || '?'; // COMMENT: нужно для вывода _addr
 
 			if (fields[i] == '_addr')
 			{
@@ -1216,7 +1236,11 @@ function osm_cl()
 			if (fields[i] == 'ref:temples.ru' && real[fields[i]])
 				v = '<a href="http://www.temples.ru/card.php?ID='+real[fields[i]]+'" target="_blank">'+v+'</a>';
 			if (fields[i] == 'wikipedia' && real[fields[i]])
+			{
 				v = '<a href="http://ru.wikipedia.org/wiki/'+real[fields[i]]+'" target="_blank">'+v+'</a>';
+				if (location.hostname != 'osm.cupivan.ru') // локальная фича только на тестовом сайте
+				v +=' <small><a href="/validator/clearWikiCache.php?id='+osm.id+'&region='+this.activeRegion+'">[очистить]</a></small>';
+			}
 
 			if (cl) cl = 'class="'+cl+'"';
 			if (t)  t  = 'title="'+t.replace(/"/g, '&quot;')+'"';

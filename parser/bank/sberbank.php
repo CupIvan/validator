@@ -4,7 +4,7 @@ require_once 'Validator.class.php';
 class sberbank extends Validator
 {
 	// откуда скачиваем данные
-	protected $domain = 'http://www.sbrf.ru';
+	protected $domain = 'http://www.sberbank.ru';
 	static $urls = array(
 		'RU-MOW' => array('г.Москва',                'Московский банк'),
 		'RU-MOS' => array('Московская область',      'Среднерусский банк'),
@@ -21,6 +21,7 @@ class sberbank extends Validator
 		'RU-VGG' => array('Волгоградская область',   'Поволжский банк'),
 		'RU-VLA' => array('Владимирская область',    'Волго-Вятский банк'),
 		'RU-IRK' => array('Иркутская область',       'Байкальский банк'),
+		'RU-LIP' => array('Липецкая область',        'Центрально-Черноземный банк'),
 		'RU-KGD' => array('Калининградская область', 'Северо-Западный банк'),
 		'RU-KLU' => array('Калужская область',       'Среднерусский банк'),
 		'RU-KEM' => array('Кемеровская область',     'Сибирский банк'),
@@ -29,7 +30,9 @@ class sberbank extends Validator
 		'RU-KYA' => array('Красноярский край',       'Восточно-Сибирский банк'),
 		'RU-KRS' => array('Курская область',         'Центрально-Черноземный банк'),
 		'RU-MUR' => array('Мурманская область',      'Северо-Западный банк'),
+		'RU-NGR' => array('Новгородская область',    'Северо-Западный банк'),
 		'RU-NIZ' => array('Нижегородская область',   'Волго-Вятский банк'),
+		'RU-OMS' => array('Омская область',          'Западно-Сибирский банк'),
 		'RU-ORL' => array('Орловская область',       'Центрально-Черноземный банк'),
 		'RU-PNZ' => array('Пензенская область',      'Поволжский банк'),
 		'RU-PER' => array('Пермский край',           'Западно-Уральский банк'),
@@ -54,8 +57,8 @@ class sberbank extends Validator
 		'name'     => 'Сбербанк',
 		'operator' => 'ОАО "Сбербанк России"',
 		'branch'   => '',
-		'website'  => 'http://sbrf.ru',
-		'phone'    => '',
+		'contact:website' => 'http://sbrf.ru',
+		'contact:phone' => '',
 		'ref'      => '',
 		'disused'  => '',
 		'department'    => '',
@@ -77,15 +80,24 @@ class sberbank extends Validator
 		$this->fields['branch'] = $branch;
 
 		$url = '/moscowoblast/ru/about/branch/list_branch//index.php';
-		$action = urlencode('Искать'); $pageNumber = 1;
+		$pageNumber = 1;
 		do
 		{
 			$this->log("page = $pageNumber");
 			$this->context = stream_context_create(array(
 				'http' => array(
 					'method'  => 'POST',
-					'header'  => "Content-Type: application/x-www-form-urlencoded\n",
-					'content' => "rid115=$regionName&cid115=0&clt115=0&action115=$action&page=$pageNumber",
+					'header'  => "Content-Type: application/x-www-form-urlencoded",
+					'content' => 
+						"&rid115=".urlencode($regionName).
+						"&cid115=0".
+						"&clt115=".urlencode("физических лиц").
+						"&street115=".
+						"&name115=".
+						"&action115=".urlencode('Искать').
+						"&charset=utf8".
+						"&page=$pageNumber".
+						"",
 				)
 			));
 			$page = $this->download($this->domain.$url.'#'.$this->region."-$pageNumber");
@@ -96,6 +108,26 @@ class sberbank extends Validator
 			if (!preg_match("#active.>$pageNumber</span>.{0,80}?fsubmit\((\d+)#s", $page, $m)) break;
 			$pageNumber = $m[1];
 		} while ($pageNumber);
+	}
+	protected function parseTime($st)
+	{
+		$st = str_replace(
+			array('.:с', ' до ', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вск'),
+			array('',    '-',    'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'),
+			$st);
+		$st = str_replace('круглосуточно', '00:00-24:00', $st);
+
+		$res = array();
+
+		if (preg_match_all('#'.
+			'(?<day>Mo|Tu|We|Th|Fr|Sa|Su)'.
+			'\D+?(\d\d:\d\d)\D+?(\d\d:\d\d)'.
+			'(?:\D+?обед\D+?(\d\d:\d\d)\D+?(\d\d:\d\d))?'.
+			'#u', $st, $m, PREG_SET_ORDER))
+		foreach ($m as $a)
+			$res[$a['day']] = (!empty($a[4])) ? "${a[2]}-${a[4]},${a[5]}-${a[3]}" : "${a[2]}-${a[3]}";
+
+		return $res;
 	}
 	// парсер страницы
 	protected function parse($st)
@@ -113,48 +145,19 @@ class sberbank extends Validator
 		foreach ($m as $obj)
 		{
 			if ($obj['wheel']) $obj['wheelchair'] = 'yes';
-			$obj['phone'] = $this->phone($obj['phone']);
+			$obj['contact:phone'] = $this->phone($obj['phone']);
 
 			// номер отделения
 			if (preg_match('#[\d/]+#', $obj['_name'], $m_))
 				$obj['ref'] = $m_[0];
 
 			// формируем часы работы
-			$st = $obj['hours'];
-			$st = str_replace(
-				array('Пн.','Вт.','Ср.','Чт.','Пт.','Сб.','Вск.'), $days_list =
-				array('Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'),
-				$st);
-			$st = str_replace('круглосуточно', '00:00-24:00', $st);
-			$days  = explode(',', explode(' ',$st)[0]);
-			preg_match_all('/(.)(\d\d:\d\d)/', $st, $hours);
-			$day = 0; $skobka = $hours[1]; $hours = $hours[2]; // skobka[i]=='(' - признак времени обеда
-
-			// формируем часы работы по дням
-			$a = array(); $i = 0;
-			foreach ($days as $day)
-			if ($day)
-			{
-				if (isset($skobka[$i+2]) && $skobka[$i+2] == '(')
-				{
-					if ($hours[$i+3] != '00:00')
-						$time = $hours[$i].'-'.$hours[$i+2].','.$hours[$i+3].'-'.$hours[$i+1];
-					else
-						$time = $hours[$i].'-'.$hours[$i+1];
-					$i += 2; // пропускаем обед
-				}
-				else
-					$time = $hours[$i].'-'.$hours[$i+1];
-
-				$a[$day] = $time;
-				$i += 2;
-			}
-			$obj['opening_hours'] = $this->time($a);
+			$obj['opening_hours'] = $this->time($this->parseTime($obj['hours']));
 
 			// обрабатываем адрес
 			$obj['_addr'] = preg_replace('/\d{6}/i', '', $obj['_addr']); // убираем индекс
 			$obj['_addr'] = preg_replace('/(^[^а-я0-9]+|[^а-я0-9]+$)/ui', '', $obj['_addr']); // мусор на границах
-			$obj['_addr'] = preg_replace('/\(.+/ui', '', $obj['_addr']); // убираем все что вскобках и правее
+			$obj['_addr'] = preg_replace('/\(.+/ui', '', $obj['_addr']); // убираем все что в скобках и правее
 
 			// отделение
 			if (preg_match('/[а-я]+ отделение/iu', $obj['_name'], $m))

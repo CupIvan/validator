@@ -22,14 +22,17 @@ class russian_post extends Validator
 		'RU-AD'  => array(385, 385),
 		'RU-RYA' => array(390, 391),
 		'RU-VOR' => array(394, 397),
+		'RU-LIP' => array(398, 399),
 		'RU-VGG' => array(400, 404),
 		'RU-TA'  => array(420, 423),
 		'RU-ULY' => array(432, 433),
 		'RU-PNZ' => array(440, 442),
 		'RU-BA'  => array(450, 453),
+		'RU-CHE' => array(454, 457),
 		'RU-VLA' => array(600, 602),
 		'RU-KIR' => array(610, 613),
-		'RU-PER' => array(614, 618),
+		'RU-PER' => array(614, 619),
+		'RU-OMS' => array(644, 646),
 		'RU-KEM' => array(650, 654),
 		'RU-KYA' => array(660, 663),
 		'RU-IRK' => array(664, 668),
@@ -41,10 +44,10 @@ class russian_post extends Validator
 		'amenity'  => 'post_office',
 		'name'     => '',
 		'operator' => 'Почта России',
-		'website'  => 'http://www.russianpost.ru',
+		'contact:website' => 'http://www.russianpost.ru',
 		'ref'      => '',
 		'opening_hours' => '',
-		'phone' => '',
+		'contact:phone' => '',
 		'lat'   => '',
 		'lon'   => '',
 		'_name' => '',
@@ -59,20 +62,26 @@ class russian_post extends Validator
 		$this->log('Update real data '.$this->region);
 		$url = '/PostOfficeFindInterface/FindOPSByPostOfficeID.aspx?index=';
 		// "идентифицуируемся" :-)
-		$page = $this->download($this->domain.$url, 1);
+		echo "Identificating on russianpost site...\n";
+//		$page = $this->download($this->domain.$url, 1);
 		if (preg_match('/"key" value="(\d+)"/', $page, $a))
-		$this->context = stream_context_create(array(
-			'http' => array(
-				'method'  => 'POST',
-				'header'  => "Content-Type: application/x-www-form-urlencoded\n",
-				'content' => 'key='.$a[1],
-			)
-		));
-		$page = $this->download($this->domain.$url, 1);
+		{
+			$this->context = stream_context_create(array(
+				'http' => array(
+					'method'  => 'POST',
+					'header'  => "Content-Type: application/x-www-form-urlencoded\n",
+					'timeout' => 5,
+					'content' => 'key='.$a[1],
+				)
+			));
+			echo "Login to russianpost site...\n";
+			$page = $this->download($this->domain.$url, 1);
+		}
 
 		list($min, $max) = static::$urls[$this->region]; $err = 0; $nerr = 0;
 		$min *= 1000;
 		$max  = ($max+1)*1000;
+
 		for ($this->index = $min; $this->index < $max; $this->index++)
 		{
 			if ($this->index % 500 == 0) $this->log("ref = ".$this->index);
@@ -83,6 +92,11 @@ class russian_post extends Validator
 	// парсер страницы
 	protected function parse($st)
 	{
+		if (!preg_match('#<center>.+?</center>#s', $st, $m))
+			return false;
+
+		$st = $m[0];
+
 		if (!preg_match('#'
 			.'индекс:.+?;">(?<ref>\d+)'
 			.'.+?связи:.+?;">(?<type>[^<]+)\s*'
@@ -91,7 +105,7 @@ class russian_post extends Validator
 			.'.+?Адрес:.+?">(?<_addr>[^<]+)'
 			.'.+?работы:(?<hours>.+?)</tr>'
 			.'.+?Перерыв:(?<dinner>.+?)</tr>'
-			.'#su', $st, $obj)) return;
+			.'#su', $st, $obj)) return false;
 
 		// время работы
 		$t = array('Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su');
@@ -118,7 +132,7 @@ class russian_post extends Validator
 		$obj['_addr'] = str_replace('Татарстан ',    ', Татарстан ',    $obj['_addr']);
 		$obj['_addr'] = str_replace('Башкортостан ', ', Башкортостан ', $obj['_addr']);
 
-		$obj['phone'] = $this->phone($obj['phone']);
+		$obj['contact:phone'] = $this->phone($obj['phone']);
 
 		$obj['name'] = 'Отделение связи №'.$obj['ref'];
 
@@ -134,6 +148,8 @@ class russian_post extends Validator
 
 		if (strpos($content, '<body>') && !strpos($content, '<table'))
 			$content = '-'; // сокращаем по-минимуму страницы без индекса
+		if (!strpos($content, ' 404. ')) // страница не найдена
+		if (!strpos($content, '<body onload="')) // кривая страница
 		file_put_contents($fname, $content);
 
 		return $content;
@@ -153,8 +169,8 @@ class russian_post extends Validator
 		if ($this->useCacheHtml) $reload = 0;
 		else
 		if (time() - filemtime($fname) < 3600*24*7) $reload = 0; // обновляли только что, поэтому больше не надо
-		else if ($this->updateHtml || mt_rand(0,9) == 0)
-			$reload = 1; // старые файлы обновляем с вероятностью 1/10
+		else if ($this->updateHtml || mt_rand(0,19) == 0)
+			$reload = 1; // старые файлы обновляем с вероятностью 1/20
 
 		if ($reload) return false;
 

@@ -8,6 +8,8 @@ class OsmFunctions
 	private   $timestamp   = '';
 	public    $useCachePbf  = false; // использовать только кеш
 
+	static    $prefix = '/home/cupivan/http/_.cupivan.ru/osm/validator/_/';
+
 	/** загрузка данных OSM */
 	public function loadOSM()
 	{
@@ -25,7 +27,11 @@ class OsmFunctions
 	{
 		$url = 'http://data.gis-lab.info/osm_dump/dump/latest';
 		$fname = $region.'.osm.pbf';
-		$remote_date = preg_replace('/.+?\nversion = ([^ ]+).+/s', '$1', file_get_contents("$url/$fname.meta"));
+
+		ob_start();
+		passthru("wget -q -O - $url/$fname.meta");
+		$st = ob_get_clean();
+		$remote_date = preg_replace('/.+?\nversion = ([^ ]+).+/s', '$1', $st);
 		if (!file_exists('../_/pbf')) mkdir('../_/pbf', 0777);
 		$local_date  = date('Y-m-d', @filemtime("../_/pbf/$fname"));
 		if ($remote_date != $local_date)
@@ -60,7 +66,7 @@ class OsmFunctions
 					".$this->osmosisFilter($fname, $filter)." \
 					--write-xml - compressionMethod=none \
 					| sed -r 's/uid.+?lat=/lat=/' \
-					| sed -r 's/ ver[^ ]+(.+\/>)/\1/' > ../_/$type/$osm"); // COMMENT: sed'ом убираем ненужные теги
+					> ../_/$type/$osm"); // COMMENT: sed'ом убираем ненужные теги
 			touch("../_/$type/$osm", filemtime("../_/pbf/$fname"));
 		}
 		return "../_/$type/$osm";
@@ -162,14 +168,17 @@ class OsmFunctions
 
 		$id  = preg_replace('/\D/', '', $id);
 		$h   = substr("$id", 0, 2);
-		$dir = "../_/_objects/$type/$h";
+		$dir = self::$prefix."/_objects/$type/$h";
 		@mkdir($dir, 0777, true);
 		$fname = "$dir/$id";
 
+		$page = '';
 		if (file_exists($fname))
 			$page = file_get_contents($fname);
-		else
+
+		if (!strpos($page, '</osm>'))
 		{
+			echo "// Download $id\n";
 //			$this->log("OSM API: $type$id");
 			if ($object != 'node') $id .= '/full';
 			$page = @file_get_contents("http://api.openstreetmap.org/api/0.6/$object/$id");
@@ -184,11 +193,14 @@ class OsmFunctions
 		$a = array();
 		$st = self::getOsmXML($id);
 		if (!$st) return $a;
+		try {
 		$osm = new SimpleXMLElement($st);
+		} catch (Exception $e) { echo "// Error parse XML for $id\n"; return $a; }
 		$item = ($id[0] == 'n') ? $osm->node : $osm->way;
 		foreach ($item->attributes() as $k => $v) $a[$k] = (string)$v;
 		foreach ($item->tag as $tag) $a[(string)$tag->attributes()['k']] = (string)$tag->attributes()['v'];
 		ksort($a);
+		$a['id'] = $id;
 		return $a;
 	}
 	/** получение центра площадного объекта */
@@ -196,7 +208,9 @@ class OsmFunctions
 	{
 		$st  = self::getOsmXML($id);
 		if (!$st) return array();
-		$osm = new SimpleXMLElement($st);
+		try {
+		$osm = @new SimpleXMLElement($st);
+		} catch (Exception $e) { echo "// Error parse XML for $id!\n"; return array(); }
 
 		// рассчитываем средние координаты для веев
 		$a = array('lat' => 0, 'lon' => 0); $n = 0;

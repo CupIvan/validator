@@ -22,7 +22,7 @@ class Validator extends OsmFunctions
 		if (!isset(static::$urls[$region])) throw new Exception('Unknow region!');
 		$this->region = $region;
 		$this->context = stream_context_create(array(
-			'http' => array('method' => 'GET', 'header' => "User-agent: OSM validator http://osm.cupivan.ru\r\n")
+			'http' => array('method' => 'GET', 'timeout' => 5, 'header' => "User-agent: OSM validator http://osm.cupivan.ru\r\n")
 		));
 	}
 	/** список областей */
@@ -231,10 +231,10 @@ class Validator extends OsmFunctions
 	/** создание объекта с нужными полями */
 	protected function makeObject($fields)
 	{
-		if (isset($fields['_addr']))
+		if (!empty($fields['_addr']))
 			$fields['_addr'] = trim(strip_tags($fields['_addr']));
 		// добавляем координаты
-		if (!isset($fields['lat']) && isset($fields['_addr']))
+		if (empty($fields['lat']) && !empty($fields['_addr']))
 		{
 			$geocoder = new Geocoder();
 			$fields += $geocoder->getCoordsByAddress($fields['_addr']);

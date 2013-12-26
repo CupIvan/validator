@@ -1,6 +1,19 @@
 <?php
 class Geocoder
 {
+	private $context = null;
+	static  $prefix  = '/home/cupivan/http/_.cupivan.ru/osm/validator/_/';
+
+	public function __construct()
+	{
+		$this->context = stream_context_create(
+			array('http' => array(
+				'method'  => 'GET',
+				'timeout' => 3,
+				'header'  => "User-agent: OSM geocoder http://osm.cupivan.ru\r\n"
+			))
+		);
+	}
 	/** геокодирование адреса */
 	public function getCoordsByAddress($st)
 	{
@@ -23,8 +36,8 @@ class Geocoder
 		$res = $this->load($st);
 		if ($res) return $res;
 
-		$res = @file_get_contents('http://osm.org.ru/api/autocomplete?'.
-		'q='.urlencode($st).'&email=cupivan@narod.ru&from=validator');
+		$url = 'http://osm.org.ru/api/autocomplete?q='.urlencode($st);
+		$res = @file_get_contents($url.'&email=cupivan@narod.ru&from=validator', false, $this->context);
 		if (!$res) { echo "Error geocode: $st\n"; return false; }
 
 		$res = json_decode($res, 1);
@@ -66,6 +79,6 @@ class Geocoder
 		else
 			$folder = '_/'.substr($md5, 0, 2);
 
-		return '../_/_geocoder/'.$folder."/$md5.sz";
+		return self::$prefix.'/_geocoder/'.$folder."/$md5.sz";
 	}
 }
