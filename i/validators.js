@@ -1125,6 +1125,13 @@ function osm_cl()
 			b = b.replace(/.*?"(.+?)".*/, '$1');
 		}
 
+		// не считаем ошибкой небольшое изменение населения
+		if (field == 'population')
+		{
+			if (Math.abs(a - b) < 100 || Math.abs(a - b) < a * 0.1)
+				b = a;
+		}
+
 		if (!a) return C_Empty;
 		return (a != b) ? C_Diff : C_Similar;
 	}
