@@ -1152,6 +1152,13 @@ function osm_cl()
 				b = a;
 		}
 
+		// считаем пгт и рабочий посёлок равнозначными
+		if (field == 'official_status')
+		{
+			a = a.replace('ru:рабочий поселок', 'ru:поселок городского типа');
+			b = b.replace('ru:рабочий поселок', 'ru:поселок городского типа');
+		}
+
 		if (!a) return C_Empty;
 		return (a != b) ? C_Diff : C_Similar;
 	}
