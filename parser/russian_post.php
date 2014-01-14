@@ -32,6 +32,7 @@ class russian_post extends Validator
 		'RU-VLA' => array(600, 602),
 		'RU-KIR' => array(610, 613),
 		'RU-PER' => array(614, 619),
+		'RU-NVS' => array(630, 633),
 		'RU-OMS' => array(644, 646),
 		'RU-KEM' => array(650, 654),
 		'RU-KYA' => array(660, 663),
