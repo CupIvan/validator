@@ -2,6 +2,7 @@ var osm = new osm_cl()
 	.region('Москва', 'RU-MOW')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
+		.validator('Театры',      'mos531')
 		.validator('Служба крови','blood')
 		.validator('Альфабанк',   'alfabank')
 		.validator('Промсбербанк','promsberbank')
@@ -303,6 +304,7 @@ var links = {
 	'podruzka':    'http://www.podrygka.ru/shops/find/',
 	'mvideo':      'http://www.mvideo.ru/shops/',
 	'blood':       'http://yadonor.ru/where.htm',
+	'mos531':      'http://data.mos.ru/datasets/531',
 _:0};
 
 var fields = {
@@ -337,6 +339,7 @@ var fields = {
 	'podruzhka':   ['_addr', 'operator', 'name', 'brand', 'contact:phone', 'contact:website', 'opening_hours'],
 	'mvideo':      ['_addr', 'ref', 'operator', 'name', 'brand', 'contact:phone', 'contact:website', 'opening_hours'],
 	'blood':       ['_addr', 'name', 'contact:phone', 'opening_hours', 'contact:website', 'contact:email', 'operator'],
+	'mos531':      ['_addr', 'name', 'contact:website', '_name'],
 _:0}
 
 C_Empty    = 1;
