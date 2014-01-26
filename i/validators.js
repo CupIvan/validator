@@ -25,6 +25,7 @@ var osm = new osm_cl()
 		.validator('Избёнка',     'izbenka')
 		.validator('Терволина',   'tervolina')
 		.validator('Подружка',    'podruzhka')
+		.validator('Магнит',      'magnit')
 	.region('Московская область', 'RU-MOS')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
@@ -50,6 +51,7 @@ var osm = new osm_cl()
 		.validator('Зоомагазин "4 лапы"', 'lapy4')
 		.validator('Терволина',   'tervolina')
 		.validator('Подружка',    'podruzhka')
+		.validator('Магнит',      'magnit')
 	.region('Санкт-Петербург', 'RU-SPE')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
@@ -141,11 +143,12 @@ var osm = new osm_cl()
 		.validator('Лукойл',   'lukoil')
 	.region('Калужская область', 'RU-KLU')
 		.validator('Населенные пункты', 'wiki_places')
-		.validator('Сбербанк', 'sberbank')
+		.validator('Сбербанк',    'sberbank')
 		.validator('Газпромнефть','gazprom')
 		.validator('Промсбербанк','promsberbank')
 		.validator('Дикси',       'diksi')
 		.validator('Перекресток', 'perekrestok')
+		.validator('Магнит',      'magnit')
 	.region('Кемеровская область', 'RU-KEM')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
@@ -163,6 +166,7 @@ var osm = new osm_cl()
 		.validator('Служба крови', 'blood')
 		.validator('Лукойл',       'lukoil')
 		.validator('Роснефть',     'rosneft')
+		.validator('Магнит',       'magnit')
 	.region('Красноярский край', 'RU-KYA')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
@@ -287,6 +291,7 @@ var links = {
 	'diksi':       'http://dixy.ru/shops',
 	'bashneft':    'http://www.bashneft-azs.ru/network_azs/',
 	'atak':        'http://www.ataksupermarket.ru/atak.html?rid=1',
+	'magnit':      'http://www.magnit-info.ru/buyers/adds/list.php?SECTION_ID=1258',
 	'auchan':      'http://www.auchan.ru/ru/moscow',
 	'farmlend':    'http://www.farmlend.ru/apteki/',
 	'izbenka':     'http://vkusvill.ru/shops/shoplist/',
@@ -319,6 +324,7 @@ var fields = {
 	'diksi':       ['_addr', 'operator', 'name', 'payment:cards', 'opening_hours'],
 	'bashneft':    ['_addr', 'ref', 'operator', 'brand', 'name', 'payment:cards', 'payment:fuel_cards', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg'],
 	'atak':        ['_addr', 'operator', 'brand', 'name', 'phone', 'website', 'opening_hours'],
+	'magnit':      ['_addr', 'operator', 'name', 'website', 'opening_hours'],
 	'auchan':      ['_addr', 'ref', 'operator', 'brand', 'name', 'website', 'opening_hours'],
 	'farmlend':    ['_addr', 'ref', 'operator', 'phone', 'website', 'dispensing'],
 	'izbenka':     ['_addr', 'operator', 'brand', 'name', 'website', 'opening_hours'],
