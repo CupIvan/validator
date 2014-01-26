@@ -332,7 +332,7 @@ var fields = {
 	'izbenka':     ['_addr', 'operator', 'brand', 'name', 'website', 'opening_hours'],
 	'minbank':     ['_addr', 'operator', 'name', 'website', 'opening_hours'],
 	'lapy4':       ['_addr', 'name', 'phone', 'opening_hours', 'pets', 'aquarium', 'veterinary', 'grooming', 'payment:cards', 'website'],
-	'wiki_places': ['name', 'name:ru', 'official_status', 'place', 'population', '_population2013', '_population2012', '_population2010', 'wikipedia', 'old_name', 'contact:website', 'addr:postcode', 'okato:user', 'addr:country', 'addr:region', 'addr:district'],
+	'wiki_places': ['name', 'name:ru', 'official_status', 'place', 'abandoned:place', 'population', 'population:date', '_population2013', '_population2012', '_population2010', 'wikipedia', 'old_name', 'contact:website', 'addr:postcode', 'okato:user', 'addr:country', 'addr:region', 'addr:district'],
 	'auto49':      ['_addr', 'operator', 'brand', 'phone', 'website', 'opening_hours', 'payment:cards'],
 	'mkb':         ['_addr', 'operator', 'department', 'name', 'contact:phone', 'contact:website', 'opening_hours'],
 	'tervolina':   ['_addr', 'operator', 'name', 'brand', 'phone', 'website', 'opening_hours'],
@@ -629,9 +629,11 @@ function osm_cl()
 				.replace('name:ru',   'Русское')
 				.replace('name',      'Название')
 				.replace('addr:postcode', 'Индекс')
+				.replace('abandoned:place', '<span title="abandoned">a:place</span>')
 				.replace('community:gender', '<span title="community:gender">Пол</span>')
 				.replace('official_status', 'Статус')
 				.replace('addr:country', '<span title="Страна">RU</span>')
+				.replace('population:date', '<span title="Год переписи">Год</span>')
 				.replace('population', '<span title="Население">Нас.</span>')
 				.replace('_addr', 'Адрес');
 			st += j+'</th>';
@@ -942,7 +944,7 @@ function osm_cl()
 			data[minObjId]._used = (data[minObjId]._used || 0) + 1;
 			if (!data[minObjId]._used_name) data[minObjId]._used_name = '';
 			data[minObjId]._used_name += '\n'+(a['name:ru'] || a['name'])+
-				' (lat='+(Math.round(a.lat*1000)/1000)+'&lon='+(Math.round(a.lon*1000)/1000)+');';
+				' (ref='+a[ref]+', lat='+(Math.round(a.lat*1000)/1000)+', lon='+(Math.round(a.lon*1000)/1000)+');';
 		}
 
 		return minObjId < 0 ? null : data[minObjId];
@@ -1024,6 +1026,9 @@ function osm_cl()
 				if (k == 'phone')   a[k = 'contact:phone'] = v;
 				if (k == 'website') a[k = 'contact:website'] = v;
 
+				// пропускаем неправильный ОКАТО
+				if (k == 'okato:user' && v == '46') continue;
+
 				url += (url?'|':'')+encodeURIComponent(k)+'='+encodeURIComponent(v);
 			}
 		if (!url) return '';
@@ -1033,6 +1038,7 @@ function osm_cl()
 		{
 			i = 'phone';   if (b[i] && a['contact:'+i]) url += '|'+i+'=%20';
 			i = 'website'; if (b[i] && a['contact:'+i]) url += '|'+i+'=%20';
+			i = 'population:year'; if (b[i] && a['population:date']) url += '|'+i+'=%20';
 		}
 
 		var d; if (a.id.charAt(0) != 'n') d = 0.001; // FIXME: лучше передавать координату одного из угла, чтобы загружался только один объект!
@@ -1069,7 +1075,7 @@ function osm_cl()
 		$('josm').src = 'http://localhost:8111/load_and_zoom?'+coords;
 	}
 
-	// поиск по адресу в яндекса
+	// поиск по адресу в яндекс картах
 	this.link_yasearch = function(st)
 	{
 		return '<a href="/OSMvsNarod.html#q='+st+'" target="_blank" title="Поиск адреса в НЯКе">'+
@@ -1088,8 +1094,8 @@ function osm_cl()
 */
 		if (!osm) osm = {};
 		var a = osm[field] || '', b = real[field];
-		if (!b || field.charAt(0) == '_') return C_Skip;
-		if (a == b) return C_Equal;
+		if (b === '' || b == undefined || field.charAt(0) == '_') return C_Skip;
+		if (a === b) return C_Equal;
 
 		a = (''+a).replace(/ё/g, 'е');
 		b = (''+b).replace(/ё/g, 'е');
@@ -1161,8 +1167,13 @@ function osm_cl()
 		if (field == 'population')
 		{
 			if (Math.abs(a - b) < 100 || Math.abs(a - b) < a * 0.1)
-				b = a;
+				return C_Similar;
 		}
+
+		// не считаем ошибкой незаданную дату переписи населения
+		if (field == 'population:date')
+		if (a === '' && b)
+			return C_Similar;
 
 		// считаем пгт и рабочий посёлок равнозначными
 		if (field == 'official_status')
@@ -1170,6 +1181,10 @@ function osm_cl()
 			a = a.replace('ru:рабочий поселок', 'ru:поселок городского типа');
 			b = b.replace('ru:рабочий поселок', 'ru:поселок городского типа');
 		}
+
+		// перечисление строк через запятую и точку с запятой равнозначно
+		a = a.replace(/[,;]\s+/g, ';');
+		b = b.replace(/[,;]\s+/g, ';');
 
 		if (!a) return C_Empty;
 		return (a != b) ? C_Diff : C_Similar;
@@ -1240,7 +1255,8 @@ function osm_cl()
 						break;
 					}
 			}
-			if (v == '?') v = osm[fields[i]] || real[fields[i]] || '?'; // COMMENT: нужно для вывода _addr
+			if (v == '?') v = osm[fields[i]] || real[fields[i]]; // COMMENT: нужно для вывода _addr
+			if (v === '' || v == undefined) v = '?';
 
 			if (fields[i] == '_addr')
 			{

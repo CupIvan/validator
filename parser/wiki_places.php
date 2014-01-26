@@ -54,12 +54,14 @@ class wiki_places extends Validator
 		'old_name'   => '',
 		'official_status' => '',
 		'population' => '',
+		'population:date' => '',
 		'_population2010'=> '', // население из переписи
 		'_population2012'=> '',
 		'_population2013'=> '',
 		'okato:user' => '',
 		'wikipedia'  => '',
 		'contact:website' => '',
+		'abandoned:place' => '',
 		'lat'   => '',
 		'lon'   => '',
 		);
@@ -147,6 +149,7 @@ class wiki_places extends Validator
 
 		$st = str_replace('{{НП2',       '{{НП-Россия', $st);
 		$st = str_replace('{{НП+Россия', '{{НП-Россия', $st);
+
 		if (!mb_strpos($st, '{{НП-')) { if (!$title) $title = urldecode($this->url); $this->log("Error parse '$title'!"); return false; }
 
 		// названия на других языках
@@ -160,6 +163,7 @@ class wiki_places extends Validator
 		$st = preg_replace("#<table.+?</table>#s", '', $st); // вырезаем предпросмотр старых изменений
 		$st = substr($st, strpos($st, '<textarea')-9, 5000);
 		$st = strip_tags($st);
+
 		$st = preg_replace("#.+?({{НП-Россия.+?\n}}.+?\n)== .+#s", '$1', "$st\n==  ");
 		$st = preg_replace("#({{НП-Россия.*\|)(.+)#", "$1\n|статус = $2", $st); // параметры без имени
 		$st = preg_replace("#({{НП-Россия.*\|)(.+)#", "$1\n|русское название = $2", $st);
@@ -173,16 +177,18 @@ class wiki_places extends Validator
 		$st = preg_replace("# +#", ' ', $st);
 		$st =  str_replace(array('у́', 'я́', 'а́', 'и́', '́', "'"), array('у', 'я', 'а', 'и', '', ""), $st); // убираем ударения
 
-		if (preg_match('#\|русское название\s*=\s*(.+)#', $st, $m)) $obj['name:ru']    = trim(strip_tags($m[1]));
+		if (preg_match('#\|русское название\s*=\s*([^|]+)#', $st, $m)) $obj['name:ru']    = trim(strip_tags($m[1]));
 		if (preg_match('#\|оригинальное название\s*=\s*\{{lang-(.{2})\|(.+?)}}#', $st, $m)) $obj['name:'.$m[1]] = trim($m[2]);
-		if (preg_match('#\|статус\s*=\s*(.+)#', $st, $m))             $obj['official_status'] = 'ru:'.($p['st'] = trim(mb_strtolower($m[1])));
+		if (preg_match('#\|статус\s*=\s*([^|]+)#', $st, $m))             $obj['official_status'] = 'ru:'.($p['st'] = trim(mb_strtolower($m[1])));
 		if (preg_match('#\|почтовый индекс\s*=\s*(\d{5}[1-9])#', $st, $m)) $obj['addr:postcode']   = $m[1]; // COMMENT: 0 на конце признак нескольких индексов у города
-		if (preg_match('#\|регион\s*=\s*(.*)#', $st, $m))             $obj['addr:region']   = trim($m[1]);
+		if (preg_match('#\|регион\s*=\s*([^|]*)#', $st, $m))             $obj['addr:region']   = trim($m[1]);
 		if (preg_match('#\|район\s*=\s*([^|]+?район)#', $st, $m))     $obj['addr:district'] = trim($m[1]);
 		if (preg_match('#\|сайт\s*=\s*(http://.+?)/?$#m', $st, $m))   $obj['contact:website'] = trim($m[1]);
 		if (preg_match('#\|цифровой идентификатор\s*=\s*(\d+)#', $st, $m)) $obj['okato:user'] = $m[1];
-		if (preg_match('#\|вид поселения\s*=(.*)#', $st, $m))         $obj['place_type'] = mb_strtolower(trim($m[1]));
-		if (preg_match('#\|население\s*=.+?(\d[\d ,.]*)(.*?(?<m>|тыс|млн))#', $st, $m))
+		if (preg_match('#\|вид поселения\s*=([^|]*)#', $st, $m))           $obj['place_type'] = mb_strtolower(trim($m[1]));
+		if (preg_match('#\|население\s*=.*?(\d+)#', $st, $m))              $obj['population'] = $m[1];
+		if (preg_match('#\|год переписи\s*=.*?(\d+)#', $st, $m))           $obj['population:date'] = $m[1];
+		if (preg_match('#\|население\s*=.+?(\d[0-9 ,.]*)(.*?(?<m>|тыс|млн))#', $st, $m))
 		{
 			$obj['population'] = (float)str_replace(array(' ',','), array('','.'), $m[1]);
 			// COMMENT: если население указано в тысячах - домножаем
@@ -191,11 +197,26 @@ class wiki_places extends Validator
 		}
 		if ($title) $obj['wikipedia'] = "ru:$title";
 
+		// население задано через шаблон - пытаемся распознать его из карточки
+		if (strpos($st, '{{ Население'))
+		{
+			$st_ = $this->download($this->domain.str_replace(['/wiki/', '?action=edit'], ['/wiki/ru:', ''], $this->url));
+			if (preg_match('#Население</td>.+?<td.+?\>(.+?)</td>#su', $st_, $m))
+			{
+				if (preg_match('#(\d+) год#su', $m[0], $m_))
+					$obj['population:date'] = $m_[1];
+				$pop = strip_tags($m[0]);
+				$pop = preg_replace('#\D*(\d+).*#', ' $1 ', $pop);
+				$obj['population'] = (float)$pop;
+			} else unset($obj['population']);
+		}
+
 		// TODO: прежние имена
 		if (preg_match('#\|прежние имена\s*=\s*([^|]+)#u', $st, $m))
 		{
 			$obj['old_name'] = trim(strip_tags($m[1]));
 			if (strpos($obj['old_name'], '{{') !== false) $obj['old_name'] = '';
+			$obj['old_name'] = preg_replace('/,\s+/', ';', $obj['old_name']);
 		}
 
 		// координаты
@@ -219,7 +240,7 @@ class wiki_places extends Validator
 		$st = preg_replace('#{{[^{]+?}}#s', '', $st);
 		$st = preg_replace('#{{[^{]+?}}#s', '', $st);
 
-		if (!empty($obj['population']))
+		if (isset($obj['population']))
 		$p['pop']          = $obj['population'];
 		$p['adm_center']   = strpos($st, 'административный центр');
 		$p['adm_subject']  = preg_match('#центр.+?(области|края|республики)#', $st);
@@ -233,7 +254,11 @@ class wiki_places extends Validator
 		$p['pgt'] = ($s == 'посёлок городского типа') || ($s == 'рабочий посёлок') || ($s == 'дачный посёлок');
 
 		// населенные пункты
-		if ($p['pop'] === 0) $obj['place'] = 'locality';
+		if ($p['pop'] === 0.0)
+		{
+			$obj['place'] = 'locality';
+			$obj['abandoned:place'] = ($p['st'] == 'хутор') ? 'isolated_dwelling' : 'hamlet';
+		}
 		else
 		if (0
 			|| ($p['pop'] > 100000*0.9)
@@ -243,7 +268,7 @@ class wiki_places extends Validator
 		if (0
 			|| ($p['st'] == 'город')
 			|| ($p['adm_center'] && $p['pop'] > 4000*0.9 && $p['adm_district'])
-			|| ($p['adm_center'] && $p['pop'] > 2000*0.9 && $p['pgt'])
+			|| ($p['adm_center'] && $p['pop'] > 2000*0.9 && $p['adm_district'] && $p['pgt'])
 			|| ($p['pop'] > 5000*0.9 && $p['pgt'])
 			|| ($p['pop'] > 8000*0.9 && $p['selo'])
 		) $obj['place'] = 'town';
@@ -284,8 +309,8 @@ class wiki_places extends Validator
 				$obj['_population'.$m[1]] = (int)$m['N'];
 		}
 
-		if (!empty($obj['_population2010'])) $obj['population'] = $obj['_population2010'];
-		if (!empty($obj['_population2012'])) $obj['population'] = $obj['_population2012'];
-		if (!empty($obj['_population2013'])) $obj['population'] = $obj['_population2013'];
+		if (!empty($obj['_population2010'])) { $obj['population:date'] = 2010; $obj['population'] = $obj['_population2010']; }
+		if (!empty($obj['_population2012'])) { $obj['population:date'] = 2012; $obj['population'] = $obj['_population2012']; }
+		if (!empty($obj['_population2013'])) { $obj['population:date'] = 2013; $obj['population'] = $obj['_population2013']; }
 	}
 }

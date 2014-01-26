@@ -242,12 +242,12 @@ class Validator extends OsmFunctions
 
 		$obj = array();
 		foreach ($this->fields as $k => $v)
-			if (isset($fields[$k]) && $fields[$k])
-				$obj[$k] = $fields[$k];
+			if (isset($fields[$k]) && $fields[$k] !== '')
+				$obj[$k] = ''.$fields[$k];
 			else
 			{
 				if (is_array($v)) $v = @$v[$this->region];
-				if ($v) $obj[$k] = $v;
+				if ($v) $obj[$k] = ''.$v;
 			}
 		return $obj;
 	}
