@@ -252,8 +252,9 @@ var osm = new osm_cl()
 		.validator('Сбербанк', 'sberbank')
 	.region('Ульяновская область', 'RU-ULY')
 		.validator('Населенные пункты', 'wiki_places')
-		.validator('Сбербанк', 'sberbank')
-		.validator('Почта',    'russian_post')
+		.validator('Сбербанк',    'sberbank')
+		.validator('Почта',       'russian_post')
+		.validator('Поликлиники', 'ulgov27')
 	.region('Хабаровский край', 'RU-KHA')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
@@ -305,6 +306,7 @@ var links = {
 	'mvideo':      'http://www.mvideo.ru/shops/',
 	'blood':       'http://yadonor.ru/where.htm',
 	'mos531':      'http://data.mos.ru/datasets/531',
+	'ulgov27':     'http://data.ulgov.ru/index/data/id/27/',
 _:0};
 
 var fields = {
@@ -340,6 +342,7 @@ var fields = {
 	'mvideo':      ['_addr', 'ref', 'operator', 'name', 'brand', 'contact:phone', 'contact:website', 'opening_hours'],
 	'blood':       ['_addr', 'name', 'contact:phone', 'opening_hours', 'contact:website', 'contact:email', 'operator'],
 	'mos531':      ['_addr', 'name', 'contact:website', '_name'],
+	'ulgov27':     ['_addr', 'name', 'ref', 'contact:phone', '_name'],
 _:0}
 
 C_Empty    = 1;
