@@ -170,9 +170,9 @@ class Validator extends OsmFunctions
 		$st = ' '.strip_tags(mb_strtolower($st, 'utf-8')).' ';
 		if (mb_stripos($st, 'круглос')) $st = '24/7';
 		$st = str_replace(
-			array('выходной', 'будни', 'выходные', 'ежедневно', ' ', 'c', ' и ', ' в ',
+			array('выходной', 'будни', 'выходные', 'ежедневно', 'круглосуточно', ' ', 'c', ' и ', ' в ',
 				' до ', ' по ', ',', '.', '&ndash;', '&mdash;', '&nbsp;', '–'),
-			array('off',      'Mo-Fr', 'Sa-Su',    'Mo-Su',     ' ', 'с', ', ',  ' ',
+			array('off',      'Mo-Fr', 'Sa-Su',    'Mo-Su',     'Mo-Su',         ' ', 'с', ', ',  ' ',
 				'-',    '-',    ';', '', '-', '-', ' ', '-'), $st);
 		$st = preg_replace('#(\D)(\d{1,2})\s*-\s*(\d{1,2})\s#', '$1$2:00-$3:00', $st);
 		$st = preg_replace(
@@ -257,6 +257,34 @@ class Validator extends OsmFunctions
 		$t1 = $this->region == $region;   // совпадение по региону
 		$t2 = preg_match("/$city/u", $text); // совпадение по адресу
 		return ($t1 && $t2) || (!$t1 && !$t2)? 1 : 0; // оба совпали или оба не совпали
+	}
+	/** преобразование html таблицы в массив */
+	protected function htmlTable2Array($html)
+	{
+		$a = [];
+		$rowId = 0; $columnId = 0; $rowspan = []; $colspan = [];
+		foreach (new SimpleXMLElement($html) as $tr)
+		{
+			$a[$rowId] = []; $columnId = 0;
+			foreach ($tr->td as $td)
+			{
+				$value = (string)$td;
+
+				while (!empty($rowspan[$columnId]))
+				{
+					$a[$rowId][$columnId] = trim($rowspan[$columnId][1]);
+					if (--$rowspan[$columnId][0] < 1) unset($rowspan[$columnId]);
+					$columnId++;
+				}
+				if ($n = (int)($td->attributes()['rowspan']))
+					$rowspan[$columnId] = [$n-1, $value];
+
+				$a[$rowId][$columnId] = trim($value);
+				$columnId++;
+			}
+			$rowId++;
+		}
+		return $a;
 	}
 	/** добавление объекта во время парсинга страницы */
 	protected function addObject($object)

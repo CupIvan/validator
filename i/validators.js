@@ -2,6 +2,7 @@ var osm = new osm_cl()
 	.region('Москва', 'RU-MOW')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
+		.validator('Почтоматы',   'russian_postomat')
 		.validator('Театры',      'mos531')
 		.validator('Служба крови','blood')
 		.validator('Альфабанк',   'alfabank')
@@ -31,6 +32,7 @@ var osm = new osm_cl()
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
+		.validator('Почтоматы',   'russian_postomat')
 		.validator('Служба крови','blood')
 		.validator('Альфабанк',   'alfabank')
 		.validator('Промсбербанк','promsberbank')
@@ -56,6 +58,7 @@ var osm = new osm_cl()
 	.region('Санкт-Петербург', 'RU-SPE')
 		.validator('Сбербанк',    'sberbank')
 		.validator('Почта',       'russian_post')
+		.validator('Почтоматы',   'russian_postomat')
 		.validator('Служба крови','blood')
 		.validator('Перекресток', 'perekrestok')
 		.validator('Роснефть',    'rosneft')
@@ -195,6 +198,7 @@ var osm = new osm_cl()
 	.region('Новосибирская область', 'RU-NVS')
 		.validator('Сбербанк', 'sberbank')
 		.validator('Почта',    'russian_post')
+		.validator('Почтоматы','russian_postomat')
 	.region('Омская область', 'RU-OMS')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',          'sberbank')
@@ -233,6 +237,7 @@ var osm = new osm_cl()
 	.region('Свердловская область', 'RU-SVE')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
+		.validator('Почтоматы','russian_postomat')
 	.region('Ставропольский край', 'RU-STA')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк', 'sberbank')
@@ -287,6 +292,7 @@ var links = {
 	'lukoil':      'http://www.lukoil.ru/new/azslocator',
 	'rosneft':     'http://www.rosneft.ru/Downstream/petroleum_product_sales/servicestations/',
 	'russian_post':'http://www.russianpost.ru/rp/servise/ru/home/postuslug/searchops1',
+	'russian_postomat':'http://www.russianpost.ru/rp/servise/ru/home/postuslug/pochtomats/adres_pochtomata',
 	'autopasker':  'http://avtopasker.ru/info/list.php?town=all',
 	'promsberbank':'http://www.promsbank.ru/contact',
 	'temples':     'http://www.temples.ru/tree.php',
@@ -322,6 +328,7 @@ var fields = {
 	'lukoil':      ['_addr', 'ref', 'operator', 'brand', 'contact:website', 'opening_hours', 'payment:cards', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:diesel', 'fuel:lpg', 'car_wash', 'shop', 'toilets', 'compressed_air'],
 	'rosneft':     ['_addr', 'ref', 'operator', 'brand', 'website', 'opening_hours', 'fuel:octane_98', 'fuel:octane_95', 'fuel:octane_92', 'fuel:octane_80', 'fuel:diesel'],
 	'russian_post':['_addr', 'ref', 'operator', 'name', 'contact:website', 'contact:phone', 'opening_hours', '_name'],
+	'russian_postomat':['_addr', 'ref', 'postal_code', 'operator', '_inside', 'opening_hours'],
 	'autopasker':  ['_addr', 'operator', 'brand', 'phone', 'website', 'opening_hours', 'payment:cards'],
 	'promsberbank':['_addr', 'ref', 'operator', 'name', 'website', 'phone', '_data'],
 	'temples':     ['_addr', 'ref:temples.ru', 'start_date', 'name', 'alt_name', 'community:gender', 'building', 'disused', 'denomination', 'denomination:ru', 'russian_orthodox', 'religion', 'phone'],

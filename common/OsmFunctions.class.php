@@ -148,7 +148,8 @@ class OsmFunctions
 		foreach ($a as $v)
 			if (mb_stripos(" $v", $filter)) { $ok = 1; break; }
 
-		if (!$ok && !isset($a['name']) && !isset($a['operator'])) $ok = 1; // анонимные объекты тоже сохраняем
+		// COMMENT: анонимные объекты тоже сохраняем
+		if (!$ok && !isset($a['name']) && !isset($a['operator'])) $ok = 1;
 
 		if (!$ok) return;
 
