@@ -197,6 +197,13 @@ class wiki_places extends Validator
 		}
 		if ($title) $obj['wikipedia'] = "ru:$title";
 
+		// нормализируем название города, названного в чью-то честь
+		if (preg_match('#(имени|станции|турбазы|дома отдыха|племхоза|хозяйства) #ui', @$obj['name:ru']))
+		{
+			$obj['name:ru'] = $obj['official_status'].' '.$obj['name:ru'];
+			$obj['name:ru'] = str_replace(['ru:', 'городского типа '], ['', ''], $obj['name:ru']);
+		}
+
 		// население задано через шаблон - пытаемся распознать его из карточки
 		if (strpos($st, '{{ Население'))
 		{
