@@ -46,6 +46,7 @@
 
 	#date { color: #999; font-size: 80%; }
 	#search_ref { width: 80px; }
+	#wiki_note  { display: none; background: #FAA; padding: 10px; margin: 10px 0; }
 
 	#help { background: #F9F9F9; border: 2px solid #999; padding: 0px 20px; display: none; }
 
@@ -99,7 +100,9 @@
 	<span id="date"></span>
 </div>
 <div id="checkJosm"></div>
-<div id="state" class="hidden" style="display: none;"></div>
+<div id="wiki_note"><b>Внимание!</b> Если вы меняете тег place или name на точке, поменяйте его
+	<a href="/places/errors/">также и на контуре</a>!</div>
+<div id="state"  class="hidden" style="display: none;"></div>
 <div id="filter" class="hidden" style="display: none;">
 	<span id="city"></span>
 	<input id="search"     placeholder="Поиск по адресу" onkeyup="osm.searchByName(this.value)">

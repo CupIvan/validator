@@ -437,6 +437,8 @@ function osm_cl()
 		$('search').value = '';
 		$('validate', '');
 
+		style('wiki_note', 'display: '+(x=='wiki_places'?'block':'none'));
+
 		this.loaded_objects = {};
 
 		// добавляем инфу о времени последнего обновления
