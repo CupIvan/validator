@@ -28,6 +28,7 @@ var osm = new osm_cl()
 		.validator('Терволина',   'tervolina')
 		.validator('Подружка',    'podruzhka')
 		.validator('Магнит',      'magnit')
+		.validator('Кофе Хауз',   'coffeehouse')
 	.region('Московская область', 'RU-MOS')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
@@ -313,6 +314,7 @@ var links = {
 	'blood':       'http://yadonor.ru/where.htm',
 	'mos531':      'http://data.mos.ru/datasets/531',
 	'ulgov27':     'http://data.ulgov.ru/index/data/id/27/',
+	'coffeehouse': 'http://www.coffeehouse.ru/adress/',
 _:0};
 
 var fields = {
@@ -350,6 +352,7 @@ var fields = {
 	'blood':       ['_addr', 'name', 'contact:phone', 'opening_hours', 'contact:website', 'contact:email', 'operator'],
 	'mos531':      ['_addr', 'name', 'contact:website', '_name'],
 	'ulgov27':     ['_addr', 'name', 'ref', 'contact:phone', '_name'],
+	'coffeehouse': ['name', 'name:en', 'opening_hours', 'cuisine', 'internet_access', 'internet_access:fee', 'payment:cards', 'contact:website', 'operator'],
 _:0}
 
 C_Empty    = 1;
@@ -640,6 +643,7 @@ function osm_cl()
 				.replace('old_name',  '<span title="Прежнее название">Прежн.</span>')
 				.replace('name:ru',   'Русское')
 				.replace('name',      'Название')
+				.replace('internet_access', '<span title="Доступ в интернет">www</span>')
 				.replace('addr:postcode', 'Индекс')
 				.replace('abandoned:place', '<span title="abandoned">a:place</span>')
 				.replace('community:gender', '<span title="community:gender">Пол</span>')
