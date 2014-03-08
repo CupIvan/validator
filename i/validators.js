@@ -29,6 +29,8 @@ var osm = new osm_cl()
 		.validator('Подружка',    'podruzhka')
 		.validator('Магнит',      'magnit')
 		.validator('Кофе Хауз',   'coffeehouse')
+		.validator('IL Патио',    'ilpatio')
+		.validator('Планета Cуши','planetasushi')
 	.region('Московская область', 'RU-MOS')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
@@ -71,6 +73,8 @@ var osm = new osm_cl()
 		.validator('МИнБ',        'minbank')
 		.validator('Церкви',      'temples')
 		.validator('Авто49',      'auto49')
+		.validator('IL Патио',    'ilpatio')
+		.validator('Планета Cуши','planetasushi')
 	.region('Ленинградская область', 'RU-LEN')
 		.validator('Населенные пункты', 'wiki_places')
 		.validator('Сбербанк',    'sberbank')
@@ -315,6 +319,8 @@ var links = {
 	'mos531':      'http://data.mos.ru/datasets/531',
 	'ulgov27':     'http://data.ulgov.ru/index/data/id/27/',
 	'coffeehouse': 'http://www.coffeehouse.ru/adress/',
+	'ilpatio':     'http://www.rosinter.ru/locator/?brand=Ilpatio',
+	'planetasushi':'http://www.rosinter.ru/locator/?brand=PlanetSushi',
 _:0};
 
 var fields = {
@@ -353,6 +359,8 @@ var fields = {
 	'mos531':      ['_addr', 'name', 'contact:website', '_name'],
 	'ulgov27':     ['_addr', 'name', 'ref', 'contact:phone', '_name'],
 	'coffeehouse': ['name', 'name:en', 'opening_hours', 'cuisine', 'internet_access', 'internet_access:fee', 'payment:cards', 'contact:website', 'operator'],
+	'ilpatio':     ['name', 'opening_hours', 'cuisine', 'contact:website', 'contact:phone', '_addr'],
+	'planetasushi':['name', 'opening_hours', 'cuisine', 'contact:website', 'contact:phone', '_addr'],
 _:0}
 
 C_Empty    = 1;
