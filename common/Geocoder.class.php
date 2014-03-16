@@ -6,11 +6,25 @@ class Geocoder
 	{
 		$st = preg_replace('/ /',   ' ', $st);
 		$st = preg_replace('/([\.,;])(\S)/u', '$1 $2', $st); // после знака препинания пробел, а то глюки
-		$st = str_replace('пр-т', 'проспект', $st);
-		$st = str_replace('с.',   'село',     $st);
+		$st = str_replace(' пр-т', ' проспект', $st);
+		$st = str_replace(' пр.', ' проспект', $st);
+		$st = str_replace(' ул.', ' улица', $st);
+		$st = str_replace(' пл.', ' площадь', $st);
+		$st = str_replace(' пер.', ' переулок', $st);
+		$st = str_replace(' с.',   ' село',     $st);
+		$st = str_replace(' п.',   ' поселок',     $st);
+		$st = str_replace(' пос.',   ' поселок',     $st);
 		$st = str_replace('Республика', ' ', $st);
+		$st = str_replace(' р-н', ' район', $st);
+		$st = str_replace('дом', ' ', $st);
+		$st = str_replace('д.', ' ', $st);
+		$st = str_replace(' г.', ' ', $st);
+		
+		if (strpos($st, 'улица') === FALSE)
+		{
+		  $st = str_replace(' ул', ' улица', $st);
+		}
 		$st = preg_replace('/\s+/', ' ', $st);
-
 		$res = $this->geocode($st);
 		if (!isset($res['matches'][0]['lat'])) return array();
 		$res = array_intersect_key($res['matches'][0], array('lat'=>0, 'lon'=>0));
@@ -19,16 +33,13 @@ class Geocoder
 	}
 	/** геокодирование */
 	private function geocode($st)
-	{
+	{	
 		$res = $this->load($st);
 		if ($res) return $res;
-
-		$res = @file_get_contents('http://osm.org.ru/api/autocomplete?'.
-		'q='.urlencode($st).'&email=cupivan@narod.ru&from=validator');
+		$res = @file_get_contents('http://openstreetmap.ru/api/autocomplete?q='.urlencode($st).'&email=cupivan@narod.ru&from=validator');
 		if (!$res) { echo "Error geocode: $st\n"; return false; }
 
 		$res = json_decode($res, 1);
-
 		$this->save($st, $res);
 
 		return $res;
