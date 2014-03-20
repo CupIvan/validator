@@ -17,17 +17,17 @@ class maria_ra extends Validator
 		'shop'  => 'supermarket',
 		'name'     => 'Мария-Ра',
 		'operator' => 'ООО "Розница-1"',
-		'website'  => 'http://www.maria-ra.ru/',
+		'contact:website'  => 'http://www.maria-ra.ru',
 		'ref'      => '',
 		'opening_hours' => '',
-		'phone' => '',
+		'contact:phone' => '',
 		'lat'   => '',
 		'lon'   => '',
 		'_name' => '',
 		'_addr' => '',
 		);
 	// фильтр для поиска объектов в OSM
-	protected $filter = array('shop=supermarket', 'мария');
+	protected $filter = array('shop=supermarket', 'Мария');
 
 	/** обновление данных по региону */
 	public function update()
@@ -37,8 +37,10 @@ class maria_ra extends Validator
 
 		//определяем число страниц
 		$page = $this->download($this->domain.$url);		
-		preg_match('/modern.page.dots.+?PAGEN_1.+?PAGEN_1=(?<pages>\d+)"/s', $page, $obj);
-		$pages = intval($obj['pages']);
+		if (preg_match('/modern.page.dots.+?PAGEN_1.+?PAGEN_1=(?<pages>\d+)"/s', $page, $obj))
+		    $pages = intval($obj['pages']);
+        else
+            $pages = 1;
 
 		for ($i = 1; $i <= $pages; $i++)
 		{
@@ -56,7 +58,6 @@ class maria_ra extends Validator
         $cityBody = preg_split('#'
             .'(<h4>.+?</h4>)'
             .'#su', $st);
-
         foreach ($places['city'] as $i => $city)
         {
             preg_match_all('#'
@@ -67,9 +68,14 @@ class maria_ra extends Validator
                 .'.+?'
                 .'<b>(?<type>.+?),(?<time>.+?)</b>'
                 .'.+?'
+                .'<p><b>Контакты</b></p>'
+                .'.+?'
+                .'<p>(?<phone>.+?)</p>'
+                .'.+?'
                 .'<div class="coordmag">(?<lat>.+?),(?<lon>.+?)</div>'
                 .'.+?'
                 .'#su', $cityBody[$i + 1], $shops);
+
 
             for ($j = 0; $j < count($shops['address']); $j++)
             {
@@ -78,7 +84,7 @@ class maria_ra extends Validator
                 $hours = $this->time($hours);
                 $obj = array();
                 $obj['_addr'] = static::$urls[$this->region][1].', '.$city.', '.$shops['address'][$j];
-                print $obj['_addr']."\n";
+                $obj['contact:phone'] = $this->phone("+7".$shops['phone'][$j]);
                 $obj['opening_hours'] = $hours;
 //                Координаты на сайте получены геокодером Яндекса. Ещё и криво получены.
 //                $obj['lat'] = $shops['lat'][$j];

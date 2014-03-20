@@ -19,7 +19,7 @@ class novex extends Validator
 		'operator' => 'ООО "Новэкс"',
 		'ref'      => '',
 		'opening_hours' => '',
-		'phone' => '',
+		'contact:phone' => '',
 		'lat'   => '',
 		'lon'   => '',
 		'_name' => '',
@@ -58,8 +58,8 @@ class novex extends Validator
                 {
                     $obj = array();
                     $obj['_addr'] = $shops['_addr'][$j];
-                    $obj['phone'] = $this->phone($shops['phone'][$j]);
-                    $obj['website'] = $shops['website'][$j];
+                    $obj['contact:phone'] = $this->phone($shops['phone'][$j]);
+                    $obj['contact:website'] = $shops['website'][$j];
                     $this->addObject($this->makeObject($obj));
                 }
 
