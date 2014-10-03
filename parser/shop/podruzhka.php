@@ -6,8 +6,9 @@ class podruzhka extends Validator
 	// откуда скачиваем данные
 	protected $domain = 'http://www.podrygka.ru';
 	static $urls = array(
-		'RU-MOW' => '/shops/find/',
-		'RU-MOS' => '/shops/find/',
+		'RU-MOW' => '/ajax/allshops.php',
+		'RU-MOS' => '/ajax/allshops.php',
+		'RU-SPE' => '/ajax/allshops.php',
 	);
 	// поля объекта
 	protected $fields = array(
@@ -21,6 +22,7 @@ class podruzhka extends Validator
 		'lat'   => '',
 		'lon'   => '',
 		'_addr' => '',
+		'website' => '',
 		);
 	// фильтр для поиска объектов в OSM
 	protected $filter = array('shop=chemist', 'подруж');
@@ -28,29 +30,14 @@ class podruzhka extends Validator
 	// парсер страницы
 	protected function parse($st)
 	{
-		if (!preg_match('#points = (\[.+\]);</script>#s', $st, $m)) return false;
-		$a = json_decode($m[1], true);
-		foreach ($a as $obj)
-		{
-			if (preg_match('#г\.\s*\w+#u', $obj['TEXT'], $m))
-			{
-				$city = $m[0];
-				if ($this->region == 'RU-MOW') continue;
-			}
-			else
-			{
-				$city = 'Москва';
-				if ($this->region != 'RU-MOW') continue;
-			}
+		$json = json_decode($st, true);
 
-			$obj['lat'] = $obj['LAT'];
-			$obj['lon'] = $obj['LON'];
-
-			if (preg_match('#Адрес:</b>\s*(.+?)<#',  $obj['TEXT'], $m)) $obj['_addr'] = $city.', '.$m[1];
-			if (preg_match('#с .+? до .+?\d+,#', $obj['TEXT'], $m))
-				$obj['opening_hours'] = $this->time(str_replace('без выходных и прерывов', '', $m[0]));
-
-			$obj['_addr'] = str_replace('&quot;', '"', $obj['_addr']);
+		foreach ($json['shops-list'] as $key => $shop) {
+			$obj['lat'] = $shop['coords'][0];
+			$obj['lon'] = $shop['coords'][1];
+			$obj['website'] = $this->domain . $shop['link'] . '/';
+			$obj['opening_hours'] = $this->time(str_replace('без выходных и прерывов', '', $shop['time']));
+			$obj['_addr'] = $shop['address'];
 
 			$this->addObject($this->makeObject($obj));
 		}
