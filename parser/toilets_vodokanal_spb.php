@@ -45,7 +45,7 @@ class toilets_vodokanal_spb extends Validator
 				$obj['opening_hours'] = "May-Sep: 09:00-21:00";
 			}
 
-			list($lat, $lon) = explode(" ", $geoObject->Point->pos);
+			list($lon, $lat) = explode(" ", $geoObject->Point->pos);
 			$obj['lat'] = $lat;
 			$obj['lon'] = $lon;
 			$this->addObject($this->makeObject($obj));
