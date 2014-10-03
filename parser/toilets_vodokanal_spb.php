@@ -24,6 +24,7 @@ class toilets_vodokanal_spb extends Validator
 		'lat' => '',
 		'lon' => '',
 		'_addr' => '',
+		'_type' => '',
 	);
 	// фильтр для поиска объектов в OSM
 	protected $filter = array('amenity=toilets');
@@ -44,6 +45,9 @@ class toilets_vodokanal_spb extends Validator
 			} else if (strpos($descr, "Время работы: с 9.00 до 21.00 ежедневно в летний период (с мая по октябрь), с учетом технологических перерывов (20-40 мин.)") !== FALSE) {
 				$obj['opening_hours'] = "May-Sep: 09:00-21:00";
 			}
+
+			preg_match("!^(.*?)<br/>!sm", $descr, $matches);
+			$obj['_type'] = $matches[1];
 
 			list($lon, $lat) = explode(" ", $geoObject->Point->pos);
 			$obj['lat'] = $lat;
